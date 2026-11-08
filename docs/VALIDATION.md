@@ -1,4 +1,8 @@
-# Validação atual — v0.5, 08/11/2026
+# Validação atual — v0.6 em implementação, 08/11/2026
+
+Checkpoint de integridade/fila: **46 testes API, 26 TypeScript e 24 Chromium aprovados**; 2 Chromium opcionais de inferência omitidos. Typecheck e exportação web aprovados. Regressões: ID de tensão repetido com conteúdo equivalente/diferente, data equivalente com fuso, ausência de ressurreição após eliminação parcial, duas edições com a mesma versão (uma 200/uma 409), precondição obrigatória, versão do documento pai, manutenção da evidência, formulário desatualizado com campos preservados e decisão explícita. Fila: limite/deduplicação/FIFO/cancelamento/expiração/âmbito e confirmação não automática; parser sem Ollama. Testes anteriores mantidos. Detalhes da fila em LOCAL_EXTRACTION.md. Os ensaios de desempenho comparáveis estão em atualização em LOAD_TEST.md.
+
+## Registo histórico — v0.5
 
 Executado em Windows: **25 testes TypeScript, 23 Chromium, 42 API e 2 de fundação — 92 aprovados**. Typecheck e exportação web Expo aprovados. Playwright: `23 passed, 2 skipped`; os dois opcionais de inferência real não foram repetidos nesta v0.5, sem alteração ao motor. Comandos reproduzíveis em [UX_LEARN.md](UX_LEARN.md); logs desta execução em `tmp/v05-browser.log` e `tmp/v05-api.log` (temporários, fora do Git).
 

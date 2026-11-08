@@ -12,12 +12,14 @@ import subprocess
 from .hybrid import MAX_UPLOAD, MIMES
 from .local_ollama import LocalOllama, EngineError
 from .data_routes import router as data_router
+from .data_routes import scope
+from .extraction_jobs import queue,processing_slot,process_document,validate_source
 import os
 
 app = FastAPI(title="PULSO — demonstração", version="0.0.1")
-app.add_middleware(CORSMiddleware, allow_origins=os.environ.get('PULSO_WEB_ORIGINS','http://localhost:8081,http://127.0.0.1:8081,http://127.0.0.1:8765').split(','), allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Content-Type", "X-Pulso-Demo", "X-Pulso-Profile"])
+app.add_middleware(CORSMiddleware, allow_origins=os.environ.get('PULSO_WEB_ORIGINS','http://localhost:8081,http://127.0.0.1:8081,http://127.0.0.1:8765').split(','), allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Content-Type", "X-Pulso-Demo", "X-Pulso-Profile", "If-Match"])
 app.include_router(data_router)
-extraction_lock=asyncio.Semaphore(1)
+extraction_lock=processing_slot
 
 @app.get('/demo/extraction/status')
 def extraction_status():
@@ -39,20 +41,35 @@ async def extract(request: Request):
         payload.extend(chunk)
         if len(payload) > MAX_UPLOAD:
             raise HTTPException(413, 'Limite de 2 MB excedido.')
-    # Isolated parser with a hard wall-clock limit. No filenames supplied by client.
+    async with extraction_lock:return await process_document(bytes(payload),mime)
+
+@app.post('/demo/extractions',status_code=202)
+async def submit_extraction(request:Request):
+    owner=request.headers.get('x-pulso-profile');scope(request,owner)
+    mime=request.headers.get('content-type')
+    if request.headers.get('x-pulso-demo')!='synthetic-only' or mime not in MIMES:raise HTTPException(400,'Seleciona apenas um documento inteiramente fictício num formato suportado.')
+    queue.cleanup()
+    if queue.receiving+sum(j['state'] in {'queued','processing'} for j in queue.jobs.values())>=queue.capacity:
+        raise HTTPException(429,'A fila de leitura está cheia. Aguarda alguns segundos e tenta novamente.',headers={'Retry-After':'5'})
+    queue.receiving+=1
     try:
-        # Windows reload uses a Selector loop without asyncio subprocess support.
-        async with extraction_lock:
-            completed = await asyncio.to_thread(subprocess.run,
-                [sys.executable, '-m', 'services.api.app.hybrid',mime],
-                input=bytes(payload), capture_output=True, timeout=285,
-                cwd=Path(__file__).resolve().parents[3])
-        parsed = json.loads(completed.stdout)
-    except (subprocess.TimeoutExpired, ValueError, OSError):
-        raise HTTPException(422, 'Não foi possível processar o documento dentro dos limites.')
-    if not parsed.get('ok'):
-        raise HTTPException(422, parsed.get('error', 'Documento não suportado.'))
-    return parsed['data']
+        payload=bytearray()
+        async for chunk in request.stream():
+            payload.extend(chunk)
+            if len(payload)>MAX_UPLOAD:raise HTTPException(413,'Limite de 2 MB excedido.')
+        await asyncio.to_thread(validate_source,bytes(payload),mime)
+        return queue.submit(owner,bytes(payload),mime)
+    finally:queue.receiving-=1
+
+@app.get('/demo/extractions/{job_id}')
+async def extraction_job(job_id:str,request:Request):
+    owner=request.headers.get('x-pulso-profile');scope(request,owner)
+    return queue.snapshot(queue.get(owner,job_id))
+
+@app.delete('/demo/extractions/{job_id}')
+async def cancel_extraction(job_id:str,request:Request):
+    owner=request.headers.get('x-pulso-profile');scope(request,owner)
+    return queue.cancel(owner,job_id)
 
 class HealthResponse(BaseModel):
     status: Literal["ok"] = "ok"

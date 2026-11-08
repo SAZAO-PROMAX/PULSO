@@ -152,12 +152,12 @@ class Load:
         payload = dict(id=sid, date='2026-11-08T10:00:00Z', systolic='128', diastolic='78', heartRate='72')
         await self.request(client, m, 'POST', prefix + '/pressure', owner=owner, json=payload)
         await self.request(client, m, 'POST', prefix + '/pressure', owner=owner, json=payload)  # idempotent replay
-        await self.request(client, m, 'PATCH', prefix + '/result/' + sid + '-systolic', owner=owner, json={'value': 129})
+        await self.request(client, m, 'PATCH', prefix + '/result/' + sid + '-systolic', owner=owner, headers={'If-Match':'"1"'},json={'value': 129})
         data = await self.read(client, m, owner)
         rows = [r for r in data['results'] if r.get('sessionId') == sid]
         assert len(rows) == 3 and next(r for r in rows if r['parameter'] == 'systolic')['value'] == 129, 'Lost/duplicated write'
         for row in rows:
-            await self.request(client, m, 'DELETE', prefix + '/result/' + row['id'], owner=owner)
+            await self.request(client, m, 'DELETE', prefix + '/result/' + row['id'], owner=owner,headers={'If-Match':str(row.get('version',1))})
 
     async def document(self, client, m, owner):
         r = await self.request(client, m, 'POST', '/demo/extract', content=self.raw, headers={'Content-Type': 'application/pdf', 'X-Pulso-Demo': 'synthetic-only'}, controlled=(429,))
@@ -176,7 +176,8 @@ class Load:
         data = await self.read(client, m, owner)
         assert sum(r['id'] == row['id'] and r['value'] == 99 for r in data['results']) == 1
         assert next(d for d in data['documents'] if d['id'] == did)['original']['dataUrl'] == doc['original']['dataUrl']
-        await self.request(client, m, 'DELETE', prefix + '/document/' + did, owner=owner)
+        document=next(d for d in data['documents'] if d['id']==did)
+        await self.request(client, m, 'DELETE', prefix + '/document/' + did, owner=owner,headers={'If-Match':str(document.get('version',1))})
         return True
 
     async def isolation(self, client, m, owner):
@@ -205,15 +206,16 @@ class Load:
         replay = await client.post(prefix+'/pressure',headers=headers,json={**payload,'systolic':'140'})
         data = (await client.get(prefix+'/data',headers=headers)).json()
         stored = next(r for r in data['results'] if r['id']==sid+'-systolic')
-        patches = await asyncio.gather(*[client.patch(prefix+'/result/'+sid+'-systolic',headers=headers,json={'value':value}) for value in (130,131)])
+        patches = await asyncio.gather(*[client.patch(prefix+'/result/'+sid+'-systolic',headers={**headers,'If-Match':'"1"'},json={'value':value}) for value in (130,131)])
         current = (await client.get(prefix+'/data',headers=headers)).json()
         edited = next(r for r in current['results'] if r['id']==sid+'-systolic')
         result = {'changed_idempotent_payload':{'http':replay.status_code,'response':replay.json(),'sent':140,'stored':stored['value']},
                   'concurrent_same_result':{'http':[p.status_code for p in patches],'stored':edited['value'],'previous_versions':len(edited.get('previousVersions',[])),
-                                            'note':'No version precondition; last committed edit wins. Response order is not a commit ordering guarantee.'}}
+                                            'note':'Same expected version: exactly one edit must commit, the other must conflict.'}}
+        assert replay.status_code==409 and stored['value']==128 and sorted(p.status_code for p in patches)==[200,409]
         for row in current['results']:
             if row.get('sessionId')==sid:
-                response = await client.delete(prefix+'/result/'+row['id'],headers=headers);response.raise_for_status()
+                response = await client.delete(prefix+'/result/'+row['id'],headers={**headers,'If-Match':str(row.get('version',1))});response.raise_for_status()
         result['baseline_restored'] = await self.integrity(client)==self.baseline
         (self.out/'probes.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
         print('Collision probes:',json.dumps(result),flush=True)

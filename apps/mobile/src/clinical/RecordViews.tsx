@@ -2,7 +2,7 @@ import React,{useState} from 'react';
 import {View,Platform} from 'react-native';
 import {Card,T,Button,Field,layout} from '../ui';
 import {ClinicalData,MedicalDocument,Result,parameterLabels,displayTime,resultDate,numberText,confirmationLabels,exclusionReason} from './data';
-import {originFor,confirmedResults,clinicalRepository,API} from './repository';
+import {originFor,confirmedResults,clinicalRepository,API,ApiError} from './repository';
 import {MedicalTerm,InfoButton} from '../learning/Learning';
 export function DocumentView({doc}:{doc:MedicalDocument}) {
  const [open,setOpen]=useState(false);
@@ -58,25 +58,36 @@ export function History({data,onChanged}:{data:ClinicalData;onChanged:(message:s
 
 
 function ResultActions({result:r,onChanged}:{result:Result;onChanged:(message:string)=>void}){
+ const [version,setVersion]=useState(r.version??1),[conflict,setConflict]=useState(false);
  const [edit,setEdit]=useState(false),[remove,setRemove]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const [value,setValue]=useState(r.value===null?'':String(r.value)),[unit,setUnit]=useState(r.unit),[date,setDate]=useState(r.measuredAt??'');
- async function act(work:()=>Promise<void>,message:string){setBusy(true);setError('');try{await work();onChanged(message);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+ async function act(work:()=>Promise<void>,message:string){setBusy(true);setError('');try{await work();onChanged(message);}catch(e){setError((e as Error).message);setConflict(e instanceof ApiError&&e.status===409);}finally{setBusy(false);}}
  return <View style={layout.stack}>
  <Button label="Editar medição" disabled={busy} onPress={()=>{setEdit(true);setRemove(false);}}/>
- {edit&&<><Field label="Valor corrigido" value={value} onChange={setValue}/><Field label="Unidade corrigida" value={unit} onChange={setUnit}/><Field label="Data e hora com fuso horário (ISO)" value={date} onChange={setDate}/><T kind="small">O valor anterior e a evidência original são preservados. Se só existia a data, a hora técnica não é uma hora clínica.</T><Button label="Guardar correção" disabled={busy} onPress={()=>{if(!/^\d+(?:[.,]\d+)?$/.test(value)){setError('Introduz um número válido.');return;}void act(()=>clinicalRepository.editResult(r.ownerId,r.id,{value:Number(value.replace(',','.')),unit,measuredAt:date}),'Correção guardada.');}}/><Button label="Cancelar correção" disabled={busy} onPress={()=>{setEdit(false);setError('');}}/></>}
+ {edit&&<><Field label="Valor corrigido" value={value} onChange={setValue}/><Field label="Unidade corrigida" value={unit} onChange={setUnit}/><Field label="Data e hora com fuso horário (ISO)" value={date} onChange={setDate}/><T kind="small">O valor anterior e a evidência original são preservados. Se só existia a data, a hora técnica não é uma hora clínica.</T><Button label="Guardar correção" disabled={busy||conflict} onPress={()=>{if(!/^\d+(?:[.,]\d+)?$/.test(value)){setError('Introduz um número válido.');return;}void act(()=>clinicalRepository.editResult(r.ownerId,r.id,{value:Number(value.replace(',','.')),unit,measuredAt:date},version),'Correção guardada.');}}/><Button label="Cancelar correção" disabled={busy} onPress={()=>{setEdit(false);setError('');}}/></>}
  <Button label="Eliminar medição" disabled={busy} onPress={()=>{setRemove(true);setEdit(false);}}/>
- {remove&&<><T>Eliminar apenas esta medição? O exame original e os restantes resultados serão mantidos.</T><Button label="Confirmar eliminação da medição" disabled={busy} onPress={()=>void act(()=>clinicalRepository.deleteResult(r.ownerId,r.id),'Medição eliminada na base local.')}/><Button label="Cancelar eliminação" disabled={busy} onPress={()=>setRemove(false)}/></>}
+ {remove&&<><T>Eliminar apenas esta medição? O exame original e os restantes resultados serão mantidos.</T><Button label="Confirmar eliminação da medição" disabled={busy||conflict} onPress={()=>void act(()=>clinicalRepository.deleteResult(r.ownerId,r.id,version),'Medição eliminada na base local.')}/><Button label="Cancelar eliminação" disabled={busy} onPress={()=>setRemove(false)}/></>}
+ {conflict&&<ConflictResolver owner={r.ownerId} kind="result" id={r.id} onVersion={v=>{setVersion(v);setConflict(false);setError('');}}/>}
  {busy&&<T accessibilityLiveRegion="polite">A guardar na base local…</T>}{error&&<T accessibilityRole="alert">{error}</T>}
  </View>;
 }
 function DocumentActions({doc,count,onChanged}:{doc:MedicalDocument;count:number;onChanged:(message:string)=>void}){
+ const [version,setVersion]=useState(doc.version??1),[conflict,setConflict]=useState(false);
  const [edit,setEdit]=useState(false),[remove,setRemove]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const [title,setTitle]=useState(doc.title),[lab,setLab]=useState(doc.laboratory??'');
- async function act(work:()=>Promise<void>,message:string){setBusy(true);setError('');try{await work();onChanged(message);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+ async function act(work:()=>Promise<void>,message:string){setBusy(true);setError('');try{await work();onChanged(message);}catch(e){setError((e as Error).message);setConflict(e instanceof ApiError&&e.status===409);}finally{setBusy(false);}}
  return <View style={layout.stack}><Button label="Editar exame" disabled={busy} onPress={()=>{setEdit(true);setRemove(false);}}/>
- {edit&&<><Field label="Título do exame" value={title} onChange={setTitle}/><Field label="Laboratório do exame" value={lab} onChange={setLab}/><Button label="Guardar exame" disabled={busy} onPress={()=>void act(()=>clinicalRepository.editDocument(doc.ownerId,doc.id,{title,laboratory:lab}),'Exame corrigido na base local.')}/><Button label="Cancelar edição do exame" disabled={busy} onPress={()=>setEdit(false)}/></>}
+ {edit&&<><Field label="Título do exame" value={title} onChange={setTitle}/><Field label="Laboratório do exame" value={lab} onChange={setLab}/><Button label="Guardar exame" disabled={busy||conflict} onPress={()=>void act(()=>clinicalRepository.editDocument(doc.ownerId,doc.id,{title,laboratory:lab},version),'Exame corrigido na base local.')}/><Button label="Cancelar edição do exame" disabled={busy} onPress={()=>setEdit(false)}/></>}
  <Button label="Eliminar exame completo" disabled={busy} onPress={()=>{setEdit(false);setRemove(true);}}/>
- {remove&&<><T>Eliminar este exame e os {count} resultados associados? O documento original e esses resultados serão eliminados em conjunto.</T><Button label="Confirmar eliminação do exame e resultados" disabled={busy} onPress={()=>void act(()=>clinicalRepository.deleteDocument(doc.ownerId,doc.id),'Exame e resultados associados eliminados.')}/><Button label="Cancelar eliminação do exame" disabled={busy} onPress={()=>setRemove(false)}/></>}
+ {remove&&<><T>Eliminar este exame e os {count} resultados associados? O documento original e esses resultados serão eliminados em conjunto.</T><Button label="Confirmar eliminação do exame e resultados" disabled={busy||conflict} onPress={()=>void act(()=>clinicalRepository.deleteDocument(doc.ownerId,doc.id,version),'Exame e resultados associados eliminados.')}/><Button label="Cancelar eliminação do exame" disabled={busy} onPress={()=>setRemove(false)}/></>}
+ {conflict&&<ConflictResolver owner={doc.ownerId} kind="document" id={doc.id} onVersion={v=>{setVersion(v);setConflict(false);setError('');}}/>}
  {busy&&<T accessibilityLiveRegion="polite">A guardar na base local…</T>}{error&&<T accessibilityRole="alert">{error}</T>}
  </View>;
+}
+
+function ConflictResolver({owner,kind,id,onVersion}:{owner:string;kind:'document'|'result';id:string;onVersion:(version:number)=>void}){
+ const [current,setCurrent]=useState<MedicalDocument|Result|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ async function refresh(){setBusy(true);try{const data=await clinicalRepository.load(owner);const row=(kind==='document'?data.documents:data.results).find(r=>r.id===id);if(!row)throw Error('O registo já não existe. Os teus campos continuam disponíveis; fecha a edição e atualiza o Histórico.');setCurrent(row);setError('');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+ return <Card><T kind="heading">Conflito de edição</T><T>Os teus campos não foram apagados. Consulta o que foi guardado antes de decidir se queres reaplicar as tuas alterações.</T><Button label="Consultar versão atual" disabled={busy} onPress={()=>void refresh()}/>
+ {current&&<><T>Versão atual: {current.version??1} · {'title' in current?current.title:current.value===null?'Sem valor':numberText(current.value)+' '+current.unit}</T><Button label="Usar esta versão como base, mantendo os meus campos" onPress={()=>onVersion(current.version??1)}/></>}{error&&<T accessibilityRole="alert">{error}</T>}</Card>;
 }

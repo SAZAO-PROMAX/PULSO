@@ -4,6 +4,7 @@ import pymupdf
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import Response
 from . import store
+from starlette.concurrency import run_in_threadpool
 router=APIRouter(prefix="/demo/profiles")
 def scope(request,owner):
     if owner not in {"demo-a","demo-b"} or request.headers.get("x-pulso-profile")!=owner:
@@ -52,13 +53,13 @@ def preview(owner:str,result_id:str,request:Request):
         raise HTTPException(422,'Não foi possível destacar uma região inequívoca. Consulta o original.')
 @router.post("/{owner}/migrate")
 async def migrate(owner:str,request:Request):
-    scope(request,owner);return store.migrate(owner,await body(request))
+    scope(request,owner);return await run_in_threadpool(store.migrate,owner,await body(request))
 @router.post("/{owner}/confirm")
 async def confirm(owner:str,request:Request):
-    scope(request,owner);return store.confirm(owner,await body(request))
+    scope(request,owner);return await run_in_threadpool(store.confirm,owner,await body(request))
 @router.post("/{owner}/pressure")
 async def pressure(owner:str,request:Request):
-    scope(request,owner);return store.pressure(owner,await body(request))
+    scope(request,owner);return await run_in_threadpool(store.pressure,owner,await body(request))
 @router.post("/{owner}/reset")
 def reset(owner:str,request:Request):
     scope(request,owner);return store.reset(owner)
@@ -66,9 +67,16 @@ def reset(owner:str,request:Request):
 async def edit(owner:str,kind:str,item_id:str,request:Request):
     scope(request,owner)
     if kind not in {"document","result"}: raise HTTPException(404)
-    return store.manage(owner,kind,item_id,await body(request))
+    return await run_in_threadpool(store.manage,owner,kind,item_id,await body(request),expected_version=expected_version(request))
 @router.delete("/{owner}/{kind}/{item_id}")
 def delete(owner:str,kind:str,item_id:str,request:Request):
     scope(request,owner)
     if kind not in {"document","result"}: raise HTTPException(404)
-    return store.manage(owner,kind,item_id)
+    return store.manage(owner,kind,item_id,expected_version=expected_version(request))
+
+def expected_version(request):
+    value=request.headers.get('if-match')
+    if value is None:return None
+    import re
+    if not re.fullmatch(r'"?[1-9][0-9]{0,9}"?',value) or value.count('"') not in (0,2):raise HTTPException(400,'Versão esperada inválida.')
+    return int(value.strip('"'))

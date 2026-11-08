@@ -1,5 +1,12 @@
 # Extração local PULSO v0.4 — 08/11/2026
 
+## Incremento v0.6 — fila limitada
+
+O formulário web usa agora POST `/demo/extractions` (202), GET `/demo/extractions/{id}` e DELETE do pedido ainda em espera, com âmbito do perfil. Estados: queued, processing, ready (aguarda confirmação), error e cancelled. O original/resultados só são persistidos após confirmação no fluxo existente. Validação de assinatura/formato/limites precede o processamento; cliques repetidos com o mesmo hash/perfil reutilizam o pedido ou resultado ainda retido.
+Fila em memória, máximo cinco pedidos ativos/aguardando, espera até 60 s, processamento com prazo de 285 s, resposta retida até 300 s e no máximo 20 concluídos. Pedidos expirados são removidos/assinalados na próxima consulta ou passagem do trabalhador. O número de uploads em receção também é limitado. Fila cheia: 429/Retry-After; trabalho iniciado não é cancelado pela interface. Reiniciar o processo perde fila/resultados temporários; 404 explica repetição e ausência de gravação. Uma única extração partilhada com o endpoint síncrono `/demo/extract`, mantido para compatibilidade. Não aumentar workers: a fila/semaforo são locais ao processo e não coordenam múltiplas instâncias. Sem alteração de modelo, concorrência GPU, serviços externos ou nova base.
+
+As secções seguintes registam a implementação e os ensaios históricos v0.4.
+
 Implementada sobre Expo/React Native + FastAPI + a mesma SQLite. Não foi reconstruído o dashboard. Apenas documentos inteiramente sintéticos; confirmação humana não equivale a validação médica.
 
 ## Ambiente verificado

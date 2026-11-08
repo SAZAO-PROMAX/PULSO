@@ -1,10 +1,15 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {ApiRepository,StoragePort} from '../src/clinical/repository';
+import {ApiRepository,StoragePort,ApiError} from '../src/clinical/repository';
 import {validateData,FixtureRepository,buildSeries,exclusionReason} from '../src/clinical/data';
 import {confirmRows,Extraction,ReviewRow,localDateTime} from '../src/clinical/importData';
 const parsed:Extraction={parserVersion:'test',sha256:'a'.repeat(64),laboratory:'Laboratorio Demo X',date:'2026-11-07',text:'PULSO SYNTHETIC LAB V1',candidates:[{parameter:'glucose',value:'98,5',unit:'mg/dL',referenceText:'70-110',method:'hexoquinase',context:'plasma',page:1,excerpt:'Glicose | 98,5 | mg/dL',issues:[]}]};
 const review:ReviewRow={value:'99,2',unit:'mg/dL',method:'hexoquinase',context:'plasma',include:true,reviewed:true};
+
+test('edição envia a versão vista pelo utilizador e preserva conflito explícito',async()=>{
+ const repo=new ApiRepository(async(_url,options)=>{assert.equal((options?.headers as Record<string,string>)['If-Match'],'"2"');return new Response(JSON.stringify({detail:'Outra sessão alterou este registo.'}),{status:409});});
+ const patch={value:99};await assert.rejects(repo.editResult('demo-a','result',patch,2),(e:unknown)=>e instanceof ApiError&&e.status===409);assert.equal(patch.value,99);
+});
 test('cliente só remove cópia antiga após migração confirmada pelo backend',async()=>{
  const data=await new FixtureRepository().load('demo-a');let value:string|null=JSON.stringify(data),fail=true;const calls:string[]=[];
  const storage:StoragePort={getItem:()=>value,setItem:()=>{},removeItem:()=>{value=null;}};

@@ -14,7 +14,13 @@ def client(tmp_path,monkeypatch):
     return TestClient(app)
 
 def request(client,method,path,body=None,owner="demo-b"):
-    return client.request(method,"/demo/profiles/"+owner+path,json=body,headers={"X-Pulso-Profile":owner})
+    headers={"X-Pulso-Profile":owner}
+    if method in {'PATCH','DELETE'}:
+        collection='documents' if path.startswith('/document/') else 'results'
+        data=client.get('/demo/profiles/'+owner+'/data',headers=headers).json()
+        item=next((r for r in data[collection] if r['id']==path.rsplit('/',1)[-1]),None)
+        if item:headers['If-Match']=str(item.get('version',1))
+    return client.request(method,"/demo/profiles/"+owner+path,json=body,headers=headers)
 
 def document(i=0,date="2026-11-07",value="99,2",owner="demo-b",unit="mg/dL",lab="A"):
     lines=[*LINES[:5],f"Glicose | {value} | {unit} | referencia ficticia | hexoquinase | plasma"]
@@ -61,6 +67,35 @@ def test_pressure_validation_and_recovery(client):
     assert all(r["source"]=="manual" for r in data["results"])
     assert request(client,"POST","/pressure",{**row,"id":"bad","date":"2026-02-30T09:30:00Z"}).status_code==422
     assert len(request(client,"GET","/data").json()["results"])==2
+
+def test_pressure_id_conflict_equivalent_timezone_and_no_resurrection(client):
+    body=dict(id='retry',systolic='128',diastolic='081',heartRate='',date='2026-11-08T10:00:00Z')
+    assert request(client,'POST','/pressure',body).status_code==200
+    assert request(client,'POST','/pressure',{**body,'diastolic':'81','date':'2026-11-08T11:00:00+01:00'}).status_code==200
+    before=request(client,'GET','/data').json()
+    for change in ({'systolic':'140'},{'heartRate':'70'},{'date':'2026-11-08T11:00:00Z'}):
+        assert request(client,'POST','/pressure',{**body,**change}).status_code==409
+        assert request(client,'GET','/data').json()==before
+    assert request(client,'DELETE','/result/retry-systolic').status_code==200
+    assert request(client,'POST','/pressure',body).status_code==409
+    assert len(request(client,'GET','/data').json()['results'])==1
+
+def test_optimistic_concurrency_atomic_conflict_and_parent_version(client):
+    from concurrent.futures import ThreadPoolExecutor
+    request(client,'POST','/confirm',document())
+    url='/demo/profiles/demo-b/result/result-0'
+    headers={'X-Pulso-Profile':'demo-b','If-Match':'"1"'}
+    assert client.patch(url,json={'value':100},headers={'X-Pulso-Profile':'demo-b'}).status_code==428
+    def edit(value):return client.patch(url,json={'value':value},headers=headers).status_code
+    with ThreadPoolExecutor(max_workers=2) as pool:codes=list(pool.map(edit,[101,102]))
+    assert sorted(codes)==[200,409]
+    data=request(client,'GET','/data').json();row=data['results'][0];doc=data['documents'][0]
+    assert row['version']==2 and len(row['previousVersions'])==1 and doc['version']==2
+    assert client.delete(url,headers=headers).status_code==409
+    assert client.delete('/demo/profiles/demo-b/document/doc-0',headers=headers).status_code==409
+    assert len(request(client,'GET','/data').json()['results'])==1
+    assert client.patch(url,json={'value':103},headers={**headers,'If-Match':'"2"'}).status_code==200
+    assert request(client,'GET','/data').json()['results'][0]['evidence']==document()['results'][0]['evidence']
 
 def test_edit_and_delete_are_transactional_and_keep_original_evidence(client):
     body=document()

@@ -1,5 +1,7 @@
 # Estado atual do PULSO
 
+**Sprint ativo v0.6:** checkpoint anterior preservado em `cca50b2` (v0.5/carga). Implementadas e verificadas as primeiras etapas de IDs idempotentes, conflitos de versão e fila limitada; restantes etapas do pedido em curso. Resultados atuais em [VALIDATION.md](VALIDATION.md). O resumo v0.5 abaixo será consolidado no fecho do sprint; não interpretar o plano de contas como já implementado.
+
 Ponto de entrada para continuar o trabalho em Codex, ChatGPT ou Work. Resumo do estado local confirmado; os relatórios ligados abaixo conservam os detalhes e a evidência.
 
 ## Versão e referência Git

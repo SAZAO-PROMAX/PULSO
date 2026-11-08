@@ -6,6 +6,7 @@ import math
 import os
 import re
 import sqlite3
+import copy
 from .laboratory import PARAMETERS as LAB_PARAMETERS
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -36,6 +37,8 @@ def validate(owner,data):
             if not isinstance(item,dict) or item.get("ownerId")!=owner or item.get("synthetic") is not True or not text(item.get("id")) or item["id"] in ids:
                 raise ValueError("Perfil, identificador ou marcação fictícia inválida.")
             ids.add(item["id"])
+            version=item.get('version',1)
+            if isinstance(version,bool) or not isinstance(version,int) or version<1: raise ValueError('Versão de registo inválida.')
     docs={d["id"]:d for d in data["documents"]}
     hashes=set()
     for d in docs.values():
@@ -89,17 +92,18 @@ def seed(owner):
         if row["ownerId"]==owner:
             data["results"].append(dict(id=row["id"],ownerId=owner,synthetic=True,parameter="systolic" if row["parameter"]=="systolic_pressure" else "diastolic",
                 value=row["value"],unit=row["unit"],measuredAt=row["measuredAt"],documentId=None,source="manual",sessionId=row["sessionId"],method="registo manual",context="domiciliário",referenceText=None,status="user_declared"))
+    for item in data['documents']+data['results']:item.setdefault('version',1)
     return validate(owner,data)
 
 @contextmanager
-def connection():
+def connection(write=True):
     path=Path(os.environ.get("PULSO_DB_PATH",str(ROOT/".local/pulso.sqlite3")))
     path.parent.mkdir(parents=True,exist_ok=True)
     db=sqlite3.connect(path,timeout=10)
     try:
         db.execute("CREATE TABLE IF NOT EXISTS profiles(owner TEXT PRIMARY KEY, payload TEXT NOT NULL, changed INTEGER NOT NULL DEFAULT 0, migrated INTEGER NOT NULL DEFAULT 0)")
         db.commit()
-        db.execute("BEGIN IMMEDIATE")
+        db.execute("BEGIN IMMEDIATE" if write else "BEGIN")
         yield db
         db.commit()
     except Exception:
@@ -109,13 +113,23 @@ def connection():
 
 def load_in(db,owner):
     row=db.execute("SELECT payload FROM profiles WHERE owner=?",(owner,)).fetchone()
-    if row: return json.loads(row[0])
+    if row:
+        data=json.loads(row[0])
+        for item in data['documents']+data['results']: item.setdefault('version',1)
+        return data
     data=seed(owner)
     db.execute("INSERT INTO profiles(owner,payload) VALUES (?,?)",(owner,json.dumps(data,ensure_ascii=False)))
     return data
 
 def load(owner):
-    with connection() as db: return load_in(db,owner)
+    with connection(write=False) as db:
+        row=db.execute('SELECT payload FROM profiles WHERE owner=?',(owner,)).fetchone()
+    if row:
+        data=json.loads(row[0])
+        for item in data['documents']+data['results']:item.setdefault('version',1)
+        return data
+    # First access may seed a profile: serialize only that write, not every read.
+    with connection() as db:return load_in(db,owner)
 
 def mutate(owner,operation):
     try:
@@ -141,7 +155,7 @@ def migrate(owner,data):
     except ValueError as exc: raise HTTPException(422,str(exc)) from exc
 
 def confirm(owner,body):
-    doc=body.get("document");rows=body.get("results")
+    doc=copy.deepcopy(body.get("document"));rows=copy.deepcopy(body.get("results"))
     if not isinstance(doc,dict) or not isinstance(rows,list) or not rows or any(r.get("status")!="user_confirmed" or r.get("documentId")!=doc.get("id") for r in rows):
         raise HTTPException(422,"Confirmação explícita inválida.")
     def operation(data):
@@ -149,10 +163,12 @@ def confirm(owner,body):
             existing=next(d for d in data["documents"] if d.get("sha256")==doc.get("sha256"))
             if existing["id"]==doc.get("id"):
                 old_rows=[r for r in data["results"] if r.get("documentId")==existing["id"]]
-                if old_rows==rows and all(existing.get(k)==v for k,v in doc.items() if k!='importedAt'):
+                without_version=lambda items:[{k:v for k,v in item.items() if k!='version'} for item in items]
+                if without_version(old_rows)==without_version(rows) and all(existing.get(k)==v for k,v in doc.items() if k not in {'importedAt','version'}):
                     return {"saved":True}
                 raise HTTPException(409,"O exame já foi guardado com outros dados. Consulta o Histórico.")
             raise HTTPException(409,"Este PDF já está guardado neste perfil.")
+        for item in [doc]+rows: item['version']=1
         data["documents"].append(doc);data["results"].extend(rows)
         return {"saved":True}
     return mutate(owner,operation)
@@ -167,19 +183,30 @@ def pressure(owner,body):
     if any(not isinstance(v,str) or not re.fullmatch(r"\d{1,3}",v) or not 1<=int(v)<=999 for _,v in fields):
         raise HTTPException(422,"Preenche valores inteiros de 1 a 999; pulsação é opcional.")
     def operation(data):
-        if any(r.get("sessionId")==sid for r in data["results"]): return {"saved":True}
+        existing=[r for r in data['results'] if r.get('sessionId')==sid]
+        if existing:
+            expected={p:int(v) for p,v in fields}
+            same=len(existing)==len(fields) and {r['parameter']:r['value'] for r in existing}==expected
+            try:
+                same=same and all(r.get('source')=='manual' and r['unit']==('bpm' if r['parameter']=='heart_rate' else 'mmHg') and datetime.fromisoformat(r['measuredAt'].replace('Z','+00:00'))==datetime.fromisoformat(date.replace('Z','+00:00')) for r in existing)
+            except (ValueError,TypeError,AttributeError):same=False
+            if not same: raise HTTPException(409,'Este identificador já foi usado com outros valores. Nada foi alterado. Para corrigir, abre a medição no Histórico.')
+            return {"saved":True}
         for parameter,value in fields:
             data["results"].append(dict(id=sid+"-"+parameter,ownerId=owner,synthetic=True,parameter=parameter,value=int(value),
                 unit="bpm" if parameter=="heart_rate" else "mmHg",measuredAt=date,documentId=None,source="manual",sessionId=sid,
-                method="registo manual",context="domiciliário",referenceText=None,status="user_declared",createdAt=datetime.now(timezone.utc).isoformat(timespec="seconds")))
+                method="registo manual",context="domiciliário",referenceText=None,status="user_declared",version=1,createdAt=datetime.now(timezone.utc).isoformat(timespec="seconds")))
         return {"saved":True}
     return mutate(owner,operation)
 
-def manage(owner,kind,item_id,patch=None):
+def manage(owner,kind,item_id,patch=None,expected_version=None):
     def operation(data):
         collection=data["documents" if kind=="document" else "results"]
         item=next((x for x in collection if x["id"]==item_id),None)
         if item is None: raise HTTPException(404,"Registo não encontrado neste perfil.")
+        if expected_version is None: raise HTTPException(428,'É necessária a versão atual do registo. Atualiza a informação antes de editar ou eliminar.')
+        if isinstance(expected_version,bool) or not isinstance(expected_version,int) or expected_version<1: raise HTTPException(400,'Versão esperada inválida.')
+        if expected_version!=item.get('version',1): raise HTTPException(409,'Outra sessão alterou este registo. Os teus campos foram mantidos. Consulta a versão atual antes de voltar a guardar ou eliminar.')
         if patch is None:
             collection.remove(item)
             if kind=="document": data["results"]=[r for r in data["results"] if r.get("documentId")!=item_id]
@@ -189,6 +216,10 @@ def manage(owner,kind,item_id,patch=None):
             previous={key:item.get(key) for key in allowed}
             item.update(patch)
             item.setdefault("previousVersions",[]).append({"changedAt":datetime.now(timezone.utc).isoformat(timespec="seconds"),"fields":previous})
+            item['version']=item.get('version',1)+1
+        if kind=='result' and item.get('documentId'):
+            parent=next((d for d in data['documents'] if d['id']==item['documentId']),None)
+            if parent: parent['version']=parent.get('version',1)+1
         return {"saved":True}
     return mutate(owner,operation)
 

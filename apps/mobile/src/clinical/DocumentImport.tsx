@@ -20,28 +20,41 @@ export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
  const [parsed,setParsed]=useState<Extraction|null>(null),[rows,setRows]=useState<ReviewRow[]>([]),[fileData,setFileData]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [selected,setSelected]=useState<File|null>(null),[stage,setStage]=useState(''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
+ const job=useRef<string|null>(null),reading=useRef<AbortController|null>(null),[waiting,setWaiting]=useState(false);
+ useEffect(()=>()=>{reading.current?.abort();if(job.current)void fetch(API+'/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}}).catch(()=>{});},[owner]);
  useEffect(()=>{active.current=true;fetch(API+'/demo/extraction/status',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(s=>{if(active.current)setEngine(s.available?'Motor local disponível · leitura no teu computador':'Motor local indisponível · leitura de texto e introdução manual disponíveis');}).catch(()=>{if(active.current)setEngine('Não foi possível verificar o motor local.');});return()=>{active.current=false;};},[]);
  function setExtraction(data:Extraction,url:string){
   setFileData(url);setParsed(data);setChoosing(null);
   setRows(data.candidates.map(c=>({parameter:c.parameter,value:c.value,unit:c.unit,method:c.method??'',context:c.context??'',date:(c.date===undefined?data.date:c.date)??'',laboratory:(c.laboratory===undefined?data.laboratory:c.laboratory)??'',include:true,reviewed:false})));
  }
  async function read(file:File){
+  if(reading.current)return;
   setError('');setBusy(true);setStage('A preparar documento');
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),300000);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),360000);reading.current=controller;
   try{
    const source=await original(file);
    const response=await new Promise<Response>((resolve,reject)=>{
-    const xhr=new XMLHttpRequest();xhr.open('POST',API+'/demo/extract');xhr.setRequestHeader('Content-Type',mimeFor(file)!);xhr.setRequestHeader('X-Pulso-Demo','synthetic-only');
-    xhr.upload.onload=()=>{if(active.current)setStage('A ler as páginas localmente. Pode demorar alguns minutos.');};
+    const xhr=new XMLHttpRequest();xhr.open('POST',API+'/demo/extractions');xhr.setRequestHeader('Content-Type',mimeFor(file)!);xhr.setRequestHeader('X-Pulso-Demo','synthetic-only');xhr.setRequestHeader('X-Pulso-Profile',owner);
+    xhr.upload.onload=()=>{if(active.current)setStage('A validar o documento e a disponibilidade da fila.');};
     xhr.onload=()=>resolve(new Response(xhr.responseText,{status:xhr.status}));xhr.onerror=()=>reject(Error('Serviço local indisponível. Inicia o PULSO com .\\dev.cmd e tenta novamente.'));xhr.onabort=()=>reject(Error('Tempo de leitura excedido. Podes repetir ou introduzir manualmente.'));
     controller.signal.addEventListener('abort',()=>xhr.abort(),{once:true});xhr.send(source.bytes);
    });
-   const data=await response.json();
-   if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'Não foi possível extrair os resultados.');
+   let ticket=await response.json();
+   if(!response.ok)throw Error(typeof ticket.detail==='string'?ticket.detail:'Não foi possível colocar o documento em espera.');
+   job.current=ticket.id;
+   while(!['ready','error','cancelled'].includes(ticket.state)){
+    if(active.current){setWaiting(ticket.state==='queued');setStage(ticket.state==='queued'?'A aguardar processamento · posição '+ticket.position:'A extrair · leitura local em curso.');}
+    await new Promise<void>((resolve,reject)=>{const done=()=>{controller.signal.removeEventListener('abort',abort);resolve();};const timer=setTimeout(done,600);const abort=()=>{clearTimeout(timer);reject(Error('Pedido interrompido. Nada foi guardado.'));};controller.signal.addEventListener('abort',abort,{once:true});if(controller.signal.aborted)abort();});
+    const status=await fetch(API+'/demo/extractions/'+job.current,{headers:{'X-Pulso-Profile':owner},signal:controller.signal});ticket=await status.json();
+    if(!status.ok)throw Error(ticket.detail??'Pedido de leitura indisponível. Podes repetir.');
+   }
+   if(ticket.state!=='ready')throw Error(ticket.error??'Pedido cancelado. Nada foi guardado.');
+   const data:Extraction=ticket.result;job.current=null;
    if(active.current){setExtraction(data,source.url);setStage(data.status==='manual_required'?'Leitura automática não concluída. Podes introduzir os resultados manualmente.':'Aguarda revisão e confirmação');}
   }catch(e){if(active.current){setError((e as Error).message);setStage('A leitura não foi concluída. Nada foi guardado.');}}
-  finally{clearTimeout(timer);if(active.current)setBusy(false);}
+  finally{clearTimeout(timer);reading.current=null;if(active.current){setBusy(false);setWaiting(false);}}
  }
+ async function cancelWaiting(){if(!job.current)return;try{const response=await fetch(API+'/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}});const data=await response.json();if(!response.ok)throw Error(data.detail);setStage('Pedido cancelado. Nada foi guardado.');setWaiting(false);}catch(e){setError((e as Error).message);}}
  async function manual(){
   if(!selected)return;setBusy(true);setError('');
   try{const source=await original(selected);if(active.current){setExtraction({parserVersion:'manual-0.4',sha256:source.sha,mediaType:mimeFor(selected)!,laboratory:null,date:null,text:'[Introdução manual: consultar o documento original.]',candidates:[],status:'manual_required',processedAt:new Date().toISOString()},source.url);setStage('Introdução manual · nada guardado até confirmares.');}}
@@ -74,6 +87,7 @@ export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
  <PdfPicker onFile={file=>{setSelected(file);setParsed(null);setRows([]);setFileData('');setError('');setStage('Ficheiro selecionado');}} disabled={busy}/>
  {selected&&!parsed&&<><T>{selected.name}</T><Button label="Importar PDF" primary disabled={busy} onPress={()=>void read(selected)}/><Button label="Introduzir resultados manualmente" disabled={busy} onPress={()=>void manual()}/><Button label="Cancelar seleção" disabled={busy} onPress={()=>{setSelected(null);setStage('');setError('');}}/></>}
  {stage&&<T accessibilityLiveRegion="polite">{stage}</T>}{error&&<T accessibilityRole="alert">{error}</T>}
+ {waiting&&<Button label="Cancelar pedido em espera" onPress={()=>void cancelWaiting()}/>}
  {selected&&!parsed&&error&&<Button label="Tentar novamente" disabled={busy} onPress={()=>void read(selected)}/>}
  {parsed&&<><T kind="heading">Rever resultados extraídos</T>
  {parsed.warnings?.map((warning,i)=><T kind="small" key={i}>{warning}</T>)}

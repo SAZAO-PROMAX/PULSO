@@ -6,10 +6,12 @@ export const labParameters=laboratory.parameters.map(p=>p.id as Parameter);
 export const labUnits=Object.fromEntries(laboratory.parameters.map(p=>[p.id,p.units])) as Partial<Record<Parameter,string[]>>;
 export type Confirmation = 'user_declared'|'extracted_pending'|'user_confirmed'|'professional_verified';
 export interface MedicalDocument {
+ version?:number;
  id:string; ownerId:string; synthetic:boolean; title:string; laboratory:string|null;
  issuedAt:string|null; importedAt:string; sha256?:string; parserVersion?:string; processedAt?:string; pageMethods?:{page:number;method:string;state:string}[];original:{fileName:string;mediaType:string;text:string;dataUrl?:string};
 }
 export interface Result {
+ version?:number;
  id:string; ownerId:string; synthetic:boolean; parameter:Parameter; value:number|null;
  unit:string; measuredAt:string|null; documentId:string|null; method:string|null; context:string|null;
  source?:'manual'; sessionId?:string; createdAt?:string; laboratory?:string|null;
@@ -28,6 +30,7 @@ const nonempty=(s:unknown):s is string=>typeof s==='string'&&s.trim().length>0;
 export function validateData(data:ClinicalData):void {
  if(data?.schemaVersion!==1||!Array.isArray(data.documents)||!Array.isArray(data.results)) throw Error('Versão de dados não suportada.');
  for(const collection of [data.documents,data.results]) {
+  if(collection.some(x=>x.version!==undefined&&(!Number.isSafeInteger(x.version)||x.version<1)))throw Error('Versão de registo inválida.');
   if(collection.some(x=>!x||!nonempty(x.id)||!['demo-a','demo-b'].includes(x.ownerId))||new Set(collection.map(x=>x.id)).size!==collection.length) throw Error('Identificadores inválidos ou repetidos.');
  }
  for(const d of data.documents) {
