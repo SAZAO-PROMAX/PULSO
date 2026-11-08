@@ -1,0 +1,37 @@
+import {test,expect} from './fixtures';
+import fs from 'node:fs';
+import path from 'node:path';
+test('editar e eliminar uma medição preserva as restantes após recarregar',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:'Adicionar medição',exact:true}).click();
+ await page.getByLabel('Sistólica (mmHg)',{exact:true}).fill('129');await page.getByLabel('Diastólica (mmHg)',{exact:true}).fill('82');
+ await page.getByRole('button',{name:'Rever medição',exact:true}).click();await page.getByRole('button',{name:'Confirmar e guardar medição',exact:true}).click();
+ await page.getByText('Tensão sistólica: 129 mmHg',{exact:true}).locator('..').getByRole('button').click();
+ await page.getByRole('button',{name:'Editar medição',exact:true}).click();await page.getByLabel('Valor corrigido',{exact:true}).fill('130');
+ await page.getByRole('button',{name:'Guardar correção',exact:true}).click();await expect(page.getByText('Tensão sistólica: 130 mmHg',{exact:true})).toBeVisible();
+ await page.getByText('Tensão sistólica: 130 mmHg',{exact:true}).locator('..').getByRole('button').click();
+ await page.getByRole('button',{name:'Eliminar medição',exact:true}).click();await page.getByRole('button',{name:'Confirmar eliminação da medição',exact:true}).click();
+ await expect(page.getByText('Medição eliminada na base local.',{exact:true})).toBeVisible();
+ await page.reload();await page.getByRole('button',{name:'Histórico',exact:true}).click();
+ await expect(page.getByText('Tensão sistólica: 130 mmHg',{exact:true})).toHaveCount(0);
+ await expect(page.getByText('Tensão diastólica: 82 mmHg',{exact:true})).toBeVisible();
+});
+test('exame pode ser corrigido e eliminado com resultados numa transação',async({page,request})=>{
+ const raw=fs.readFileSync(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
+ const extraction=await request.post('http://127.0.0.1:8000/demo/extract',{data:raw,headers:{'Content-Type':'application/pdf','X-Pulso-Demo':'synthetic-only'}});
+ const p=await extraction.json(),owner='demo-a',id='management-doc';
+ const doc={id,ownerId:owner,synthetic:true,title:'Exame para gerir',laboratory:p.laboratory,issuedAt:p.date+'T12:00:00Z',importedAt:new Date().toISOString(),sha256:p.sha256,original:{fileName:'test.pdf',mediaType:'application/pdf',text:p.text,dataUrl:'data:application/pdf;base64,'+raw.toString('base64')}};
+ const rows=p.candidates.map((r:any,i:number)=>({id:id+i,ownerId:owner,synthetic:true,parameter:r.parameter,value:Number(r.value.replace(',','.')),unit:r.unit,measuredAt:p.date+'T12:00:00Z',documentId:id,method:r.method,context:r.context,referenceText:r.referenceText,status:'user_confirmed'}));
+ const response=await request.post('http://127.0.0.1:8000/demo/profiles/demo-a/confirm',{headers:{'X-Pulso-Profile':owner},data:{document:doc,results:rows}});expect(response.ok(),await response.text()).toBeTruthy();
+ await page.goto('/');await page.getByRole('button',{name:'Histórico',exact:true}).click();
+ await page.getByRole('button',{name:'Gerir exame Exame para gerir',exact:true}).click();
+ await page.getByRole('button',{name:'Editar exame',exact:true}).click();await page.getByLabel('Título do exame',{exact:true}).fill('Exame corrigido');
+ await page.getByRole('button',{name:'Guardar exame',exact:true}).click();
+ await page.getByRole('button',{name:'Gerir exame Exame corrigido',exact:true}).click();await page.getByRole('button',{name:'Eliminar exame completo',exact:true}).click();
+ await expect(page.getByText(/os 5 resultados associados/)).toBeVisible();await page.getByRole('button',{name:'Confirmar eliminação do exame e resultados',exact:true}).click();
+ await page.reload();await page.getByRole('button',{name:'Histórico',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Gerir exame Exame corrigido',exact:true})).toHaveCount(0);
+ const data=await(await request.get('http://127.0.0.1:8000/demo/profiles/demo-a/data',{headers:{'X-Pulso-Profile':owner}})).json();
+ expect(data.documents.some((d:any)=>d.id===id)).toBe(false);expect(data.results.some((r:any)=>r.documentId===id)).toBe(false);
+ expect(data.documents.length).toBe(3);
+});
+

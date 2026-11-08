@@ -1,0 +1,18 @@
+[
+  {
+    "id": "demo-a",
+    "synthetic": true,
+    "displayName": "Perfil fictício A",
+    "interests": [
+      "blood_pressure"
+    ],
+    "conditions": []
+  },
+  {
+    "id": "demo-b",
+    "synthetic": true,
+    "displayName": "Perfil fictício B",
+    "interests": [],
+    "conditions": []
+  }
+]

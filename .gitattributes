@@ -1,0 +1,3 @@
+# Preserve generated fixture documents and reviewed screenshots byte-for-byte.
+*.pdf binary
+*.png binary

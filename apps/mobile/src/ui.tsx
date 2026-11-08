@@ -1,0 +1,14 @@
+import React,{createContext,useContext,useState} from 'react';
+import {View,Text,Pressable,TextInput,StyleSheet,TextProps} from 'react-native';
+const light={bg:'#f4f6ef',card:'#ffffff',ink:'#172d22',muted:'#4a5c50',line:'#bcc9b8',accent:'#cfed85',accentInk:'#172d22',soft:'#eaf0e4'};
+const dark={bg:'#101b16',card:'#1c2b22',ink:'#f1f6ed',muted:'#bdcdbc',line:'#566b59',accent:'#cfed85',accentInk:'#172d22',soft:'#273b2c'};
+const Theme=createContext({colors:light,dark:false,toggle:()=>{}});
+export function ThemeProvider({children}:{children:React.ReactNode}){const [isDark,setDark]=useState(false);return <Theme.Provider value={{colors:isDark?dark:light,dark:isDark,toggle:()=>setDark(x=>!x)}}>{children}</Theme.Provider>;}
+export const useTheme=()=>useContext(Theme);
+export function T({children,kind='body',style,...rest}:TextProps&{tabIndex?:0|-1;kind?:'body'|'small'|'title'|'heading'}){const {colors:c}=useTheme();return <Text accessibilityRole={kind==='title'||kind==='heading'?'header':undefined} {...(kind==='heading'?{'aria-level':2}:kind==='title'?{'aria-level':1}:{})} {...rest} style={[{color:kind==='small'?c.muted:c.ink,fontSize:kind==='title'?34:kind==='heading'?22:kind==='small'?14:17,lineHeight:kind==='title'?42:kind==='heading'?30:26,fontWeight:kind==='title'||kind==='heading'?'700':'400'},style]}>{children}</Text>;}
+export function Card({children}:{children:React.ReactNode}){const {colors:c}=useTheme();return <View style={{backgroundColor:c.card,borderColor:c.line,borderWidth:1,borderRadius:20,padding:20,gap:12}}>{children}</View>;}
+export function Button({label,onPress,selected=false,primary=false,disabled=false}:{label:string;onPress:()=>void;selected?:boolean;primary?:boolean;disabled?:boolean}){const {colors:c}=useTheme();return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{selected,disabled}} disabled={disabled} onPress={onPress} style={({pressed})=>({minHeight:50,paddingHorizontal:16,paddingVertical:12,borderRadius:12,borderWidth:1,borderColor:c.line,backgroundColor:selected||primary?c.accent:c.card,opacity:disabled?0.5:pressed?0.75:1,justifyContent:'center'})}><T style={{fontWeight:'600',color:selected||primary?c.accentInk:c.ink}}>{label}</T></Pressable>;}
+export function Field({label,value,onChange,placeholder}:{label:string;value:string;onChange:(s:string)=>void;placeholder?:string}){const {colors:c}=useTheme();return <View style={{gap:5}}><T kind="small">{label}</T><TextInput accessibilityLabel={label} value={value} onChangeText={onChange} placeholder={placeholder} placeholderTextColor={c.muted} style={{color:c.ink,fontSize:18,padding:14,minHeight:50,borderWidth:1,borderColor:c.line,borderRadius:10,backgroundColor:c.bg}}/></View>;}
+export const layout=StyleSheet.create({stack:{gap:16},row:{flexDirection:'row',flexWrap:'wrap',gap:8},grow:{flexGrow:1,flexShrink:1,minWidth:0,flexBasis:260}});
+
+

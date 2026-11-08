@@ -1,0 +1,86 @@
+import {test,expect} from './fixtures';
+import path from 'node:path';
+test('registo de tensão persiste e aparece no mesmo histórico e gráfico',async({page})=>{
+ await page.goto('/');
+ await page.getByRole('button',{name:'Adicionar medição',exact:true}).click();
+ await page.getByLabel('Sistólica (mmHg)',{exact:true}).fill('128');
+ await page.getByLabel('Diastólica (mmHg)',{exact:true}).fill('81');
+ await page.getByLabel('Frequência cardíaca (bpm, opcional)',{exact:true}).fill('73');
+ await page.getByLabel('Data e hora local (AAAA-MM-DDTHH:mm)',{exact:true}).fill('2026-11-07T10:30');
+ await page.getByRole('button',{name:'Rever medição',exact:true}).click();
+ await page.getByRole('button',{name:'Confirmar e guardar medição',exact:true}).click();
+ await expect(page.getByText('Tensão sistólica: 128 mmHg',{exact:true})).toBeVisible();
+ await page.reload();
+ await page.getByRole('button',{name:'Tensão arterial',exact:true}).click();
+ await expect(page.getByText('Tensão sistólica · mmHg',{exact:true})).toHaveCount(2); // fixtures and manual methods kept apart
+ await expect(page.getByRole('button',{name:/128 mmHg/}).first()).toBeVisible();
+ await page.getByRole('button',{name:'Perfil',exact:true}).click();
+ await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
+ await page.getByRole('button',{name:'Histórico',exact:true}).click();
+ await expect(page.getByText('Este perfil ainda não tem registos.')).toBeVisible();
+});
+test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({page})=>{
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/');
+ await page.getByRole('button',{name:'Adicionar exame',exact:true}).click();
+ await page.getByLabel('Selecionar PDF sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
+ await expect(page.getByText('Ficheiro selecionado',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Importar PDF',exact:true}).click();
+ await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
+ await page.getByLabel('Valor Glicose',{exact:true}).fill('99,2');
+ for(const parameter of ['Glicose','Colesterol LDL','Creatinina','Hemoglobina','Hemoglobina glicada']) await page.getByRole('button',{name:'Marcar revisto: '+parameter,exact:true}).click();
+ await page.route('**/demo/profiles/demo-a/confirm',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({detail:'Falha de gravação de teste'})}));
+ await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
+ await expect(page.getByRole('alert')).toContainText('Falha de gravação');
+ await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');
+ await page.unroute('**/demo/profiles/demo-a/confirm');
+ await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
+ await expect(page.getByText('Glicose: 99,2 mg/dL',{exact:true})).toBeVisible();
+ await page.reload();
+ await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
+ await page.getByRole('button',{name:'Ponto 07/11/2026 99,2 mg/dL',exact:true}).click();
+ await expect(page.getByText('Origem: Laboratorio Demo Pulso',{exact:true})).toBeVisible();
+ await expect(page.getByText(/Extraído originalmente: 98,5 mg\/dL/)).toBeVisible();
+ await page.getByRole('button',{name:'Ver documento original fictício',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Abrir PDF original',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Perfil',exact:true}).click();
+ await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
+ await page.getByRole('button',{name:'Histórico',exact:true}).click();
+ await expect(page.getByText('Este perfil ainda não tem registos.')).toBeVisible();
+ expect(errors).toEqual([]);
+});
+test('falha de dados locais permite repetir, modo escuro e largura 320',async({page})=>{
+ await page.goto('/');
+ await page.evaluate(()=>localStorage.setItem('pulso-demo-v2-demo-a','invalid'));
+ await page.reload();
+ await expect(page.getByRole('alert')).toBeVisible();
+ await page.evaluate(()=>localStorage.removeItem('pulso-demo-v2-demo-a'));
+ await page.getByRole('button',{name:'Tentar novamente',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Adicionar exame',exact:true})).toBeVisible();
+ await page.setViewportSize({width:320,height:850});
+ await page.getByRole('button',{name:'Modo escuro',exact:true}).click();
+ await page.screenshot({path:'../../docs/interface-dark-320.png',fullPage:true});
+ await page.getByRole('button',{name:'Modo claro',exact:true}).click();
+ const width=await page.evaluate(()=>document.documentElement.scrollWidth);
+ expect(width).toBeLessThanOrEqual(320);
+ const cards=page.getByRole('button',{name:'Análises ao sangue',exact:true});
+ const bounds=await cards.boundingBox();
+ expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(320);
+ await page.getByRole('button',{name:'Registar',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Registar',exact:true})).toBeFocused();
+ await page.keyboard.press('Tab');
+ await expect(page.getByRole('button',{name:'Tensão arterial',exact:true})).toBeFocused();
+});
+test('interface a 200% de ampliação CSS mantém formulário e navegação utilizáveis',async({page})=>{
+ await page.setViewportSize({width:1280,height:900});await page.goto('/');
+ await page.evaluate(()=>{document.body.style.zoom='2';});
+ await page.getByRole('button',{name:'Adicionar medição',exact:true}).click();
+ await page.getByLabel('Sistólica (mmHg)',{exact:true}).fill('120');
+ await page.getByLabel('Diastólica (mmHg)',{exact:true}).fill('80');
+ await page.getByRole('button',{name:'Rever medição',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Confirmar e guardar medição',exact:true})).toBeVisible();
+});
+
+
+
+

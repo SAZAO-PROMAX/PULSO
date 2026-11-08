@@ -1,0 +1,26 @@
+[
+  {
+    "id": "obs-demo-1",
+    "ownerId": "demo-a",
+    "synthetic": true,
+    "parameter": "systolic_pressure",
+    "value": 123,
+    "unit": "mmHg",
+    "measuredAt": "2026-11-01T09:00:00+00:00",
+    "source": "manual_demo",
+    "confirmationStatus": "user_declared",
+    "sessionId": "session-demo-1"
+  },
+  {
+    "id": "obs-demo-2",
+    "ownerId": "demo-a",
+    "synthetic": true,
+    "parameter": "diastolic_pressure",
+    "value": 78,
+    "unit": "mmHg",
+    "measuredAt": "2026-11-01T09:00:00+00:00",
+    "source": "manual_demo",
+    "confirmationStatus": "user_declared",
+    "sessionId": "session-demo-1"
+  }
+]
