@@ -132,6 +132,29 @@ def test_failure_rolls_back_whole_document(client):
     assert request(client,"GET","/data").json()["documents"]==[]
     assert request(client,"GET","/data").json()["results"]==[]
 
+def test_document_only_classification_multiple_specialties_and_original_not_duplicated(client):
+    body=document();doc=body['document'];doc.update(category='cardiology',examType='holter',specialties=['cardiology','general'],examDate='2026-11-08')
+    assert request(client,'POST','/documents',{'document':doc}).status_code==200
+    data=request(client,'GET','/data').json()
+    assert data['results']==[] and len(data['documents'])==1
+    assert data['documents'][0]['specialties']==['cardiology','general']
+    original=data['documents'][0]['original']
+    assert request(client,'PATCH','/document/doc-0',{'category':'imaging','examType':'mri','specialties':['radiology'],'examDate':None}).status_code==200
+    updated=request(TestClient(app),'GET','/data').json()
+    assert len(updated['documents'])==1 and updated['documents'][0]['original']==original and updated['documents'][0]['category']=='imaging'
+    assert request(client,'POST','/documents',{'document':{**doc,'ownerId':'demo-a'}}).status_code in {409,422}
+
+def test_reclassification_keeps_results_and_rejects_invalid_metadata(client):
+    body=document();body['document'].update(category='laboratory',examType='blood',specialties=['general'],examDate=None)
+    assert request(client,'POST','/confirm',body).status_code==200
+    before=request(client,'GET','/data').json()
+    for patch in ({'category':'cardiology','examType':'mri'},{'category':[]},{'examDate':'2026-02-30'},{'specialties':['unknown']}):
+        assert request(client,'PATCH','/document/doc-0',patch).status_code==422
+        assert request(client,'GET','/data').json()==before
+    assert request(client,'PATCH','/document/doc-0',{'category':'cardiology','examType':'ecg','specialties':['cardiology','general']}).status_code==200
+    after=request(client,'GET','/data').json()
+    assert after['results']==before['results'] and after['documents'][0]['original']==before['documents'][0]['original']
+
 def test_image_missing_metadata_and_provenance_roundtrip(client):
     from scripts.benchmark_extraction import image
     body=document();original=image(pdf(LINES));doc=body['document'];row=body['results'][0]

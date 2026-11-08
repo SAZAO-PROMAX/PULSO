@@ -1,5 +1,7 @@
 # Validação atual — v0.6 em implementação, 08/11/2026
 
+Checkpoint Registar/Histórico: **48 API, 26 TypeScript e 25 Chromium aprovados** (2 opcionais omitidos); typecheck/exportação aprovados. Classificação validada, documento sem resultados, especialidades múltiplas, alteração de categoria sem duplicar original/alterar resultados, pesquisa/filtros/persistência e ausência de chamadas de extração no fluxo documental. Captura Registar a 320 px revista em tmp. Admissão ordenada de escrita manteve atomicidade e melhorou os percentis no ensaio curto; ver LOAD_TEST.md. Contas/perfil ainda em implementação neste checkpoint.
+
 Checkpoint de integridade/fila: **46 testes API, 26 TypeScript e 24 Chromium aprovados**; 2 Chromium opcionais de inferência omitidos. Typecheck e exportação web aprovados. Regressões: ID de tensão repetido com conteúdo equivalente/diferente, data equivalente com fuso, ausência de ressurreição após eliminação parcial, duas edições com a mesma versão (uma 200/uma 409), precondição obrigatória, versão do documento pai, manutenção da evidência, formulário desatualizado com campos preservados e decisão explícita. Fila: limite/deduplicação/FIFO/cancelamento/expiração/âmbito e confirmação não automática; parser sem Ollama. Testes anteriores mantidos. Detalhes da fila em LOCAL_EXTRACTION.md. Os ensaios de desempenho comparáveis estão em atualização em LOAD_TEST.md.
 
 ## Registo histórico — v0.5

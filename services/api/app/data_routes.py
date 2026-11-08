@@ -1,11 +1,21 @@
 import json
 import base64
 import pymupdf
+import asyncio
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import Response
 from . import store
 from starlette.concurrency import run_in_threadpool
 router=APIRouter(prefix="/demo/profiles")
+
+async def write(operation,*args,**kwargs):
+    # Fair admission within this event loop: don't occupy all worker threads
+    # waiting for SQLite's single writer. SQLite remains the atomic authority.
+    loop=asyncio.get_running_loop()
+    gate=getattr(loop,'_pulso_write_gate',None)
+    if gate is None:
+        gate=asyncio.Lock();setattr(loop,'_pulso_write_gate',gate)
+    async with gate:return await run_in_threadpool(operation,*args,**kwargs)
 def scope(request,owner):
     if owner not in {"demo-a","demo-b"} or request.headers.get("x-pulso-profile")!=owner:
         raise HTTPException(403,"Seleciona o perfil de demonstração correto. Isto não é autenticação de produção.")
@@ -53,26 +63,30 @@ def preview(owner:str,result_id:str,request:Request):
         raise HTTPException(422,'Não foi possível destacar uma região inequívoca. Consulta o original.')
 @router.post("/{owner}/migrate")
 async def migrate(owner:str,request:Request):
-    scope(request,owner);return await run_in_threadpool(store.migrate,owner,await body(request))
+    scope(request,owner);return await write(store.migrate,owner,await body(request))
 @router.post("/{owner}/confirm")
 async def confirm(owner:str,request:Request):
-    scope(request,owner);return await run_in_threadpool(store.confirm,owner,await body(request))
+    scope(request,owner);return await write(store.confirm,owner,await body(request))
 @router.post("/{owner}/pressure")
 async def pressure(owner:str,request:Request):
-    scope(request,owner);return await run_in_threadpool(store.pressure,owner,await body(request))
+    scope(request,owner);return await write(store.pressure,owner,await body(request))
+
+@router.post('/{owner}/documents')
+async def save_document(owner:str,request:Request):
+    scope(request,owner);return await write(store.save_document,owner,await body(request))
 @router.post("/{owner}/reset")
-def reset(owner:str,request:Request):
-    scope(request,owner);return store.reset(owner)
+async def reset(owner:str,request:Request):
+    scope(request,owner);return await write(store.reset,owner)
 @router.patch("/{owner}/{kind}/{item_id}")
 async def edit(owner:str,kind:str,item_id:str,request:Request):
     scope(request,owner)
     if kind not in {"document","result"}: raise HTTPException(404)
-    return await run_in_threadpool(store.manage,owner,kind,item_id,await body(request),expected_version=expected_version(request))
+    return await write(store.manage,owner,kind,item_id,await body(request),expected_version=expected_version(request))
 @router.delete("/{owner}/{kind}/{item_id}")
-def delete(owner:str,kind:str,item_id:str,request:Request):
+async def delete(owner:str,kind:str,item_id:str,request:Request):
     scope(request,owner)
     if kind not in {"document","result"}: raise HTTPException(404)
-    return store.manage(owner,kind,item_id,expected_version=expected_version(request))
+    return await write(store.manage,owner,kind,item_id,expected_version=expected_version(request))
 
 def expected_version(request):
     value=request.headers.get('if-match')

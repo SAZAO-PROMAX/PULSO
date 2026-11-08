@@ -1,5 +1,19 @@
 # Teste de carga PULSO — 08/11/2026
 
+## Comparação curta v0.6 — escrita
+
+Mesma máquina/percurso de sete pedidos, pausa 0,3 s, rampa 2 s e 8 s a carga plena por patamar; Ollama desligado, base temporária. Referência v0.5 capturada antes de modificar a API (`tmp/v06-before`), com cópia do hash normal preservada. A v0.6 acrescenta If-Match às mesmas operações; não foram removidas verificações ou alterado o percurso para favorecer resultados.
+
+| Clientes | Antes RPS | Antes p95 ms | V0.6 RPS | V0.6 p95 ms |
+|---|---:|---:|---:|---:|
+| 1 | 18,79 | 17,9 | 19,06 | 18,2 |
+| 25 | 90,54 | 743,8 | 201,55 | 102,8 |
+| 50 | 76,80 | 1673,6 | 200,18 | 272,2 |
+
+Transações de leitura deixaram de reservar o escritor; escrita síncrona saiu do event loop. A tentativa intermédia apenas com threads melhorou p95 mas agravou p99 a 50 clientes para 7855 ms: não foi considerada aprovada. Admissão ordenada no event loop evita ocupar o pool de threads a disputar o único escritor SQLite, mantendo BEGIN IMMEDIATE/versões no banco. Ensaio final (`tmp/v06-fair-write`) aprovou os objetivos provisórios em 1/25/50, sem erros inesperados ou divergência de dados; a base normal manteve hash. Resultados são curtos, uma amostra por configuração, sem causalidade isolada por profiling nem equivalência a produção. Não foi repetido o ensaio sustentado de dez minutos nesta comparação. A fila de importação é verificada separadamente; não confundir desempenho de escrita com capacidade de inferência.
+
+O restante relatório conserva o ensaio histórico v0.5, incluindo os problemas então reproduzidos (agora com regressões e correções v0.6).
+
 Ensaio HTTP local executado, sem alterações funcionais à aplicação. Windows, Ryzen 7 260 (8 núcleos/16 processadores lógicos observados), 32 GB de RAM declarados. Gerador e API na mesma máquina, com serviços normais de desenvolvimento mantidos ativos. Não representa utilizadores reais, contas autenticadas, milhares de navegadores ou capacidade de produção.
 
 ## Resultado e condições

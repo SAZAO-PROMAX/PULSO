@@ -7,6 +7,8 @@ import {Extraction,Candidate,ReviewRow,confirmRows,rowLabel} from './importData'
 import {DocumentView} from './RecordViews';
 import {PdfPicker} from './PdfPicker';
 import {MedicalTerm} from '../learning/Learning';
+import {Classification,classificationFor,registrationCategories,validateClassification} from './classification';
+import {ClassificationFields} from './ClassificationFields';
 const MAX_BYTES=2*1024*1024;
 const mimeFor=(file:File)=>file.name.toLowerCase().endsWith('.pdf')?'application/pdf':file.name.toLowerCase().endsWith('.png')?'image/png':/\.jpe?g$/i.test(file.name)?'image/jpeg':null;
 async function original(file:File){
@@ -16,13 +18,14 @@ async function original(file:File){
  const url=await new Promise<string>((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result));r.onerror=()=>no(Error('Falha na leitura do ficheiro.'));r.readAsDataURL(new Blob([bytes],{type:mimeFor(file)!}));});
  return {bytes,sha,url};
 }
-export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
+export function DocumentImport({owner,onSaved,classification=classificationFor('laboratory','blood'),documentOnly=false}:{owner:string;onSaved:()=>void;classification?:Classification;documentOnly?:boolean}){
+ const [metadata,setMetadata]=useState(classification),[title,setTitle]=useState(documentOnly?(registrationCategories.find(c=>c.id===classification.category)?.types.find(t=>t.id===classification.examType)?.label??'Documento sintético'):'Documento laboratorial sintético'),[institution,setInstitution]=useState('');
  const [parsed,setParsed]=useState<Extraction|null>(null),[rows,setRows]=useState<ReviewRow[]>([]),[fileData,setFileData]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [selected,setSelected]=useState<File|null>(null),[stage,setStage]=useState(''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
  const job=useRef<string|null>(null),reading=useRef<AbortController|null>(null),[waiting,setWaiting]=useState(false);
  useEffect(()=>()=>{reading.current?.abort();if(job.current)void fetch(API+'/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}}).catch(()=>{});},[owner]);
- useEffect(()=>{active.current=true;fetch(API+'/demo/extraction/status',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(s=>{if(active.current)setEngine(s.available?'Motor local disponível · leitura no teu computador':'Motor local indisponível · leitura de texto e introdução manual disponíveis');}).catch(()=>{if(active.current)setEngine('Não foi possível verificar o motor local.');});return()=>{active.current=false;};},[]);
+ useEffect(()=>{active.current=true;if(!documentOnly)fetch(API+'/demo/extraction/status',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(s=>{if(active.current)setEngine(s.available?'Motor local disponível · leitura no teu computador':'Motor local indisponível · leitura de texto e introdução manual disponíveis');}).catch(()=>{if(active.current)setEngine('Não foi possível verificar o motor local.');});return()=>{active.current=false;};},[]);
  function setExtraction(data:Extraction,url:string){
   setFileData(url);setParsed(data);setChoosing(null);
   setRows(data.candidates.map(c=>({parameter:c.parameter,value:c.value,unit:c.unit,method:c.method??'',context:c.context??'',date:(c.date===undefined?data.date:c.date)??'',laboratory:(c.laboratory===undefined?data.laboratory:c.laboratory)??'',include:true,reviewed:false})));
@@ -61,6 +64,11 @@ export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
   catch(e){setError((e as Error).message);}finally{setBusy(false);}
  }
  function change(i:number,patch:Partial<ReviewRow>){setRows(x=>x.map((r,j)=>j===i?{...r,...patch}:r));}
+ async function saveOnly(){
+  if(!selected||lock.current)return;lock.current=true;setBusy(true);setError('');
+  try{const source=await original(selected);const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:title.trim(),laboratory:institution.trim()||null,issuedAt:null,importedAt:new Date().toISOString(),...metadata,sha256:source.sha,original:{fileName:selected.name,mediaType:mimeFor(selected)!,text:'[Documento guardado sem extração automática. Consultar o original.]',dataUrl:source.url}};validateClassification(doc);await clinicalRepository.saveDocument(owner,doc);if(active.current)onSaved();}
+  catch(e){if(active.current)setError((e as Error).message);}finally{lock.current=false;if(active.current)setBusy(false);}
+ }
  function addRow(){
   if(!parsed)return;
   const candidate:Candidate={parameter:'glucose',originalParameter:null,value:'',unit:'',referenceText:null,method:null,context:null,page:null,excerpt:'',issues:['Introdução manual: conferir parâmetro, valor, unidade, página e data no original.'],extractionMethod:'manual',verification:'manual_source_unverified'};
@@ -73,22 +81,24 @@ export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
    const mime=parsed.mediaType??'application/pdf',extension=mime==='image/png'?'png':mime==='image/jpeg'?'jpg':'pdf';
    const report=parsed.reportDate;
    if(report&&(!/^\d{4}-\d{2}-\d{2}$/.test(report)||!Number.isFinite(Date.parse(report))||new Date(report).toISOString().slice(0,10)!==report))throw Error('Revê a data do relatório.');
-   const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:'Documento laboratorial sintético',laboratory:parsed.laboratory?.trim()||null,
+   const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:title.trim(),laboratory:parsed.laboratory?.trim()||null,...metadata,
     issuedAt:report?report+'T12:00:00Z':null,importedAt:now,sha256:parsed.sha256,parserVersion:parsed.parserVersion,processedAt:parsed.processedAt,
     pageMethods:parsed.pages?.map(p=>({page:p.page,method:p.method,state:p.state})),
-    original:{fileName:'laboratorio-'+parsed.sha256.slice(0,12)+'.'+extension,mediaType:mime,text:parsed.text,dataUrl:fileData}};
+    original:{fileName:selected?.name??'laboratorio-'+parsed.sha256.slice(0,12)+'.'+extension,mediaType:mime,text:parsed.text,dataUrl:fileData}};
+   validateClassification(doc);
    await clinicalRepository.confirmDocument(owner,doc,results);if(active.current)onSaved();
   }catch(e){if(active.current){setError((e as Error).message);setStage('Não foi guardado. Os campos foram preservados.');}}
   finally{lock.current=false;if(active.current)setBusy(false);}
  }
  const preview=parsed?{id:id.current,ownerId:owner,synthetic:true,title:'Revisão',laboratory:parsed.laboratory,issuedAt:null,importedAt:new Date().toISOString(),original:{fileName:selected?.name??'documento',mediaType:parsed.mediaType??'application/pdf',text:parsed.text,dataUrl:fileData}}:null;
- return <Card><T kind="heading">Importar exame sintético</T><T kind="small">{engine}</T><T>PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas. A leitura é local e exige sempre revisão humana.</T>
+ return <Card><T kind="heading">{documentOnly?'Guardar documento sintético':'Importar exame sintético'}</T>{!documentOnly&&<T kind="small">{engine}</T>}<T>{documentOnly?'O ficheiro será guardado sem extrair medições nem interpretar o exame.':'A leitura é local e exige sempre revisão humana.'} PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas.</T>
  <Button label="Descarregar PDF de exemplo" onPress={()=>void Linking.openURL('/laboratorio-demo.pdf')}/>
  <PdfPicker onFile={file=>{setSelected(file);setParsed(null);setRows([]);setFileData('');setError('');setStage('Ficheiro selecionado');}} disabled={busy}/>
- {selected&&!parsed&&<><T>{selected.name}</T><Button label="Importar PDF" primary disabled={busy} onPress={()=>void read(selected)}/><Button label="Introduzir resultados manualmente" disabled={busy} onPress={()=>void manual()}/><Button label="Cancelar seleção" disabled={busy} onPress={()=>{setSelected(null);setStage('');setError('');}}/></>}
- {stage&&<T accessibilityLiveRegion="polite">{stage}</T>}{error&&<T accessibilityRole="alert">{error}</T>}
+ {selected&&<><Field label="Nome do documento" value={title} onChange={setTitle}/><ClassificationFields value={metadata} onChange={setMetadata}/>{documentOnly&&<Field label="Instituição de origem (opcional)" value={institution} onChange={setInstitution}/>}</>}
+ {selected&&!parsed&&<><T>{selected.name}</T>{documentOnly?<Button label="Guardar documento" primary disabled={busy} onPress={()=>void saveOnly()}/>:<><Button label="Importar PDF" primary disabled={busy} onPress={()=>void read(selected)}/><Button label="Introduzir resultados manualmente" disabled={busy} onPress={()=>void manual()}/></>}<Button label="Cancelar seleção" disabled={busy} onPress={()=>{setSelected(null);setStage('');setError('');}}/></>}
+ {!!stage&&<T accessibilityLiveRegion="polite">{stage}</T>}{!!error&&<T accessibilityRole="alert">{error}</T>}
  {waiting&&<Button label="Cancelar pedido em espera" onPress={()=>void cancelWaiting()}/>}
- {selected&&!parsed&&error&&<Button label="Tentar novamente" disabled={busy} onPress={()=>void read(selected)}/>}
+ {selected&&!parsed&&error&&<Button label="Tentar novamente" disabled={busy} onPress={()=>void(documentOnly?saveOnly():read(selected))}/>}
  {parsed&&<><T kind="heading">Rever resultados extraídos</T>
  {parsed.warnings?.map((warning,i)=><T kind="small" key={i}>{warning}</T>)}
  <Field label="Laboratório de origem" value={parsed.laboratory??''} onChange={laboratory=>{setParsed({...parsed,laboratory});setRows(rows.map(r=>({...r,laboratory:r.laboratory===parsed.laboratory||!r.laboratory?laboratory:r.laboratory,reviewed:false})));}}/>

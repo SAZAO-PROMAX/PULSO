@@ -12,6 +12,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from fastapi import HTTPException
+from .classification import validate_classification
 
 ROOT = Path(__file__).resolve().parents[3]
 PARAMETERS = {"glucose","ldl","creatinine","hemoglobin","hba1c","systolic","diastolic","heart_rate","spo2"}
@@ -42,6 +43,7 @@ def validate(owner,data):
     docs={d["id"]:d for d in data["documents"]}
     hashes=set()
     for d in docs.values():
+        validate_classification(d)
         if not (d.get("laboratory") is None or text(d.get("laboratory"))) or not text(d.get("title")): raise ValueError("Documento sem título ou origem inválida.")
         if d.get("issuedAt") is not None:timestamp(d["issuedAt"])
         timestamp(d.get("importedAt"))
@@ -154,9 +156,9 @@ def migrate(owner,data):
             return {"migrated":True}
     except ValueError as exc: raise HTTPException(422,str(exc)) from exc
 
-def confirm(owner,body):
+def confirm(owner,body,allow_empty=False):
     doc=copy.deepcopy(body.get("document"));rows=copy.deepcopy(body.get("results"))
-    if not isinstance(doc,dict) or not isinstance(rows,list) or not rows or any(r.get("status")!="user_confirmed" or r.get("documentId")!=doc.get("id") for r in rows):
+    if not isinstance(doc,dict) or not isinstance(rows,list) or (not rows and not allow_empty) or any(r.get("status")!="user_confirmed" or r.get("documentId")!=doc.get("id") for r in rows):
         raise HTTPException(422,"Confirmação explícita inválida.")
     def operation(data):
         if any(d.get("sha256") and d.get("sha256")==doc.get("sha256") for d in data["documents"]):
@@ -172,6 +174,11 @@ def confirm(owner,body):
         data["documents"].append(doc);data["results"].extend(rows)
         return {"saved":True}
     return mutate(owner,operation)
+
+def save_document(owner,body):
+    doc=body.get('document')
+    if not isinstance(doc,dict) or not doc.get('category') or not doc.get('examType') or set(body)!={'document'}:raise HTTPException(422,'Revê a categoria e o tipo do documento.')
+    return confirm(owner,{'document':doc,'results':[]},allow_empty=True)
 
 def pressure(owner,body):
     sid=body.get("id");date=body.get("date")
@@ -211,7 +218,7 @@ def manage(owner,kind,item_id,patch=None,expected_version=None):
             collection.remove(item)
             if kind=="document": data["results"]=[r for r in data["results"] if r.get("documentId")!=item_id]
         else:
-            allowed={"title","laboratory"} if kind=="document" else {"value","unit","measuredAt","method","context","referenceText"}
+            allowed={"title","laboratory","category","specialties","examType","examDate"} if kind=="document" else {"value","unit","measuredAt","method","context","referenceText"}
             if not patch or set(patch)-allowed: raise HTTPException(422,"Campos não editáveis.")
             previous={key:item.get(key) for key in allowed}
             item.update(patch)

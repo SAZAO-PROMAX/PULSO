@@ -28,7 +28,7 @@ export function PressureForm({owner,onSaved}:{owner:string;onSaved:()=>void}){
  }
  return <Card><T kind="heading">Registar tensão arterial</T><T kind="small">Só dados fictícios. Uma leitura por gravação, com sessão própria. Não é avaliação clínica.</T>
  <Field inputRef={node=>{inputs.current.systolic=node;}} error={fieldErrors.systolic} labelAccessory={<InfoButton id="systolic"/>} label="Sistólica (mmHg)" value={values.systolic} onChange={edit('systolic')}/><Field inputRef={node=>{inputs.current.diastolic=node;}} error={fieldErrors.diastolic} labelAccessory={<InfoButton id="diastolic"/>} label="Diastólica (mmHg)" value={values.diastolic} onChange={edit('diastolic')}/><Field inputRef={node=>{inputs.current.heartRate=node;}} error={fieldErrors.heartRate} labelAccessory={<InfoButton id="heart_rate"/>} label="Frequência cardíaca (bpm, opcional)" value={values.heartRate} onChange={edit('heartRate')}/><Field inputRef={node=>{inputs.current.date=node;}} error={fieldErrors.date} label="Data e hora local (AAAA-MM-DDTHH:mm)" value={values.date} onChange={edit('date')}/>
- {error&&<T accessibilityRole="alert">{error}</T>}
+ {!!error&&<T accessibilityRole="alert">{error}</T>}
  {review?<><T>Confirmação: {values.systolic}/{values.diastolic} mmHg{values.heartRate?' · '+values.heartRate+' bpm':''} · {values.date}. Apenas informação fictícia.</T><Button label="Confirmar e guardar medição" primary onPress={save} disabled={busy}/><Button label="Voltar à edição" onPress={()=>setReview(false)} disabled={busy}/></>:<Button label="Rever medição" primary onPress={prepare}/>}
  </Card>;
 }

@@ -1,11 +1,13 @@
 import fixture from '../../../../data/synthetic/clinical.json';
 import laboratory from '../../../../packages/shared/laboratory.json';
+import {validateClassification} from './classification';
 export const parameterLabels = {glucose:'Glicose',ldl:'Colesterol LDL',creatinine:'Creatinina',hemoglobin:'Hemoglobina',hba1c:'Hemoglobina glicada',cholesterol_total:'Colesterol total',hdl:'Colesterol HDL',triglycerides:'Triglicéridos',ferritin:'Ferritina',tsh:'TSH',ft4:'T4 livre',vitamin_d:'Vitamina D',urea:'Ureia',sodium:'Sódio',potassium:'Potássio',systolic:'Tensão sistólica',diastolic:'Tensão diastólica',heart_rate:'Frequência cardíaca',spo2:'Saturação periférica de oxigénio (SpO₂)'} as const;
 export type Parameter = keyof typeof parameterLabels;
 export const labParameters=laboratory.parameters.map(p=>p.id as Parameter);
 export const labUnits=Object.fromEntries(laboratory.parameters.map(p=>[p.id,p.units])) as Partial<Record<Parameter,string[]>>;
 export type Confirmation = 'user_declared'|'extracted_pending'|'user_confirmed'|'professional_verified';
 export interface MedicalDocument {
+ category?:string;examType?:string;specialties?:string[];examDate?:string|null;
  version?:number;
  id:string; ownerId:string; synthetic:boolean; title:string; laboratory:string|null;
  issuedAt:string|null; importedAt:string; sha256?:string; parserVersion?:string; processedAt?:string; pageMethods?:{page:number;method:string;state:string}[];original:{fileName:string;mediaType:string;text:string;dataUrl?:string};
@@ -34,6 +36,7 @@ export function validateData(data:ClinicalData):void {
   if(collection.some(x=>!x||!nonempty(x.id)||!['demo-a','demo-b'].includes(x.ownerId))||new Set(collection.map(x=>x.id)).size!==collection.length) throw Error('Identificadores inválidos ou repetidos.');
  }
  for(const d of data.documents) {
+  validateClassification(d);
   if(d.synthetic!==true || !d.original || !nonempty(d.original.text) || !nonempty(d.original.fileName)||!nonempty(d.original.mediaType)|| !(d.laboratory===null||nonempty(d.laboratory)) || !(d.issuedAt===null||validTimestamp(d.issuedAt)) || !validTimestamp(d.importedAt)) throw Error('Documento inválido.');
   if(d.original.dataUrl!==undefined && (typeof d.original.dataUrl!=='string'||d.original.dataUrl.length>2900000||!/^data:(?:application\/pdf|image\/png|image\/jpeg);base64,[A-Za-z0-9+/]+=*$/.test(d.original.dataUrl))) throw Error('Original inválido.');
   if(d.sha256!==undefined && !/^[a-f0-9]{64}$/.test(d.sha256)) throw Error('Identificação do PDF inválida.');
