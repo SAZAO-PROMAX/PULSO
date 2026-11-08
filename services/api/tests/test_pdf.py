@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from services.api.app.main import app
 from services.api.app.pdf_parser import parse_pdf, MAX_BYTES
+from services.api.app.hybrid import MAX_UPLOAD
 from scripts.create_sample_pdf import LINES
 
 def pdf(lines=LINES, pages=1):
@@ -59,4 +60,4 @@ def test_api_rejects_without_optin_or_wrong_content_and_parses_known_pdf():
     response = client.post("/demo/extract", content=pdf(), headers={"Content-Type":"application/pdf","X-Pulso-Demo":"synthetic-only"})
     assert response.status_code == 200
     assert len(response.json()["candidates"]) == 5
-    assert client.post("/demo/extract", content=b"%PDF-"+b"0"*MAX_BYTES, headers={"Content-Type":"application/pdf","X-Pulso-Demo":"synthetic-only"}).status_code == 413
+    assert client.post("/demo/extract", content=b"%PDF-"+b"0"*MAX_UPLOAD, headers={"Content-Type":"application/pdf","X-Pulso-Demo":"synthetic-only"}).status_code == 413

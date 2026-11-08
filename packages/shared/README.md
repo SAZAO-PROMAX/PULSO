@@ -1,2 +1,2 @@
-# Contratos partilhados — por definir
-Reservado para esquemas e contratos versionados entre frontend e API. Não há código gerado nesta entrega.
+# Catálogo partilhado
+laboratory.json é lido pelo backend Python e frontend TypeScript: identificadores, nomes, aliases exatos e unidades dos 15 parâmetros de demonstração. LOINC e mapeamentos UCUM continuam nulos. Não inclui intervalos clínicos, interpretação nem conversão de valores. Não há código gerado.

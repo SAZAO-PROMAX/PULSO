@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "parameters": [
+    {
+      "id": "glucose",
+      "label": "Glicose",
+      "aliases": [
+        "Glicose",
+        "Glucose",
+        "Glicemia"
+      ],
+      "units": [
+        "mg/dL",
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "hba1c",
+      "label": "Hemoglobina glicada",
+      "aliases": [
+        "HbA1c",
+        "Hemoglobina glicada",
+        "Hemoglobina A1c"
+      ],
+      "units": [
+        "%",
+        "mmol/mol"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "cholesterol_total",
+      "label": "Colesterol total",
+      "aliases": [
+        "Colesterol total",
+        "Total cholesterol"
+      ],
+      "units": [
+        "mg/dL",
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "hdl",
+      "label": "Colesterol HDL",
+      "aliases": [
+        "Colesterol HDL",
+        "HDL",
+        "HDL cholesterol"
+      ],
+      "units": [
+        "mg/dL",
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "ldl",
+      "label": "Colesterol LDL",
+      "aliases": [
+        "Colesterol LDL",
+        "LDL",
+        "LDL cholesterol"
+      ],
+      "units": [
+        "mg/dL",
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "triglycerides",
+      "label": "Triglicéridos",
+      "aliases": [
+        "Triglicéridos",
+        "Triglicerideos",
+        "Triglycerides"
+      ],
+      "units": [
+        "mg/dL",
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "creatinine",
+      "label": "Creatinina",
+      "aliases": [
+        "Creatinina",
+        "Creatinine"
+      ],
+      "units": [
+        "mg/dL",
+        "umol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "hemoglobin",
+      "label": "Hemoglobina",
+      "aliases": [
+        "Hemoglobina",
+        "Hemoglobin"
+      ],
+      "units": [
+        "g/dL",
+        "g/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "ferritin",
+      "label": "Ferritina",
+      "aliases": [
+        "Ferritina",
+        "Ferritin"
+      ],
+      "units": [
+        "ng/mL",
+        "ug/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "tsh",
+      "label": "TSH",
+      "aliases": [
+        "TSH",
+        "Hormona estimulante da tiroide"
+      ],
+      "units": [
+        "mIU/L",
+        "uIU/mL"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "ft4",
+      "label": "T4 livre",
+      "aliases": [
+        "T4 livre",
+        "FT4",
+        "Free T4"
+      ],
+      "units": [
+        "ng/dL",
+        "pmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "vitamin_d",
+      "label": "Vitamina D",
+      "aliases": [
+        "Vitamina D",
+        "25-OH Vitamina D",
+        "25(OH)D"
+      ],
+      "units": [
+        "ng/mL",
+        "nmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "urea",
+      "label": "Ureia",
+      "aliases": [
+        "Ureia",
+        "Urea"
+      ],
+      "units": [
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "sodium",
+      "label": "Sódio",
+      "aliases": [
+        "Sódio",
+        "Sodio",
+        "Sodium"
+      ],
+      "units": [
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    },
+    {
+      "id": "potassium",
+      "label": "Potássio",
+      "aliases": [
+        "Potássio",
+        "Potassio",
+        "Potassium"
+      ],
+      "units": [
+        "mmol/L"
+      ],
+      "loinc": null,
+      "ucumMapping": null
+    }
+  ]
+}

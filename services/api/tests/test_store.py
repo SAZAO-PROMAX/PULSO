@@ -96,3 +96,59 @@ def test_failure_rolls_back_whole_document(client):
     assert request(client,"POST","/confirm",body).status_code==422
     assert request(client,"GET","/data").json()["documents"]==[]
     assert request(client,"GET","/data").json()["results"]==[]
+
+def test_image_missing_metadata_and_provenance_roundtrip(client):
+    from scripts.benchmark_extraction import image
+    body=document();original=image(pdf(LINES));doc=body['document'];row=body['results'][0]
+    doc.update(laboratory=None,issuedAt=None,sha256=hashlib.sha256(original).hexdigest())
+    doc['original'].update(mediaType='image/png',fileName='synthetic.png',dataUrl='data:image/png;base64,'+base64.b64encode(original).decode())
+    row.update(parameter='ferritin',value=44,unit='ng/mL',measuredAt=None,method=None,context=None,
+        evidence={'page':1,'excerpt':'Ferritina | 44 | ng/mL','extractedValue':'44','extractedUnit':'ng/mL','extractionMethod':'ollama_vision','model':'qwen3-vl:4b','verification':'visual_unverified'})
+    assert request(client,'POST','/confirm',body).status_code==200
+    data=request(TestClient(app),'GET','/data').json()
+    assert data['documents'][0]['original']==doc['original']
+    assert data['results'][0]['measuredAt'] is None and data['results'][0]['evidence']==row['evidence']
+    assert request(client,'GET','/preview/result-0').status_code==404
+    assert request(client,'PATCH','/result/result-0',{'value':45}).status_code==200
+    assert request(client,'GET','/data').json()['results'][0]['evidence']['extractedValue']=='44'
+    assert request(client,'DELETE','/result/result-0').status_code==200
+    assert len(request(TestClient(app),'GET','/data').json()['documents'])==1
+
+def test_preview_recomputes_region_and_checks_scope(client):
+    from services.api.app.hybrid import extract_document
+    body=document();raw=base64.b64decode(body['document']['original']['dataUrl'].split(',')[1])
+    c=extract_document(raw,'application/pdf')['candidates'][0]
+    assert c['region'] is not None
+    body['results'][0]['evidence'].update(page=c['page'],excerpt=c['excerpt'],verification=c['verification'],region={'x0':-999,'x1':999999})
+    assert request(client,'POST','/confirm',body).status_code==200
+    response=request(client,'GET','/preview/result-0')
+    assert response.status_code==200 and response.content.startswith(b'\x89PNG')
+    assert response.headers['cache-control']=='no-store'
+    assert client.get('/demo/profiles/demo-b/preview/result-0',headers={'X-Pulso-Profile':'demo-a'}).status_code==403
+    assert request(client,'GET','/preview/result-0',owner='demo-a').status_code==404
+
+def test_pending_proposal_never_saved_by_confirm(client):
+    body=document();body['results'][0]['status']='extracted_pending'
+    assert request(client,'POST','/confirm',body).status_code==422
+    assert request(client,'GET','/data').json()['results']==[]
+
+def test_disk_persistence_is_readable_in_new_python_process(client):
+    import os,subprocess,sys
+    body=document();assert request(client,'POST','/confirm',body).status_code==200
+    reopened=subprocess.run([sys.executable,'-c',"import json; from services.api.app import store; print(json.dumps(store.load('demo-b')))"],
+        cwd=store.ROOT,env=os.environ.copy(),capture_output=True,text=True,timeout=15,check=True)
+    data=json.loads(reopened.stdout)
+    assert data['results'][0]['value']==99.2 and data['documents'][0]['sha256']==body['document']['sha256']
+
+@pytest.mark.parametrize('encrypted',[False,True])
+def test_manual_confirm_cannot_bypass_document_limits(client,encrypted):
+    import pymupdf
+    body=document()
+    raw=pdf(LINES,pages=4)
+    if encrypted:
+        with pymupdf.open(stream=pdf(LINES),filetype='pdf') as source:
+            raw=source.tobytes(encryption=pymupdf.PDF_ENCRYPT_AES_256,user_pw='test',owner_pw='test')
+    doc=body['document'];doc['sha256']=hashlib.sha256(raw).hexdigest()
+    doc['original']['dataUrl']='data:application/pdf;base64,'+base64.b64encode(raw).decode()
+    assert request(client,'POST','/confirm',body).status_code==422
+    assert request(client,'GET','/data').json()['documents']==[]

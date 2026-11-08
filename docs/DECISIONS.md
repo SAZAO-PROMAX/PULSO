@@ -1,4 +1,5 @@
 # Decisões — 07/11/2026
+> Estado atual: decisões históricas abaixo; atualização v0.4 no final.
 | ID | Decisão | Origem/estado |
 |---|---|---|
 | D01 | Portugal primeiro; foco em acessibilidade e maiores de 55 anos | PRD |
@@ -30,3 +31,7 @@ Mantida a stack e navegação. Criados tokens claro/escuro e componentes comuns,
 
 ## Estabilização
 SQLite local é a única persistência ativa, com transações e migração da cópia antiga; não é PostgreSQL. Sem novas dependências. Sem login existente, não criar infraestrutura de autenticação neste sprint: âmbito por perfil no backend é demonstrativo. Editar/eliminar no Histórico existente, nunca Arquivar. Root npm run dev e dev.cmd substituem o arranque dependente do Codex; não matar servidores desconhecidos nem reutilizar só por /health. Checkpoints em STABILIZATION.md; sem commit de trabalho preexistente.
+
+## v0.4 — 08/11/2026
+O pedido explícito do utilizador substitui D04: permite extração híbrida exclusivamente local com qwen3-vl:4b, sem interpretação clínica. Mantêm-se parser determinístico, SQLite única, confirmação humana e funcionamento sem Ollama. Adaptador REST httpx existente, sem SDK nem dependência nova; URL/modelo fixados por lista permitida, sem ferramentas/proxies/redirecionamentos. Seleção por página; visão apenas quando necessária. Não existe OCR independente: resultados visuais são sempre assinalados como não verificados por texto.
+Catálogo JSON partilhado: 12 parâmetros pedidos mais ureia/sódio/potássio para ensaiar um relatório de 15 parâmetros distintos. Só nomes/unidades, sem faixas clínicas ou códigos LOINC/UCUM inventados. Métodos/amostras/datas ausentes não são preenchidos para forçar gráficos. Destaque só com região textual inequívoca, recalculada no original guardado. Rascunhos continuam em memória; não são dados confirmados. Detalhes e evidência em LOCAL_EXTRACTION.md.

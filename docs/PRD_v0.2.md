@@ -1,6 +1,7 @@
 > Fonte: BrainStorm, 07/11/2026. Transcrição das secções 1–15 recuperadas. A secção 16 está truncada na fonte e não foi reconstruída; as instruções operacionais novas estão em AGENTS.md. Este PRD descreve requisitos futuros, não funcionalidades implementadas.
 
 # PULSO
+> Atualização autorizada v0.4, 08/11/2026: a proibição inicial de LLMs na extração foi substituída pela integração exclusivamente local Ollama/Qwen3-VL, com validação independente e confirmação humana obrigatórias. A restante especificação mantém o seu caráter histórico; estado implementado em LOCAL_EXTRACTION.md.
 ## Product Requirements & Engineering Guidelines — v0.2
 
 **Projeto:** PULSO — Plataforma Pessoal de Saúde  

@@ -23,7 +23,7 @@ test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');
  await page.getByRole('button',{name:'Adicionar exame',exact:true}).click();
- await page.getByLabel('Selecionar PDF sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
+ await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
  await expect(page.getByText('Ficheiro selecionado',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Importar PDF',exact:true}).click();
  await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
@@ -80,7 +80,3 @@ test('interface a 200% de ampliação CSS mantém formulário e navegação util
  await page.getByRole('button',{name:'Rever medição',exact:true}).click();
  await expect(page.getByRole('button',{name:'Confirmar e guardar medição',exact:true})).toBeVisible();
 });
-
-
-
-

@@ -38,5 +38,4 @@ export class ApiRepository implements ClinicalRepository {
 }
 export const clinicalRepository=new ApiRepository();
 export function confirmedResults(data:ClinicalData){return data.results.filter(r=>r.status!=='extracted_pending').sort((a,b)=>(b.measuredAt?Date.parse(b.measuredAt):-Infinity)-(a.measuredAt?Date.parse(a.measuredAt):-Infinity)||a.id.localeCompare(b.id));}
-export function originFor(data:ClinicalData,r:Result){return r.source==='manual'?'Registo domiciliário fictício':data.documents.find(d=>d.id===r.documentId)?.laboratory??'Origem indisponível';}
-
+export function originFor(data:ClinicalData,r:Result){return r.source==='manual'?'Registo domiciliário fictício':r.laboratory??data.documents.find(d=>d.id===r.documentId)?.laboratory??'Origem não indicada';}

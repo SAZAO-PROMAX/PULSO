@@ -2,24 +2,38 @@ import React,{useState} from 'react';
 import {View,Platform} from 'react-native';
 import {Card,T,Button,Field,layout} from '../ui';
 import {ClinicalData,MedicalDocument,Result,parameterLabels,displayTime,resultDate,numberText,confirmationLabels,exclusionReason} from './data';
-import {originFor,confirmedResults,clinicalRepository} from './repository';
+import {originFor,confirmedResults,clinicalRepository,API} from './repository';
 export function DocumentView({doc}:{doc:MedicalDocument}) {
  const [open,setOpen]=useState(false);
  function openPdf(){
   if(Platform.OS!=='web'||!doc.original.dataUrl)return;
   const raw=atob(doc.original.dataUrl.split(',')[1]);const bytes=Uint8Array.from(raw,x=>x.charCodeAt(0));
-  const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));window.open(url,'_blank','noopener,noreferrer');setTimeout(()=>URL.revokeObjectURL(url),60000);
+  const url=URL.createObjectURL(new Blob([bytes],{type:doc.original.mediaType}));window.open(url,'_blank','noopener,noreferrer');setTimeout(()=>URL.revokeObjectURL(url),60000);
  }
  return <View style={layout.stack}><Button label={open?'Fechar documento original':'Ver documento original fictício'} onPress={()=>setOpen(!open)}/>
- {open&&<><T kind="heading">{doc.original.fileName}</T>{doc.original.dataUrl&&<Button label="Abrir PDF original" onPress={openPdf}/>}<T selectable>{doc.original.text}</T></>}</View>;
+ {open&&<><T kind="heading">{doc.original.fileName}</T>{doc.original.dataUrl&&<Button label={doc.original.mediaType==='application/pdf'?'Abrir PDF original':'Abrir imagem original'} onPress={openPdf}/>}<T selectable>{doc.original.text}</T></>}</View>;
 }
 export function ResultDetail({data,result:r}:{data:ClinicalData;result:Result}) {
  const doc=data.documents.find(d=>d.id===r.documentId&&d.ownerId===r.ownerId);
+ const [previewError,setPreviewError]=useState('');
+ async function highlight(){
+  const target=window.open('about:blank','_blank');if(target)target.opener=null;
+  try{const response=await fetch(API+'/demo/profiles/'+r.ownerId+'/preview/'+encodeURIComponent(r.id),{headers:{'X-Pulso-Profile':r.ownerId},signal:AbortSignal.timeout(10000)});
+   if(!response.ok)throw Error('Região indisponível. Consulta o documento original.');
+   const url=URL.createObjectURL(await response.blob());if(target)target.location.href=url;else throw Error('Permite abrir o documento numa nova janela.');setTimeout(()=>URL.revokeObjectURL(url),60000);setPreviewError('');
+  }catch(e){target?.close();setPreviewError((e as Error).message);}
+ }
  return <View testID="point-detail" style={layout.stack}><T kind="heading">Resultado selecionado</T>
  <T>{resultDate(r)} · {r.value===null?'Valor não disponível':numberText(r.value)} {r.unit}</T>
  <T>Origem: {originFor(data,r)}</T><T>Referência do documento: {r.referenceText??'Não fornecida'}</T><T>Estado: {confirmationLabels[r.status]}</T>
  {r.sessionId&&<T kind="small">Leitura de uma sessão domiciliária. Sem associação a medições do oxímetro.</T>}
- {r.evidence&&<T kind="small">Página {r.evidence.page} · Extraído originalmente: {r.evidence.extractedValue} {r.evidence.extractedUnit}</T>}
+ {r.evidence&&<T kind="small">Página {r.evidence.page??'não indicada'} · Extraído originalmente: {r.evidence.extractedValue} {r.evidence.extractedUnit}</T>}
+ {r.evidence&&<><T kind="small">Método de leitura: {r.evidence.extractionMethod??'parser anterior'}{r.evidence.model?' · '+r.evidence.model:''}{r.evidence.ollamaVersion?' · Ollama '+r.evidence.ollamaVersion:''}</T>
+ <T kind="small">Nome original: {r.evidence.originalParameter??'Não registado'} · Processado: {r.evidence.processedAt?displayTime(r.evidence.processedAt):'Não registado'}</T>
+ <T kind="small">Evidência: {r.evidence.verification==='text_verified'?'associação conferida no texto; confirmação humana mantida':'conferência humana do original necessária'}</T>
+ <T kind="small" selectable>{r.evidence.excerpt}</T>
+ {Platform.OS==='web'&&r.evidence.region&&r.evidence.verification==='text_verified'&&<Button label="Ver região destacada no documento" onPress={()=>void highlight()}/>}
+ {previewError&&<T accessibilityRole="alert">{previewError}</T>}</>}
  {doc?<><T kind="small">{doc.title} · Importado {displayTime(doc.importedAt)}</T><DocumentView doc={doc}/></>:<T kind="small">Registo manual sem documento associado.</T>}
  </View>;
 }
@@ -54,7 +68,7 @@ function ResultActions({result:r,onChanged}:{result:Result;onChanged:(message:st
 }
 function DocumentActions({doc,count,onChanged}:{doc:MedicalDocument;count:number;onChanged:(message:string)=>void}){
  const [edit,setEdit]=useState(false),[remove,setRemove]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
- const [title,setTitle]=useState(doc.title),[lab,setLab]=useState(doc.laboratory);
+ const [title,setTitle]=useState(doc.title),[lab,setLab]=useState(doc.laboratory??'');
  async function act(work:()=>Promise<void>,message:string){setBusy(true);setError('');try{await work();onChanged(message);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
  return <View style={layout.stack}><Button label="Editar exame" disabled={busy} onPress={()=>{setEdit(true);setRemove(false);}}/>
  {edit&&<><Field label="Título do exame" value={title} onChange={setTitle}/><Field label="Laboratório do exame" value={lab} onChange={setLab}/><Button label="Guardar exame" disabled={busy} onPress={()=>void act(()=>clinicalRepository.editDocument(doc.ownerId,doc.id,{title,laboratory:lab}),'Exame corrigido na base local.')}/><Button label="Cancelar edição do exame" disabled={busy} onPress={()=>setEdit(false)}/></>}

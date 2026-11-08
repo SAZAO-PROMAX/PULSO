@@ -13,20 +13,17 @@ A migração localStorage é só leitura e remoção após confirmação da API,
 O backend verifica o perfil do pedido e os proprietários dos recursos. O cabeçalho X-Pulso-Profile é um âmbito demonstrativo, não autenticação. Não existem contas reais.
 Unidades/métodos/amostras agrupam séries conservadoramente; só etiquetas lexicais seguras são normalizadas, sem converter valores. Exclusões e contagens são visíveis, e originais continuam intactos. Sem deduplicação por data: duas medições legítimas no mesmo dia mantêm IDs distintos.
 Campos desconhecidos/pendentes não são inventados. Datas documentais sem hora mantêm datePrecision=day (instante técnico ao meio-dia UTC para ordenação, nunca apresentado como hora clínica).
-## PDF — fluxo real e limitado
-GET /demo/sample.pdf fornece o único PDF de exemplo.
-POST /demo/extract recebe bytes application/pdf com cabeçalho X-Pulso-Demo: synthetic-only. Limite streaming 512 KB; subprocesso isolado do parser com prazo de 8 segundos; cliente cancela aos 12 segundos.
-PyMuPDF extrai texto selecionável de até 3 páginas, rejeitando cifrados/corrompidos/layout desconhecido. Parser só aceita PULSO SYNTHETIC LAB V1, metadados inequívocos e linhas delimitadas de cinco parâmetros. Não há OCR/LLM/serviço externo.
-Devolve candidatos, problemas, página/linha, texto, data, laboratório, hash SHA-256 e versão do parser. Ainda não são resultados guardados.
-A UI permite corrigir valor/unidade/método/amostra, excluir linhas e marcar cada linha como revista. A confirmação final preserva evidência extraída e grava apenas as linhas selecionadas com estado confirmado pelo utilizador.
-Snapshot SQLite inclui original PDF base64. Abertura usa URL Blob temporária; não há URLs públicas ou partilha.
-API com persistência SQLite, limitada a loopback no arranque normal; CORS só para origens locais explícitas. /health e /docs mantidos.
-Sem autenticação ou autorização real: perfis são demonstrativos. O parser isolado tem prazo e limites de entrada/saída, mas não constitui isolamento de produção para ficheiros hostis.
-
+## Extração documental v0.4 — implementada
+POST /demo/extract aceita PDF/PNG/JPEG sintético (2 MB, 3 páginas, 12 MP por imagem, 30 000 caracteres totais). Subprocesso sem ficheiros temporários, limite global 285 s, uma extração por vez; cliente 300 s. Cada página usa PyMuPDF e o parser conhecido primeiro, ou Ollama por texto/visão quando necessário. Página com texto acima de 12 000 caracteres segue para introdução manual. Imagens são renderizadas com aresta máxima de 1280 px. O parser antigo continua com os seus limites próprios.
+local_ollama.py usa REST httpx local com esquema Pydantic, sem ferramentas, proxies ou redirecionamentos; 90 s por chamada, resposta até 512 KB, contexto 8192, geração 4096 tokens. hybrid.py valida associações texto/valor/unidade e datas; JSON válido não basta. Visão não tem OCR independente e mantém sinalização para conferência humana.
+GET /demo/extraction/status verifica disponibilidade/modelo sem aceder a dados. O frontend não escolhe servidor/modelo e nunca contacta Ollama diretamente. Apenas confirmação explícita chama a persistência existente; originais PDF/PNG/JPEG, evidência extraída e valores confirmados permanecem na mesma SQLite por perfil.
+DocumentImport reutiliza a revisão e permite associação de parâmetro, correção de valor/unidade/data/origem/página, exclusão e introdução manual. Campos e erros ficam disponíveis após falhas recuperáveis; rascunhos não sobrevivem ao fecho/recarregamento. Histórico e gráficos usam o mesmo repositório; todos os parâmetros do catálogo partilhado têm seletor. Dados sem método/amostra/data permanecem no histórico com motivo de exclusão.
+GET /demo/profiles/{owner}/preview/{result_id} verifica âmbito e recalcula uma região textual única no PDF guardado, devolvendo PNG sem cache. Não usa coordenadas do modelo nem altera o original.
+Sem autenticação de produção: X-Pulso-Profile é só âmbito demonstrativo. Configuração, evidência, limites e fontes em LOCAL_EXTRACTION.md.
 ## Limites e evolução
 Sem PostgreSQL/SQLAlchemy/Alembic, contas de produção, auditoria de acessos, gestão de chaves, backups ou sincronização. Escritas da API são transacionais; não há sincronização externa.
 Registos confirmados podem ser corrigidos ou eliminados no Histórico, com validação no backend; revisões da extração original ficam preservadas. Cancelar uma revisão não guarda resultados. Rascunhos não persistem entre reinícios.
-Instituições, objetivos clínicos, OCR e interpretação são futuros e não foram implementados.
+Instituições, objetivos clínicos, OCR independente e interpretação clínica continuam fora do âmbito.
 Documentos originais, acesso por recurso, encriptação e migrações de servidor terão de ser implementados antes de dados reais. Ver SECURITY.md.
 
 ## Correção PDF Windows

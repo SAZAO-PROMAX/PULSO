@@ -2,7 +2,7 @@ import React,{useEffect,useReducer,useState} from 'react';
 import {SafeAreaView,ScrollView,View,Pressable,Platform} from 'react-native';
 import {areas,tabs,profiles,initialState,reducer,Area} from './src/model';
 import {ClinicalPanel} from './src/clinical/ClinicalPanel';
-import {ClinicalData,parameterLabels,displayDate,numberText} from './src/clinical/data';
+import {ClinicalData,parameterLabels,displayDate,numberText,labParameters} from './src/clinical/data';
 import {clinicalRepository,confirmedResults,originFor} from './src/clinical/repository';
 import {History} from './src/clinical/RecordViews';
 import {PressureForm,PdfForm} from './src/clinical/Forms';
@@ -23,7 +23,7 @@ function Shell(){
  const start=(which:'pressure'|'pdf')=>{setForm(which);navigate('Registar');};
  const rows=data?confirmedResults(data):[];
  const pressure=rows.find(r=>r.parameter==='systolic'&&r.value!==null&&r.measuredAt!==null);
- const documents=data?[...data.documents].sort((a,b)=>Date.parse(b.issuedAt)-Date.parse(a.issuedAt)):[];
+ const documents=data?[...data.documents].sort((a,b)=>(b.issuedAt?Date.parse(b.issuedAt):-Infinity)-(a.issuedAt?Date.parse(a.issuedAt):-Infinity)):[];
  return <SafeAreaView style={{flex:1,backgroundColor:c.bg}}>
  <ScrollView key={state.profileId+'-'+state.tab+'-'+state.area} contentContainerStyle={{width:'100%',maxWidth:1120,alignSelf:'center',padding:24,gap:24,paddingBottom:36}}>
  <View style={[layout.row,{justifyContent:'space-between',alignItems:'center'}]}><T style={{fontSize:24,fontWeight:'900',letterSpacing:5}}>PULSO</T><Button label={dark?'Modo claro':'Modo escuro'} onPress={toggle}/></View>
@@ -32,12 +32,12 @@ function Shell(){
  {!!message&&<Card><T accessibilityLiveRegion="polite">{message}</T></Card>}
  {load.owner===state.profileId&&load.error?<Card><T accessibilityRole="alert">{load.error}</T><Button label="Tentar novamente" onPress={()=>setRevision(x=>x+1)}/></Card>:!data?<T accessibilityLiveRegion="polite">A carregar dados fictícios…</T>:
  state.area?<View style={layout.stack}>
- {['Análises ao sangue','Tensão arterial','Saúde respiratória'].includes(state.area)?<ClinicalPanel key={state.profileId+state.area} ownerId={state.profileId} data={data} parameters={state.area==='Análises ao sangue'?['glucose','ldl','creatinine','hemoglobin','hba1c']:state.area==='Tensão arterial'?['systolic','diastolic']:['spo2']}/>:
+ {['Análises ao sangue','Tensão arterial','Saúde respiratória'].includes(state.area)?<ClinicalPanel key={state.profileId+state.area} ownerId={state.profileId} data={data} parameters={state.area==='Análises ao sangue'?labParameters:state.area==='Tensão arterial'?['systolic','diastolic']:['spo2']}/>:
  <Card><T kind="heading">{state.area==='Medicação e consultas'?'Os teus compromissos':'Um espaço para aprender'}</T><T>{state.area==='Medicação e consultas'?'Ainda não há consultas ou medicação registadas.':'A biblioteca de conteúdos clínicos revistos ainda não está disponível.'}</T><T kind="small">Esta área continua em preparação. Não são gerados planos clínicos nem conteúdos personalizados.</T></Card>}
  <Button label="Voltar ao início" onPress={()=>navigate('Início')}/></View>:
  state.tab==='Início'?<>
  <Card><T kind="heading">O teu próximo registo, num só lugar</T><T>Adiciona um PDF de demonstração ou uma medição fictícia feita em casa.</T><View style={layout.row}><Button label="Adicionar exame" primary onPress={()=>start('pdf')}/><Button label="Adicionar medição" onPress={()=>start('pressure')}/></View></Card>
- <View style={layout.row}><View style={layout.grow}><Card><T kind="small">ÚLTIMOS EXAMES</T>{documents.length?documents.slice(0,2).map(d=><View key={d.id}><T style={{fontWeight:'600'}}>{d.title}</T><T kind="small">{displayDate(d.issuedAt)} · {d.laboratory}</T></View>):<T>Ainda sem exames. Importa o PDF sintético de exemplo.</T>}<Button label="Consultar exames e resultados" onPress={()=>navigate('Histórico')}/></Card></View>
+ <View style={layout.row}><View style={layout.grow}><Card><T kind="small">ÚLTIMOS EXAMES</T>{documents.length?documents.slice(0,2).map(d=><View key={d.id}><T style={{fontWeight:'600'}}>{d.title}</T><T kind="small">{d.issuedAt?displayDate(d.issuedAt):'Data não indicada'} · {d.laboratory}</T></View>):<T>Ainda sem exames. Importa o PDF sintético de exemplo.</T>}<Button label="Consultar exames e resultados" onPress={()=>navigate('Histórico')}/></Card></View>
  <View style={layout.grow}><Card><T kind="small">ÚLTIMA TENSÃO REGISTADA</T>{pressure?<><T kind="heading">{numberText(pressure.value!)} {pressure.unit} · sistólica</T><T kind="small">{displayDate(pressure.measuredAt!)} · {originFor(data,pressure)}</T><T kind="small">Ver sistólica e diastólica em séries independentes.</T></>:<T>Ainda sem medições. Começa por um registo fictício.</T>}<Button label="Ver evolução da tensão" onPress={()=>goArea('Tensão arterial')}/></Card></View></View>
  <T accessibilityRole="header" kind="heading">As tuas áreas de saúde</T><View style={layout.row}>{areas.map((area,i)=><Pressable key={area} accessibilityRole="button" accessibilityLabel={area} onPress={()=>goArea(area)} style={({pressed})=>({flexBasis:260,flexGrow:1,flexShrink:1,minWidth:0,borderRadius:20,padding:22,gap:10,borderWidth:1,borderColor:c.line,backgroundColor:pressed?c.soft:c.card})}><View accessible={false}><T style={{color:c.accentInk,backgroundColor:c.accent,width:44,height:44,textAlign:'center',paddingTop:7,borderRadius:13}}>{icons[i]}</T></View><T kind="heading">{area}</T><T kind="small">{descriptions[i]}</T><T kind="small">Explorar →</T></Pressable>)}</View>
  <View style={layout.row}><View style={layout.grow}><Card><T kind="heading">Próximas consultas</T><T kind="small">Nenhuma consulta registada. O calendário está em preparação.</T></Card></View><View style={layout.grow}><Card><T kind="heading">Compreender a tua informação</T><T kind="small">Conhece a origem e as limitações dos registos.</T><Button label="Abrir Aprender" onPress={()=>navigate('Aprender')}/></Card></View></View>
@@ -53,9 +53,3 @@ function Shell(){
  <View accessibilityLabel="Navegação principal" style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:6,padding:12,borderTopWidth:1,borderColor:c.line,backgroundColor:c.bg}}>{tabs.map(tab=><Button key={tab} label={tab} selected={state.tab===tab&&!state.area} onPress={()=>navigate(tab)}/>)}</View>
  </SafeAreaView>;
 }
-
-
-
-
-
-

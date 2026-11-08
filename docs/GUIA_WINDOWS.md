@@ -1,4 +1,25 @@
 # PULSO no Windows — arranque e estabilização
+## Leitura local v0.4 com Ollama
+O Ollama e qwen3-vl:4b já foram encontrados neste ASUS; não é necessário reinstalar nem voltar a descarregar o modelo. Abre Ollama no menu Iniciar e mantém a aplicação em execução. Num PowerShell normal podes verificar:
+```powershell
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" --version
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" list
+Invoke-RestMethod http://127.0.0.1:11434/api/version
+```
+O teste de leitura da aplicação carrega o modelo quando necessário. Não é preciso iniciar uma conversa em `ollama run`, criar conta, obter chave ou executar signin. Não alteres OLLAMA_HOST nem abras portas na firewall para o Ollama.
+
+Depois de iniciar o PULSO como abaixo, abre **Adicionar exame**. O estado discreto indica se o motor local está disponível. Seleciona apenas um PDF/PNG/JPEG fictício até 2 MB/3 páginas e inicia a leitura; imagens e layouts novos podem demorar. O PDF de exemplo conhecido usa o parser anterior sem IA.
+
+Revê os valores, unidades, datas e origem no original, corrige/exclui linhas e marca cada linha aceite como revista. Só **Confirmar e guardar resultados** escreve na base. Se o valor não existir, escolhe explicitamente **Registar sem valor numérico**; não inventes um número. Se a leitura falhar, usa introdução manual. Campos corrigidos permanecem após falha de gravação; não recarregues nem feches a página antes de guardar.
+
+Após guardar: **Histórico** para consultar/editar/eliminar; **Análises ao sangue** para escolher parâmetro/período e tocar num ponto. O detalhe mostra original e proveniência; destaque só quando existe região textual fiável. Campos sem data/método/amostra ficam no histórico com motivo para não aparecer no gráfico. A confirmação não é validação médica.
+
+Para gerar os exemplos alargados sem usar a GPU, na raiz:
+```powershell
+.\.venv\Scripts\python.exe scripts/benchmark_extraction.py --fixtures-only
+```
+Escolhe depois ficheiros de `tmp/v04-benchmark`, por exemplo `simple_digital.pdf`, `fifteen_rows.pdf`, `photo.png` ou `mixed.pdf`. São inteiramente fictícios. Configuração opcional, limites e testes em [LOCAL_EXTRACTION.md](LOCAL_EXTRACTION.md). `.env.example` documenta valores; o arranque usa os valores por defeito e não lê `.env` automaticamente.
+
 ## Abrir sem o Codex
 Abrir um PowerShell normal, sem administrador:
 ```powershell
@@ -86,4 +107,4 @@ npx.cmd expo export --platform web
 npm.cmd run test:web
 ```
 Playwright usa uma base SQLite temporária em tmp e nunca reutiliza a API normal. Os testes são sequenciais e repõem apenas essa base temporária.
-Ver STABILIZATION.md para checkpoints e VALIDATION.md para resultados. Não foram criados commits porque há alterações anteriores no index e falta identidade Git configurada.
+Ver STABILIZATION.md para checkpoints e VALIDATION.md para resultados. O repositório foi sincronizado anteriormente com GitHub; este incremento v0.4 não faz publicação automática.

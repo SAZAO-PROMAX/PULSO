@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {ApiRepository,StoragePort} from '../src/clinical/repository';
-import {validateData,FixtureRepository} from '../src/clinical/data';
+import {validateData,FixtureRepository,buildSeries,exclusionReason} from '../src/clinical/data';
 import {confirmRows,Extraction,ReviewRow,localDateTime} from '../src/clinical/importData';
 const parsed:Extraction={parserVersion:'test',sha256:'a'.repeat(64),laboratory:'Laboratorio Demo X',date:'2026-11-07',text:'PULSO SYNTHETIC LAB V1',candidates:[{parameter:'glucose',value:'98,5',unit:'mg/dL',referenceText:'70-110',method:'hexoquinase',context:'plasma',page:1,excerpt:'Glicose | 98,5 | mg/dL',issues:[]}]};
 const review:ReviewRow={value:'99,2',unit:'mg/dL',method:'hexoquinase',context:'plasma',include:true,reviewed:true};
@@ -38,4 +38,30 @@ test('ausências e parâmetro repetido exigem resolução explícita',()=>{
  assert.throws(()=>confirmRows('demo-a','doc',duplicate,[review,review]));
  assert.equal(confirmRows('demo-a','doc',duplicate,[review,{...review,include:false}]).length,1);
  assert.throws(()=>confirmRows('demo-a','doc',parsed,[{...review,value:'?'}]));
+});
+
+test('propostas locais preservam correções e ausências sem inventar data, método ou origem',()=>{
+ const source:Extraction={...parsed,date:null,laboratory:null,processedAt:'2026-11-08T10:00:00Z',candidates:[{...parsed.candidates[0],method:null,context:null,date:null,laboratory:null,extractionMethod:'ollama_vision',verification:'visual_unverified',model:'qwen3-vl:4b',originalParameter:'Glicose'}]};
+ const rows=confirmRows('demo-b','new',source,[{...review,date:'',method:'',context:'',laboratory:''}]);
+ assert.equal(rows[0].measuredAt,null);assert.equal(rows[0].method,null);assert.equal(rows[0].laboratory,null);
+ assert.equal(rows[0].evidence?.extractedValue,'98,5');assert.equal(rows[0].evidence?.extractionMethod,'ollama_vision');
+ const data={schemaVersion:1,documents:[],results:rows};
+ assert.equal(buildSeries(data,'demo-b','glucose').omitted,1);assert.match(exclusionReason(data,rows[0])!,/Data/);
+});
+
+test('datas distintas conservam medições repetidas; alteração da página invalida destaque',()=>{
+ const raw={...parsed.candidates[0],date:'2026-11-07',region:{x0:1,y0:2,x1:3,y1:4,units:'pdf-points'}};
+ const source={...parsed,candidates:[raw,{...raw,date:'2026-11-08'}]};
+ const rows=confirmRows('demo-a','dates',source,[{...review,date:'2026-11-07',page:'2'}, {...review,date:'2026-11-08'}]);
+ assert.notEqual(rows[0].measuredAt,rows[1].measuredAt);assert.equal(rows[0].evidence?.region,null);
+ assert.equal(rows[0].evidence?.extractedDate,'2026-11-07');assert.equal(rows[0].evidence?.page,2);
+ assert.throws(()=>confirmRows('demo-a','new',parsed,[{...review,page:'99'}]),/Página/);
+});
+
+test('valor ausente só é guardado como nulo após escolha explícita, preservando ND',()=>{
+ const missing={...parsed,candidates:[{...parsed.candidates[0],value:'ND'}]};
+ assert.throws(()=>confirmRows('demo-a','missing',missing,[{...review,value:'ND'}]));
+ const result=confirmRows('demo-a','missing',missing,[{...review,value:'ND',missingValue:true}])[0];
+ assert.equal(result.value,null);assert.equal(result.evidence?.extractedValue,'ND');
+ assert.match(exclusionReason({schemaVersion:1,documents:[],results:[result]},result)!,/Valor em falta/);
 });
