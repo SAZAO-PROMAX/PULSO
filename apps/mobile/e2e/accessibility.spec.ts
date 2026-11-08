@@ -1,4 +1,4 @@
-import {test,expect} from './fixtures';
+import {test,expect,openArea} from './fixtures';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -23,7 +23,7 @@ test('tema persiste ao fechar e voltar a abrir um navegador de teste',async({pla
 });
 
 test('modal tem nome, foco inicial, ciclo Tab, Escape e estados corretos',async({page})=>{
- await page.goto('/');await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
+ await page.goto('/');await openArea(page,'Análises ao sangue');
  const info=page.getByRole('button',{name:'Sobre Glicose',exact:true}).first();await info.focus();await page.keyboard.press('Enter');
  const dialog=page.getByRole('dialog');await expect(dialog).toHaveAccessibleName('Glicose');
  await expect(dialog.getByRole('button',{name:'Fechar explicação',exact:true})).toBeFocused();
@@ -54,7 +54,7 @@ test('campos: erro associado, foco e contraste em ambos os temas',async({page})=
 });
 
 test('gráfico tem lista consultável por teclado e explica dados não comparáveis',async({page,request})=>{
- await page.goto('/');await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
+ await page.goto('/');await openArea(page,'Análises ao sangue');
  const list=page.getByRole('list',{name:'Medições de Glicose',exact:true}).first();
  await expect(list.getByRole('listitem')).toHaveCount(3);await expect(list).toContainText('Origem do registo:');await expect(list).toContainText('mg/dL');
  const first=list.getByRole('button').first();await first.focus();await page.keyboard.press('Space');
@@ -65,7 +65,7 @@ test('gráfico tem lista consultável por teclado e explica dados não comparáv
  const doc={id,ownerId:owner,synthetic:true,title:'Relatório fictício sem data',laboratory:p.laboratory,issuedAt:null,importedAt:new Date().toISOString(),sha256:p.sha256,original:{fileName:'test.pdf',mediaType:'application/pdf',text:p.text,dataUrl:'data:application/pdf;base64,'+raw.toString('base64')}};
  const result={id:'missing-row',ownerId:owner,synthetic:true,parameter:'glucose',value:98.5,unit:'mg/dL',measuredAt:null,documentId:id,method:null,context:null,referenceText:null,status:'user_confirmed'};
  const saved=await request.post('http://127.0.0.1:8000/demo/profiles/demo-b/confirm',{headers:{'X-Pulso-Profile':owner},data:{document:doc,results:[result]}});expect(saved.ok(),await saved.text()).toBeTruthy();
- await page.getByRole('button',{name:'Perfil',exact:true}).click();await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
+ await page.getByRole('button',{name:'Perfil',exact:true}).click();await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();await openArea(page,'Análises ao sangue');
  await expect(page.getByText('Porque há registos fora do gráfico?',{exact:true})).toBeVisible();await expect(page.getByText('1 registo: Data válida em falta.',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Histórico',exact:true}).click();await expect(page.getByText('Glicose: 98,5 mg/dL',{exact:true})).toBeVisible();
 });

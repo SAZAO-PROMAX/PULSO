@@ -36,7 +36,7 @@ export class ApiRepository implements ClinicalRepository {
  async savePressure(owner:string,input:{systolic:string;diastolic:string;heartRate:string;date:string},id:string){await this.request(owner,'/pressure','POST',{...input,id});}
  async confirmDocument(owner:string,document:MedicalDocument,results:Result[]){await this.request(owner,'/confirm','POST',{document,results});}
  async saveDocument(owner:string,document:MedicalDocument){await this.request(owner,'/documents','POST',{document});}
- async reset(owner:string){await this.request(owner,'/reset','POST');}
+ async reset(owner:string){await this.request(owner,'/reset','POST',{confirm:owner});}
  async editResult(owner:string,id:string,patch:Partial<Result>,version:number){await this.request(owner,'/result/'+encodeURIComponent(id),'PATCH',patch,version);}
  async deleteResult(owner:string,id:string,version:number){await this.request(owner,'/result/'+encodeURIComponent(id),'DELETE',undefined,version);}
  async editDocument(owner:string,id:string,patch:Partial<MedicalDocument>,version:number){await this.request(owner,'/document/'+encodeURIComponent(id),'PATCH',patch,version);}

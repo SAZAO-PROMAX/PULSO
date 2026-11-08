@@ -15,7 +15,7 @@ from .accounts import router as accounts_router, session
 from .test_mode import synthetic_test_mode
 import os
 
-app = FastAPI(title="PULSO — experimental", version="0.7.1")
+app = FastAPI(title="PULSO — experimental", version="0.7.2")
 app.include_router(data_router)
 app.include_router(accounts_router)
 

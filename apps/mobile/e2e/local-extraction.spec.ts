@@ -1,4 +1,4 @@
-import {test,expect} from './fixtures';
+import {test,expect,openArea} from './fixtures';
 import path from 'node:path';
 
 // API runs with inference disabled; actual local GPU inference is measured separately.
@@ -22,7 +22,7 @@ test('imagem com Ollama desligado: introdução manual, revisão, SQLite, gráfi
  await page.getByRole('button',{name:'Marcar revisto: Glicose',exact:true}).click();
  await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeFocused();await page.getByRole('button',{name:'Ver evolução de Glicose',exact:true}).click();await expect(page.getByTestId('point-detail')).toContainText('101,5 mg/dL');await page.getByRole('button',{name:'Histórico',exact:true}).click();await expect(page.getByText('Glicose: 101,5 mg/dL',{exact:true})).toBeVisible();
- await page.reload();await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
+ await page.reload();await openArea(page,'Análises ao sangue');
  await page.getByRole('button',{name:'Ponto 08/11/2026 101,5 mg/dL',exact:true}).click();
  await expect(page.getByText('Origem: Laboratório fictício manual',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Ver documento original fictício',exact:true}).click();

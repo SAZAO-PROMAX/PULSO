@@ -1,4 +1,4 @@
-import {test,expect,reveal} from './fixtures';
+import {test,expect,reveal,openArea} from './fixtures';
 import path from 'node:path';
 test('registo de tensão persiste e aparece no mesmo histórico e gráfico',async({page})=>{
  await page.goto('/');
@@ -11,13 +11,13 @@ test('registo de tensão persiste e aparece no mesmo histórico e gráfico',asyn
  await page.getByRole('button',{name:'Confirmar e guardar medição',exact:true}).click();
  await expect(page.getByText('Tensão sistólica: 128 mmHg',{exact:true})).toBeVisible();
  await page.reload();
- await page.getByRole('button',{name:'Tensão arterial',exact:true}).click();
+ await openArea(page,'Tensão arterial');
  await expect(page.getByText('Tensão sistólica · mmHg',{exact:true})).toHaveCount(2); // fixtures and manual methods kept apart
  await expect(page.getByRole('button',{name:/128 mmHg/}).first()).toBeVisible();
  await page.getByRole('button',{name:'Perfil',exact:true}).click();
  await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
  await page.getByRole('button',{name:'Histórico',exact:true}).click();
- await expect(page.getByText('Ainda não tem exames guardados.')).toBeVisible();
+ await expect(page.getByText('O seu histórico começa aqui.')).toBeVisible();
 });
 test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -45,7 +45,7 @@ test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({
  await page.getByRole('button',{name:'Histórico',exact:true}).click();
  await expect(page.getByText('Glicose: 99,2 mg/dL',{exact:true})).toBeVisible();
  await page.reload();
- await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
+ await openArea(page,'Análises ao sangue');
  await page.getByRole('button',{name:'Ponto 07/11/2026 99,2 mg/dL',exact:true}).click();
  await expect(page.getByText('Origem: Laboratorio Demo Pulso',{exact:true})).toBeVisible();
  await expect(page.getByText(/Extraído originalmente: 98,5 mg\/dL/)).toBeVisible();
@@ -54,7 +54,7 @@ test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({
  await page.getByRole('button',{name:'Perfil',exact:true}).click();
  await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
  await page.getByRole('button',{name:'Histórico',exact:true}).click();
- await expect(page.getByText('Ainda não tem exames guardados.')).toBeVisible();
+ await expect(page.getByText('O seu histórico começa aqui.')).toBeVisible();
  expect(errors).toEqual([]);
 });
 test('falha de dados locais permite repetir, modo escuro e largura 320',async({page})=>{
@@ -71,7 +71,7 @@ test('falha de dados locais permite repetir, modo escuro e largura 320',async({p
  await page.getByRole('button',{name:'Modo claro',exact:true}).click();
  const width=await page.evaluate(()=>document.documentElement.scrollWidth);
  expect(width).toBeLessThanOrEqual(320);
- const cards=page.getByRole('button',{name:'Análises ao sangue',exact:true});
+ const cards=page.getByRole('button',{name:'Ver evolução',exact:true});
  const bounds=await cards.boundingBox();
  expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(320);
  await page.getByRole('button',{name:'Registar',exact:true}).click();

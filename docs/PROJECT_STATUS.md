@@ -4,8 +4,8 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 
 ## Versão e Git
 
-- **Atualização:** 08/11/2026, Europe/Lisbon. **Versão:** v0.7.1 experimental, frontend/Expo/API `0.7.1`.
-- **Branch:** main. **Base desta entrega:** `2258446e4163da55a315a1d9cf9b5805eb7638dc`, checkpoint da simplificação, após os checkpoints A/B/C. Esta ficha acompanha a entrega final; consultar `git log -1 -- docs/PROJECT_STATUS.md` para o commit correspondente, sem inventar um hash futuro.
+- **Atualização:** 08/11/2026, Europe/Lisbon. **Versão:** v0.7.2 experimental, frontend/Expo/API `0.7.2`.
+- **Branch:** main. **Base desta entrega:** `07e8ba1c11901fe42bd453eaa801b8563cd2d66e`, entrega anterior v0.7.1. Esta ficha acompanha a entrega final; consultar `git log -1 -- docs/PROJECT_STATUS.md` para o commit correspondente, sem inventar um hash futuro.
 - **Repositório:** https://github.com/SAZAO-PROMAX/PULSO. Confirmar estado local/remoto ao retomar. Publicar versões está autorizado, sem force push e sem dados/segredos.
 
 ## Funcionalidades realmente implementadas
@@ -15,9 +15,10 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 - Novas contas inicializam diretamente sem documentos, medições ou acontecimentos. Fixtures clínicas estão fora do código da aplicação, num auxiliar de testes. **Nenhuma limpeza da base normal foi efetuada**; contas/registos/preferências anteriores foram preservados.
 - Demo-a/demo-b só são utilizáveis com contexto de teste confirmado pelo servidor, flag explícita e base resolvida dentro de tmp. A opção de compilação não autoriza acesso. Reposição exige confirmação do perfil e não altera outras contas; não há reposição global no ambiente pessoal.
 - Guardar exame, com ou sem extração, abre o detalhe; a evolução fica a um botão de distância. Tensão abre o registo guardado; acontecimento abre a cronologia. Edição conserva o detalhe e filtros; eliminação retira o registo e volta à lista. Erros/conflitos preservam campos e não apresentam sucesso antecipado.
-- Hub compacto com ações principais, cinco áreas e resumos só quando existem dados. Registar mostra quatro categorias iniciais, pesquisa e todas as oito categorias por expansão. Histórico tem pesquisa, ordem cronológica e filtros recolhidos, incluindo origem. Estados vazios têm ações específicas.
-- Três modos partilham dados/permissões. Preferências de tema/sistema, texto, contraste, movimento e ajuda persistem na conta. Onboarding de sete passos continua opcional/retomável, com conclusão rápida após escolher modo. Perfil organizado por Conta, Informação de saúde, Aparência e Privacidade.
+- Hub com duas ações principais, estado vazio único e resumos persistidos, incluindo quando só existe tensão. As cinco áreas mantêm acesso em Ver evolução, sem segunda barra no Hub. Registar preserva as oito categorias e acontecimentos. Histórico reutiliza a mesma pesquisa/classificação: seletores de categoria/período, Mais filtros para tipo/especialidade/origem e filtros ativos removíveis. Estado vazio não se sobrepõe a acontecimentos existentes.
+- Três modos partilham dados/permissões. Preferências de tema/sistema, texto, contraste, movimento e ajuda persistem na conta. Onboarding de sete passos continua opcional/retomável, com conclusão rápida após escolher modo. Perfil organizado por Conta, Informação de saúde, Aparência e Privacidade, com avatar/conta, largura máxima de 760 px e primeiros passos como ação secundária. Data apresentada em DD/MM/AAAA, mantida em ISO na API/base.
 - Nascimento **continua obrigatório**, por confirmação explícita do utilizador neste sprint; não é utilizado para inferir competências, modo ou limites clínicos. Condições opcionais/autodeclaradas: lista local não exaustiva e adição manual. Oito avatares e fotografia fictícia privada.
+- Navegação superior a partir de 900 px e inferior nas larguras menores, reservando espaço no layout. Tema discreto, estados selecionados também sublinhados, ações secundárias sem contorno e seletores partilhados. Aprender mantém as 23 fichas, cartões editoriais/resumo limitado e ação curta com nome acessível completo.
 - Gráficos de 15 parâmetros laboratoriais e quatro vitais; unidades/métodos/amostras incompatíveis separados. Comparação por painéis alinhados, períodos e intervalo personalizado, pontos/origem/original, exclusões explícitas e lista completa paginada. Opções avançadas recolhidas por defeito no modo Equilibrado.
 - Acontecimentos versionados, referências documentais, histórico de edição, marcadores/duração e alternativa textual. Sem causalidade automática. Eliminar acontecimento preserva exames; eliminar exame retira referências ativas atomicamente.
 - Importação sintética PDF/PNG/JPEG: parser conhecido ou Ollama local, revisão/correção e confirmação humana antes de persistir. Fila limitada, uma extração de cada vez. Aprender mantém 23 fichas, sem nova revisão clínica nesta entrega.
@@ -50,9 +51,9 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 
 ## Última validação — 08/11/2026
 
-**198 testes distintos aprovados:** 100 API, 55 TypeScript, 34 Chromium em contexto demonstrativo isolado, 4 Chromium na aplicação normal sem demonstração, 2 de estrutura e 3 do gerador. Dois testes opcionais de inferência real omitidos. Typecheck, pip check e exportação web aprovados. Sem carga/inferência GPU ou exportação nativa nova.
+**202 testes distintos aprovados:** 100 API, 56 TypeScript, 36 Chromium em contexto demonstrativo isolado, 5 Chromium na aplicação normal sem demonstração, 2 de estrutura e 3 do gerador. Dois testes opcionais de inferência real omitidos. Typecheck, pip check e exportação web aprovados. Sem carga/inferência GPU ou exportação nativa nova.
 
-Catálogo completo percorrido programaticamente: 19 casos API, 19 casos do modelo e seleção/proveniência dos 19 no navegador. Matriz e limites em VALIDATION.md. Verificados cinco tamanhos (320/390/768/1100/1280), três modos, contraste dos tokens, teclado/foco/modais e zoom CSS 200%. Capturas antes/depois revistas, inteiramente fictícias; artefactos e bases em tmp, fora do Git. Não houve leitores reais, zoom real, participantes ou certificação.
+Catálogo completo percorrido programaticamente: 19 casos API, 19 casos do modelo e seleção/proveniência dos 19 no navegador. Matriz e limites em VALIDATION.md. Verificados cinco tamanhos (320/390/768/1100/1280), três modos, contraste dos tokens, teclado/foco/modais e zoom CSS 200%. Capturas comparáveis de Hub/Histórico/Aprender/Perfil a 390/1280 px; também texto muito grande em tema escuro nas cinco larguras, com teste geométrico do conteúdo e navegação. Comparação e comandos em UX_LEARN.md/VALIDATION.md; artefactos detalhados e bases em tmp, fora do Git. Não houve leitores reais, zoom real, participantes ou certificação.
 
 ## Próximos três objetivos
 

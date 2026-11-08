@@ -16,3 +16,9 @@ export async function reveal(page:import('@playwright/test').Page,label:string){
  const filters=/^(Histórico:|Filtrar (tipo|especialidade)|Todas as especialidades|Todos os tipos|Últimos 90 dias|Último ano|Todo o período)/.test(label),button=page.getByRole('button',{name:filters?'Filtros':'Opções do gráfico',exact:true});
  if(await button.count()&&await button.getAttribute('aria-pressed')!=='true')await button.click();
 }
+
+export async function openArea(page:import('@playwright/test').Page,area:string){
+ const select=page.getByLabel('Área de evolução',{exact:true});
+ if(!await select.count())await page.getByRole('button',{name:'Ver evolução',exact:true}).click();
+ await select.selectOption({label:area});
+}

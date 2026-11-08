@@ -1,6 +1,6 @@
 import React,{createContext,useContext,useRef,useState,useId} from 'react';
 import {View,Pressable,Modal,ScrollView,useWindowDimensions,Platform,Linking} from 'react-native';
-import {T,Card,Button,Field,layout,useTheme} from '../ui';
+import {T,Card,Button,Field,Select,layout,useTheme} from '../ui';
 import type {Parameter} from '../clinical/data';
 import {Topic,Category,categories,publishedTopics,topicById,topicForParameter,searchTopics,todayTopic,clinicallyReviewed} from './content';
 
@@ -60,12 +60,12 @@ export function LearnScreen({selectedId,onSelect,initialCategory='Todas'}:{selec
  </Card></View>;
  return <View style={{gap:24}}>
   <T>Palavras mais claras. Conversas mais informadas.</T><T kind="small">{publishedTopics.length} tópicos educativos · consulta local, sem personalização clínica.</T>
-  <Card><T kind="small">APRENDER HOJE</T><T kind="heading">{featured.title}</T><T>{featured.summary}</T><Button label="Ler o destaque de hoje" onPress={()=>onSelect(featured.id)}/></Card>
+  <Card style={{borderWidth:0}}><T kind="small">APRENDER HOJE</T><T kind="heading">{featured.title}</T><T>{featured.summary}</T><Button label="Ler o destaque de hoje" variant="tertiary" onPress={()=>onSelect(featured.id)}/></Card>
   <Field label="Pesquisar termos e tópicos" value={query} onChange={setQuery} placeholder="Ex.: HbA1c, creatinina, consulta"/>
-  <View accessibilityLabel="Categorias educativas" style={layout.row}>{(['Todas',...categories] as const).map(item=><Button key={item} label={'Categoria: '+item} selected={category===item} onPress={()=>setCategory(item)}/>)}</View>
+  <View style={{maxWidth:420,width:'100%'}}><Select label="Categoria educativa" value={category} options={(['Todas',...categories] as const).map(c=>({value:c,label:c}))} onChange={value=>setCategory(value as Category|'Todas')}/></View>
   <T kind="small" accessibilityLiveRegion="polite">{results.length} {results.length===1?'tópico encontrado':'tópicos encontrados'}</T>
   {!results.length&&<Card><T kind="heading">Não encontrámos esse tópico.</T><T>Experimenta outra palavra ou escolhe uma categoria diferente.</T><Button label="Limpar pesquisa e filtros" onPress={()=>{setQuery('');setCategory('Todas');}}/></Card>}
-  <View style={layout.row}>{results.map(item=><View key={item.id} style={[layout.grow,{flexBasis:300}]}><Card><T kind="small">{item.category}</T><T kind="heading">{item.title}</T><T>{item.summary}</T><Button label={'Ler: '+item.title} onPress={()=>onSelect(item.id)}/></Card></View>)}</View>
+  <View style={layout.row}>{results.map(item=><View key={item.id} style={[layout.grow,{flexBasis:300}]}><Card style={{flex:1,borderWidth:0}}><T kind="small">{item.category}</T><T kind="heading" style={{fontSize:21,lineHeight:28}}>{item.title}</T><T kind="small" numberOfLines={3}>{item.summary}</T><View style={{flex:1}}/><Button label="Ler ficha →" accessibilityLabel={'Ler: '+item.title} variant="tertiary" onPress={()=>onSelect(item.id)}/></Card></View>)}</View>
   <SafetyNote/>
  </View>;
 }

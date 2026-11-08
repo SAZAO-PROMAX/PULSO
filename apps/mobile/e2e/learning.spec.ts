@@ -1,13 +1,11 @@
-import {test,expect} from './fixtures';
+import {test,expect,openArea} from './fixtures';
 
 test('hub usa dados do perfil e apresenta estados vazios sem inventar exames',async({page})=>{
  await page.goto('/');
  await expect(page.getByText('Olá, Perfil fictício A',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Perfil',exact:true}).click();await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
  await expect(page.getByText('Olá, Perfil fictício B',{exact:true})).toBeVisible();
- await expect(page.getByText('Ainda não tem exames guardados.',{exact:true})).toBeVisible();
- await expect(page.getByText('Ainda não existem acontecimentos registados.',{exact:true})).toBeVisible();
- await expect(page.getByText('Ainda não existem medições registadas.',{exact:true})).toBeVisible();
+ await expect(page.getByText('O seu histórico começa aqui.',{exact:true})).toBeVisible();
  await expect(page.getByText('23',{exact:true})).toHaveCount(0);
  await page.getByRole('button',{name:'Abrir Aprender',exact:true}).click();
  await expect(page.getByLabel('Pesquisar termos e tópicos',{exact:true})).toBeVisible();
@@ -17,10 +15,10 @@ test('pesquisa, categorias, ficha, fontes e termos relacionados',async({page})=>
  await page.goto('/');await page.getByRole('button',{name:'Aprender',exact:true}).click();
  await page.getByLabel('Pesquisar termos e tópicos',{exact:true}).fill('glicada');
  await expect(page.getByText('1 tópico encontrado',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'Categoria: Medicação',exact:true}).click();
+ await page.getByLabel('Categoria educativa',{exact:true}).selectOption({label:'Medicação'});
  await expect(page.getByText('Não encontrámos esse tópico.',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Limpar pesquisa e filtros',exact:true}).click();
- await page.getByRole('button',{name:'Categoria: Consultas',exact:true}).click();
+ await page.getByLabel('Categoria educativa',{exact:true}).selectOption({label:'Consultas'});
  await page.getByRole('button',{name:'Ler: Como preparar uma consulta médica?',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Como preparar uma consulta médica?',exact:true})).toBeFocused();
  await expect(page.getByText('Conteúdo educativo · não é um diagnóstico',{exact:true})).toBeVisible();
@@ -34,7 +32,7 @@ test('pesquisa, categorias, ficha, fontes e termos relacionados',async({page})=>
 
 test('popover desktop por teclado, Escape, retorno do foco e ligação ao histórico',async({page})=>{
  await page.setViewportSize({width:1280,height:900});await page.goto('/');
- await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
+ await openArea(page,'Análises ao sangue');
  await page.getByRole('button',{name:'Hemoglobina glicada',exact:true}).click();
  const info=page.getByRole('button',{name:'Sobre Hemoglobina glicada (HbA1c)',exact:true}).first();
  await info.focus();await page.keyboard.press('Enter');
@@ -79,7 +77,7 @@ for(const width of [390,1280])test('hub e Aprender sem overflow a '+width,async(
  await page.getByRole('button',{name:'Aprender',exact:true}).click();
  await page.screenshot({path:'../../tmp/ux-learning-'+width+'.png'});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
- await page.getByRole('button',{name:'Categoria: Análises ao sangue',exact:true}).click();
+ await page.getByLabel('Categoria educativa',{exact:true}).selectOption({label:'Análises ao sangue'});
  await page.getByRole('button',{name:'Ler: Glicose: o açúcar no sangue',exact:true}).click();
  await page.evaluate(()=>{document.body.style.zoom='2';});
  await expect(page.getByRole('button',{name:'Voltar aos tópicos',exact:true})).toBeVisible();

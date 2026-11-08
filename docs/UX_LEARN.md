@@ -109,3 +109,19 @@ O estado Git inclui também os ficheiros novos do Hub/Aprender do sprint anterio
 
 ## Incremento v0.7
 Os mesmos componentes educativos e 23 fichas são usados nos três modos, sem conteúdo clínico novo ou revisão profissional alegada. ThemeProvider aplica tokens/escala/contraste; ajuda guiada é opcional e não deriva da idade. Hub reordena áreas por escolha explícita e mantém resumos expansíveis no modo Simples. Preferências/onboarding, gráficos alinhados e acontecimentos estão descritos em ARCHITECTURE.md; resultados finais em VALIDATION.md. Mantêm-se as limitações editoriais/clínicas anteriores.
+
+
+## v0.7.2 — redesign sobre os componentes existentes, 08/11/2026
+
+| Página | Antes | Depois |
+|---|---|---|
+| Hub | Ações equivalentes, segunda barra de cinco áreas e três mensagens vazias | Duas ações principais, estado vazio único, resumo quando há registos e acesso a Evolução/Aprender. Acontecimentos em Registar; cinco áreas no seletor de evolução. |
+| Histórico | Categorias, tipos, especialidades e períodos em linhas de botões | Pesquisa + categoria/período; Mais filtros revela tipo/especialidade/origem. Filtros ativos removíveis. Mesmos predicados, detalhe e CRUD. |
+| Aprender | Categorias grandes e repetição de títulos nos botões | Seletor compacto, cartões sem contorno, resumo até três linhas e Ler ficha. Nome acessível completo; 23 fichas e conteúdo/fontes inalterados. |
+| Perfil | Formulário largo, primeiros passos em destaque e formato de data dependente do navegador | Avatar/conta, grupos compactos, máximo 760 px e primeiros passos no fim. DD/MM/AAAA na interface; ISO persistido, nascimento obrigatório. |
+
+Reutilizados Shell/Hub/History/LearnScreen/AccountPanel, Card/Button/Field/T e todos os fluxos clínicos/documentais. Button ganhou variantes secundária/discreta/filtro/navegação e nome acessível separado do texto curto; Select partilhado usa controlo nativo do navegador e alternativa React Native. Sem biblioteca nova. Cores e escalas existentes mantidas; seleção também sublinhada, foco inclui seletores. Desktop ≥900 px: navegação superior e avatar à direita; abaixo: navegação inferior em fluxo próprio, expansível com texto grande e safe-area web. A preparação nativa não equivale a ensaio físico.
+
+Referência antes das alterações: commit `07e8ba1`, capturada em ambiente temporário. Comparação local com a mesma conta/documento fictícios: `tmp/v072-before-Início-390.png` ↔ `tmp/v072-after-Início-390.png`, e o mesmo padrão para Histórico/Aprender/Perfil e 1280 px. Hub sem dados: `v072-{before,after}-hub-empty-{390,1280}.png`. Texto muito grande/escuro: `tmp/v072-large-dark-{320,390,768,1100,1280}.png`. Capturas principais comparadas visualmente; testes geométricos verificam limites do conteúdo/rodapé/navegação. Imagens e bases temporárias não publicadas.
+
+Repetir: os comandos da secção atual de [VALIDATION.md](VALIDATION.md) incluem a suite visual autenticada, sem bypass demonstrativo. A referência anterior é um artefacto deste sprint, não pode ser recriada usando o código posterior. Resultados, erros corrigidos e limitações ficam nesse relatório único. NVDA/VoiceOver, zoom real e testes com pessoas continuam pendentes; cores/teclado testados não constituem certificação.

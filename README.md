@@ -1,4 +1,4 @@
-# PULSO v0.7.1 — aplicação experimental
+# PULSO v0.7.2 — aplicação experimental
 React Native/Expo com pré-visualização web no Windows. Apenas dados inteiramente fictícios.
 
 ## Começar
@@ -7,8 +7,8 @@ Sem sessão, a entrada é pública; iniciar sessão é obrigatório para o ambie
 
 ## Funcional
 - Página pública, verificação neutra de sessão, ambiente pessoal protegido e contas novas vazias. Logout desmonta os dados privados.
-- Hub compacto, filtros/opções avançadas expansíveis, Perfil por grupos e onboarding rápido opcional. Nascimento mantém-se obrigatório nesta fase.
-- Experiência Simples/Equilibrado/Detalhado, preferências de acessibilidade/tema por conta e onboarding opcional retomável; Hub único ordena áreas sem alterar permissões.
+- Hub com ações principais, filtros compactos no Histórico e biblioteca Aprender editorial. Navegação superior no desktop e inferior no telemóvel. Perfil por grupos, largura limitada e data DD/MM/AAAA; nascimento obrigatório, guardado em ISO.
+- Experiência Simples/Equilibrado/Detalhado, preferências de acessibilidade/tema por conta e onboarding opcional retomável; as cinco áreas continuam no seletor de evolução, sem alterar permissões.
 - Gráficos individuais ou painéis combinados com tempo alinhado e escalas independentes; nove períodos incluindo personalizado e lista acessível paginada.
 - Acontecimentos fictícios com revisão, documentos associados, histórico de edição, versões e marcadores/duração nos gráficos; sem causalidade automática.
 - Contas individuais experimentais: registo/login/logout, sessão no servidor, nascimento obrigatório e restantes campos opcionais, avatar/fotografia privada e demonstrações exclusivas de testes isolados. Recuperação/verificação por código local de desenvolvimento; nenhum e-mail real é enviado.
