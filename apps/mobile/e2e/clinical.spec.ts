@@ -5,7 +5,7 @@ for(const width of [390,1100]) test('gráficos interativos e documento a '+width
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');
  await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
- await expect(page.getByText('Evolução descritiva', {exact:false})).toBeVisible();
+ await expect(page.getByText('Evolução dos registos.', {exact:false})).toBeVisible();
  await expect(page.getByText('Glicose · mg/dL', {exact:true})).toBeVisible();
  await expect(page.getByText('Glicose · mmol/L', {exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Ponto 08/05/2026 94 mg/dL',exact:true}).click();

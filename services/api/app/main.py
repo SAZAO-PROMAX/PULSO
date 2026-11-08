@@ -25,7 +25,7 @@ async def private_responses(request,call_next):
         try:session(request,mutation=request.method not in {'GET','HEAD','OPTIONS'})
         except HTTPException as exc:return JSONResponse({'detail':exc.detail},status_code=exc.status_code,headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'})
     response=await call_next(request)
-    if request.url.path.startswith(('/auth/','/demo/profiles/','/demo/extractions')):
+    if request.url.path.startswith(('/auth/','/demo/')):
         response.headers['Cache-Control']='no-store';response.headers['X-Content-Type-Options']='nosniff'
     return response
 app.add_middleware(CORSMiddleware, allow_origins=os.environ.get('PULSO_WEB_ORIGINS','http://localhost:8081,http://127.0.0.1:8081,http://127.0.0.1:8765').split(','), allow_credentials=True,allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Content-Type", "X-Pulso-Demo", "X-Pulso-Profile", "If-Match", "X-Pulso-CSRF"])

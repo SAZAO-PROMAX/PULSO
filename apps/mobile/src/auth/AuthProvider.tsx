@@ -10,8 +10,10 @@ export async function authRequest(path:string,body?:unknown,method='POST',versio
  const data=await response.json();if(!response.ok)throw new ApiError(data.detail??'Não foi possível concluir o pedido.',response.status);return data;
  }catch(e){if(e instanceof ApiError)throw e;throw Error('Não foi possível contactar o serviço local. Os campos foram mantidos; tente novamente.');}
 }
-const Auth=createContext<{user:User|null;ready:boolean;sessionError:string;photo:string|null;refresh:()=>Promise<User|null>;signIn:(email:string,password:string)=>Promise<void>;signOut:()=>Promise<void>}>({user:null,ready:false,sessionError:'',photo:null,refresh:async()=>null,signIn:async()=>{},signOut:async()=>{}});
+const Auth=createContext<{user:User|null;ready:boolean;testAccess:boolean;sessionError:string;photo:string|null;refresh:()=>Promise<User|null>;signIn:(email:string,password:string)=>Promise<void>;signOut:()=>Promise<void>}>({user:null,ready:false,testAccess:false,sessionError:'',photo:null,refresh:async()=>null,signIn:async()=>{},signOut:async()=>{}});
 export function AuthProvider({children}:{children:React.ReactNode}){
+ const [testAccess,setTestAccess]=useState(false);
+ useEffect(()=>{if(process.env.EXPO_PUBLIC_PULSO_TEST_DEMO==='true')void apiFetch('/auth/test-context').then(r=>r.json()).then(data=>setTestAccess(data.enabled===true)).catch(()=>{});},[]);
  const generation=useRef(0);const [ready,setReady]=useState(false),[sessionError,setSessionError]=useState('');
  const [user,setUser]=useState<User|null>(null),[photo,setPhoto]=useState<{owner:string;url:string}|null>(null);
  const apply=useCallback((data:Session)=>{setCsrf(data.csrf);setUser(data.user);setReady(true);setSessionError('');return data.user;},[]);
@@ -31,6 +33,6 @@ export function AuthProvider({children}:{children:React.ReactNode}){
   if(before===generation.current)apply(confirmed);
  }
  async function signOut(){generation.current++;try{await authRequest('logout');}catch(e){if(!(e instanceof ApiError&&e.status===401))throw e;}if(Platform.OS==='web')window.location.hash='/';apply({user:null,csrf:null});}
- return <Auth.Provider value={{user,ready,sessionError,photo:user?.hasPhoto&&photo?.owner===user.id?photo.url:null,refresh,signIn,signOut}}>{children}</Auth.Provider>;
+ return <Auth.Provider value={{user,ready,testAccess,sessionError,photo:user?.hasPhoto&&photo?.owner===user.id?photo.url:null,refresh,signIn,signOut}}>{children}</Auth.Provider>;
 }
 export const useAuth=()=>useContext(Auth);

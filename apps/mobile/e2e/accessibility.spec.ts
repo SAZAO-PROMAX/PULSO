@@ -8,15 +8,15 @@ const ratio=(a:string,b:string)=>{
  const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
 };
 
-test('tema persiste ao fechar e voltar a abrir um navegador de teste',async({playwright},info)=>{
+test('tema persiste ao fechar e voltar a abrir um navegador de teste',async({playwright,baseURL},info)=>{
  const dir=info.outputPath('theme-profile');let context=await playwright.chromium.launchPersistentContext(dir,{headless:true});
  try{
-  let page=await context.newPage();await page.goto('http://127.0.0.1:8765');
+  let page=await context.newPage();await page.goto(baseURL!);
   await page.getByRole('button',{name:'Modo escuro',exact:true}).click();
   await expect(page.getByRole('button',{name:'Modo claro',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>Object.keys(localStorage))).toEqual(['pulso.theme.v1']);
   await context.close();context=await playwright.chromium.launchPersistentContext(dir,{headless:true});
-  page=await context.newPage();await page.goto('http://127.0.0.1:8765');
+  page=await context.newPage();await page.goto(baseURL!);
   await expect(page.getByRole('button',{name:'Modo claro',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>localStorage.getItem('pulso.theme.v1'))).toBe('dark');
  }finally{await context.close();}

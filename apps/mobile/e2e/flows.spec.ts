@@ -1,4 +1,4 @@
-import {test,expect} from './fixtures';
+import {test,expect,reveal} from './fixtures';
 import path from 'node:path';
 test('registo de tensão persiste e aparece no mesmo histórico e gráfico',async({page})=>{
  await page.goto('/');
@@ -17,7 +17,7 @@ test('registo de tensão persiste e aparece no mesmo histórico e gráfico',asyn
  await page.getByRole('button',{name:'Perfil',exact:true}).click();
  await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
  await page.getByRole('button',{name:'Histórico',exact:true}).click();
- await expect(page.getByText('Este perfil ainda não tem registos.')).toBeVisible();
+ await expect(page.getByText('Ainda não tem exames guardados.')).toBeVisible();
 });
 test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -54,7 +54,7 @@ test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({
  await page.getByRole('button',{name:'Perfil',exact:true}).click();
  await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
  await page.getByRole('button',{name:'Histórico',exact:true}).click();
- await expect(page.getByText('Este perfil ainda não tem registos.')).toBeVisible();
+ await expect(page.getByText('Ainda não tem exames guardados.')).toBeVisible();
  expect(errors).toEqual([]);
 });
 test('falha de dados locais permite repetir, modo escuro e largura 320',async({page})=>{
@@ -95,6 +95,6 @@ test('PDF com apenas LDL e método ausente abre o parâmetro confirmado sem inve
  for(const parameter of ['Glicose','Creatinina','Hemoglobina','Hemoglobina glicada'])await page.getByRole('button',{name:'Excluir '+parameter,exact:true}).click();
  await page.getByLabel('Método Colesterol LDL',{exact:true}).fill('');await page.getByRole('button',{name:'Marcar revisto: Colesterol LDL',exact:true}).click();await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeFocused();await page.getByRole('button',{name:'Ver evolução de Colesterol LDL',exact:true}).click();await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toBeFocused();await expect(page.getByRole('button',{name:'Colesterol LDL',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByText('1 registo: Método ou amostra em falta: não é possível garantir comparabilidade.',{exact:true})).toBeVisible();await expect(page.getByTestId('point-detail')).toHaveCount(0);
- await page.getByRole('button',{name:'Combinado',exact:true}).click();await expect(page.getByRole('button',{name:'Glicose',exact:true})).toHaveAttribute('aria-pressed','false');await expect(page.getByRole('button',{name:'Colesterol LDL',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('list',{name:'Medições de Glicose',exact:true})).toHaveCount(0);
+ await reveal(page,'Combinado');await page.getByRole('button',{name:'Combinado',exact:true}).click();await expect(page.getByRole('button',{name:'Glicose',exact:true})).toHaveAttribute('aria-pressed','false');await expect(page.getByRole('button',{name:'Colesterol LDL',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('list',{name:'Medições de Glicose',exact:true})).toHaveCount(0);
  await page.getByRole('button',{name:'Histórico',exact:true}).click();await expect(page.getByRole('button',{name:'Gerir exame Documento laboratorial sintético',exact:true})).toBeVisible();
 });

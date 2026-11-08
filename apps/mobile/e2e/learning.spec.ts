@@ -5,10 +5,10 @@ test('hub usa dados do perfil e apresenta estados vazios sem inventar exames',as
  await expect(page.getByText('Olá, Perfil fictício A',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Perfil',exact:true}).click();await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
  await expect(page.getByText('Olá, Perfil fictício B',{exact:true})).toBeVisible();
- await expect(page.getByText('Ainda não adicionaste exames.',{exact:true})).toBeVisible();
- await expect(page.getByText('A tua evolução começa com o primeiro registo.',{exact:true})).toBeVisible();
- await expect(page.getByText('Ainda sem medições.',{exact:true})).toBeVisible();
- await expect(page.getByText('23',{exact:true})).toBeVisible();
+ await expect(page.getByText('Ainda não tem exames guardados.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Ainda não existem acontecimentos registados.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Ainda não existem medições registadas.',{exact:true})).toBeVisible();
+ await expect(page.getByText('23',{exact:true})).toHaveCount(0);
  await page.getByRole('button',{name:'Abrir Aprender',exact:true}).click();
  await expect(page.getByLabel('Pesquisar termos e tópicos',{exact:true})).toBeVisible();
 });

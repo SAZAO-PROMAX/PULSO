@@ -14,15 +14,15 @@ test('login confirma cookie, dados e recarga no mesmo hostname da aplicação',a
  page.on('request',r=>{if(new URL(r.url()).pathname==='/auth/login')hosts.push(new URL(r.url()).hostname);});
  await page.getByRole('button',{name:'Iniciar sessão',exact:true}).click();
  await expect.poll(()=>hosts[0]).toBe(base.hostname);
- await expect(page.getByText('CONTA EXPERIMENTAL · DADOS FICTÍCIOS',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Adicionar medição',exact:true})).toBeVisible();
+ await expect(page.getByText('Conta experimental · dados fictícios',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Adicionar medição',exact:true})).toBeVisible();
  const session=await (await page.request.get(api+'/auth/session')).json();expect(session.user).not.toBeNull();
  const data=await page.request.get(api+'/demo/profiles/'+session.user.id+'/data');expect(data.ok()).toBeTruthy();expect((await data.json()).results).toEqual([]);
- await page.reload();await expect(page.getByText('CONTA EXPERIMENTAL · DADOS FICTÍCIOS',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Adicionar medição',exact:true})).toBeVisible();
+ await page.reload();await expect(page.getByText('Conta experimental · dados fictícios',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Adicionar medição',exact:true})).toBeVisible();
 });
 
 test('cookie recusado não apresenta uma conta autenticada nem apaga os campos',async({page,context,baseURL})=>{
  const {email}=await prepare(page,baseURL!);
  await page.route('**/auth/login',async route=>{const response=await route.fetch();const headers={...response.headers()};delete headers['set-cookie'];await context.clearCookies({name:'pulso_session'});await route.fulfill({response,headers});});
  await page.getByRole('button',{name:'Iniciar sessão',exact:true}).click();
- await expect(page.getByRole('alert')).toContainText('cookie');await expect(page.getByText('CONTA EXPERIMENTAL · DADOS FICTÍCIOS',{exact:true})).toHaveCount(0);await expect(page.getByLabel('E-mail',{exact:true})).toHaveValue(email);
+ await expect(page.getByRole('alert')).toContainText('cookie');await expect(page.getByText('Conta experimental · dados fictícios',{exact:true})).toHaveCount(0);await expect(page.getByLabel('E-mail',{exact:true})).toHaveValue(email);
 });

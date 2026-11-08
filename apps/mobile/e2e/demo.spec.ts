@@ -14,7 +14,7 @@ test('navegação real e isolamento entre perfis fictícios',async({page})=>{
  await page.getByRole('button',{name:'Perfil',exact:true}).click();
  await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
  await page.getByRole('button',{name:'Histórico',exact:true}).click();
- await expect(page.getByText('Este perfil ainda não tem registos.')).toBeVisible();
+ await expect(page.getByText('Ainda não tem exames guardados.')).toBeVisible();
  await expect(page.getByText('Tensão sistólica: 123 mmHg')).toHaveCount(0);
  for(const tab of ['Registar','Aprender','Perfil','Início']) await page.getByRole('button',{name:tab,exact:true}).click();
  await page.screenshot({path:'../../docs/sprint0-mobile.png',fullPage:true});

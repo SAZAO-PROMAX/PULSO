@@ -326,3 +326,9 @@ async def preferences(request:Request):
             db.execute('UPDATE auth_users SET profile=?,version=version+1 WHERE id=?',(json.dumps(profile,ensure_ascii=False),row['id']))
         return {'saved':True}
     return await run_in_threadpool(save)
+
+
+@router.get('/test-context')
+def test_context():
+    from .test_mode import synthetic_test_mode
+    return {'enabled':synthetic_test_mode()}
