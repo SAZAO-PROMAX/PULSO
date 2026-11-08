@@ -1,2 +1,6 @@
 # Frontend PULSO
 Expo 57/React Native/TypeScript estrito. Dashboard, histórico e gráficos usam ApiRepository e a mesma SQLite através de FastAPI na porta 8000. Forms preserva tensão e encaminha a importação para DocumentImport: PDF/PNG/JPEG sintético, revisão/correção, confirmação, original e proveniência. Ollama só é contactado pelo backend. Arranque recomendado na raiz com dev.cmd; guia em ../../docs/GUIA_WINDOWS.md e resultados v0.4 em ../../docs/LOCAL_EXTRACTION.md. Web verificada; seletor/câmara nativos continuam por implementar.
+
+Hub.tsx é o único Hub, com resumos por perfil. learning/content.ts guarda o catálogo educativo local; LearningProvider/InfoButton/MedicalTerm/LearnScreen reutilizam a UI para explicações, pesquisa, categorias e fichas. Sem dados clínicos passados às explicações, sem IA educativa, sem novas dependências. Conteúdos e verificação em ../../docs/UX_LEARN.md.
+
+v0.5: tema persistido apenas no navegador por preferences.web.ts; fallback nativo informa limitação de sessão. Gráficos têm lista textual por teclado e motivos de exclusão; campos de tensão associam erros e foco. Resultados atuais em ../../docs/VALIDATION.md; ensaios humanos e de leitores de ecrã planeados em ../../docs/USABILITY_PROTOCOL.md.

@@ -17,7 +17,7 @@ test('cliente só remove cópia antiga após migração confirmada pelo backend'
 test('falha de transporte não declara sucesso nem apaga campos ou originais',async()=>{
  const repo=new ApiRepository(async()=>{throw Error('offline');});
  const input={systolic:'128',diastolic:'81',heartRate:'',date:'2026-11-07T10:00:00Z'};
- await assert.rejects(repo.savePressure('demo-a',input,'sid'),/contactar a API/);
+ await assert.rejects(repo.savePressure('demo-a',input,'sid'),/ligar ao serviço local/);
  assert.equal(input.systolic,'128');
 });
 test('confirmação explícita e correção preservam o extraído original',()=>{

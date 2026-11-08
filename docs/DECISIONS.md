@@ -1,4 +1,7 @@
 # Decisões — 07/11/2026
+## Sprint UX e Aprender — 08/11/2026
+Preservar Expo, cinco áreas, navegação, componentes de gráficos e ApiRepository. Evoluir Hub numa implementação única e criar catálogo educativo local tipado, com fontes, data editorial e revisão clínica pendente. Um único componente informativo acessível por toque/teclado, com popover modal em desktop e painel inferior em largura reduzida. Sem dependências novas, conteúdo personalizado, IA educativa ou CRUD de medicação/calendário. A biblioteca funciona sem a API, mantendo dados laboratoriais e educação separados. Implementação e limitações em UX_LEARN.md.
+
 > Estado atual: decisões históricas abaixo; atualização v0.4 no final.
 | ID | Decisão | Origem/estado |
 |---|---|---|
@@ -35,3 +38,7 @@ SQLite local é a única persistência ativa, com transações e migração da c
 ## v0.4 — 08/11/2026
 O pedido explícito do utilizador substitui D04: permite extração híbrida exclusivamente local com qwen3-vl:4b, sem interpretação clínica. Mantêm-se parser determinístico, SQLite única, confirmação humana e funcionamento sem Ollama. Adaptador REST httpx existente, sem SDK nem dependência nova; URL/modelo fixados por lista permitida, sem ferramentas/proxies/redirecionamentos. Seleção por página; visão apenas quando necessária. Não existe OCR independente: resultados visuais são sempre assinalados como não verificados por texto.
 Catálogo JSON partilhado: 12 parâmetros pedidos mais ureia/sódio/potássio para ensaiar um relatório de 15 parâmetros distintos. Só nomes/unidades, sem faixas clínicas ou códigos LOINC/UCUM inventados. Métodos/amostras/datas ausentes não são preenchidos para forçar gráficos. Destaque só com região textual inequívoca, recalculada no original guardado. Rascunhos continuam em memória; não são dados confirmados. Detalhes e evidência em LOCAL_EXTRACTION.md.
+
+## v0.5 — linguagem, educação e acessibilidade
+Reutilizar o único Hub, catálogo de 23 fichas e LearningProvider. Separar revisão editorial de revisão clínica com evidência profissional, sem atribuir aprovação artificial. Fontes históricas/não confirmadas têm notas visíveis; nenhum limiar ou objetivo terapêutico foi introduzido. Popover curto/ficha completa partilham conteúdo. Lista de pontos e motivos de exclusão complementam o gráfico sem mudar comparabilidade. Corrigir estados web, foco, bordas e associação de erros nos componentes existentes, sem dependências.
+Persistir só tema no localStorage web; adaptador nativo mantém sessão e informa a limitação, pois os fluxos suportados/verificados são web Windows. Não existiam outras preferências próprias de acessibilidade. Criar apenas um protocolo de usabilidade, com recrutamento planeado e grelha vazia; não inventar ensaios humanos. Zoom real/NVDA/dispositivos físicos ficam explicitamente pendentes. Não alterar pipeline Ollama, SQLite ou arquitetura de extração.

@@ -3,6 +3,7 @@ import {View,Platform} from 'react-native';
 import {Card,T,Button,Field,layout} from '../ui';
 import {ClinicalData,MedicalDocument,Result,parameterLabels,displayTime,resultDate,numberText,confirmationLabels,exclusionReason} from './data';
 import {originFor,confirmedResults,clinicalRepository,API} from './repository';
+import {MedicalTerm,InfoButton} from '../learning/Learning';
 export function DocumentView({doc}:{doc:MedicalDocument}) {
  const [open,setOpen]=useState(false);
  function openPdf(){
@@ -24,8 +25,10 @@ export function ResultDetail({data,result:r}:{data:ClinicalData;result:Result}) 
   }catch(e){target?.close();setPreviewError((e as Error).message);}
  }
  return <View testID="point-detail" style={layout.stack}><T kind="heading">Resultado selecionado</T>
+ <MedicalTerm parameter={r.parameter} label={parameterLabels[r.parameter]}/>
  <T>{resultDate(r)} · {r.value===null?'Valor não disponível':numberText(r.value)} {r.unit}</T>
  <T>Origem: {originFor(data,r)}</T><T>Referência do documento: {r.referenceText??'Não fornecida'}</T><T>Estado: {confirmationLabels[r.status]}</T>
+ <View style={[layout.row,{alignItems:'center'}]}><T kind="small">O intervalo do laboratório não é um objetivo individual.</T><InfoButton id="read-results" label="Intervalos de referência"/></View>
  {r.sessionId&&<T kind="small">Leitura de uma sessão domiciliária. Sem associação a medições do oxímetro.</T>}
  {r.evidence&&<T kind="small">Página {r.evidence.page??'não indicada'} · Extraído originalmente: {r.evidence.extractedValue} {r.evidence.extractedUnit}</T>}
  {r.evidence&&<><T kind="small">Método de leitura: {r.evidence.extractionMethod??'parser anterior'}{r.evidence.model?' · '+r.evidence.model:''}{r.evidence.ollamaVersion?' · Ollama '+r.evidence.ollamaVersion:''}</T>
@@ -45,7 +48,7 @@ export function History({data,onChanged}:{data:ClinicalData;onChanged:(message:s
  {data.documents.map(d=><Card key={d.id}><T kind="heading">{d.title}</T><T kind="small">{d.laboratory}</T><Button label={'Gerir exame '+d.title} onPress={()=>{setSelected(null);setSelectedDoc(d.id);}}/></Card>)}
  {doc&&<Card><DocumentView doc={doc}/><DocumentActions doc={doc} count={data.results.filter(r=>r.documentId===doc.id).length} onChanged={onChanged}/><Button label="Fechar exame" onPress={()=>setSelectedDoc(null)}/></Card>}
  {result&&<Card><ResultDetail data={data} result={result}/><ResultActions result={result} onChanged={onChanged}/><Button label="Fechar detalhe" onPress={()=>setSelected(null)}/></Card>}
- {rows.map(r=><Card key={r.id}><T kind="heading">{parameterLabels[r.parameter]}: {r.value===null?'—':numberText(r.value)} {r.unit}</T>
+ {rows.map(r=><Card key={r.id} testID="history-record"><MedicalTerm parameter={r.parameter} label={parameterLabels[r.parameter]+': '+(r.value===null?'—':numberText(r.value))+' '+r.unit}/>
  <T kind="small">{resultDate(r)} · {originFor(data,r)}</T>{exclusionReason(data,r)&&<T kind="small">Fora dos gráficos: {exclusionReason(data,r)}</T>}<Button label={'Consultar '+parameterLabels[r.parameter]+' '+resultDate(r)} onPress={()=>{setSelectedDoc(null);setSelected(r.id);}}/></Card>)}
  {data.results.some(r=>r.status==='extracted_pending')&&<Card><T kind="heading">Exemplo pendente</T><T kind="small">Existe um resultado de demonstração pendente. Não é considerado confirmado nem incluído nos gráficos.</T></Card>}
  </View>;
@@ -60,7 +63,7 @@ function ResultActions({result:r,onChanged}:{result:Result;onChanged:(message:st
  async function act(work:()=>Promise<void>,message:string){setBusy(true);setError('');try{await work();onChanged(message);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
  return <View style={layout.stack}>
  <Button label="Editar medição" disabled={busy} onPress={()=>{setEdit(true);setRemove(false);}}/>
- {edit&&<><Field label="Valor corrigido" value={value} onChange={setValue}/><Field label="Unidade corrigida" value={unit} onChange={setUnit}/><Field label="Data/hora com fuso (ISO)" value={date} onChange={setDate}/><T kind="small">O valor anterior e a evidência original são preservados. Se só existia a data, a hora técnica não é uma hora clínica.</T><Button label="Guardar correção" disabled={busy} onPress={()=>{if(!/^\d+(?:[.,]\d+)?$/.test(value)){setError('Introduz um número válido.');return;}void act(()=>clinicalRepository.editResult(r.ownerId,r.id,{value:Number(value.replace(',','.')),unit,measuredAt:date}),'Correção confirmada pela API.');}}/><Button label="Cancelar correção" disabled={busy} onPress={()=>{setEdit(false);setError('');}}/></>}
+ {edit&&<><Field label="Valor corrigido" value={value} onChange={setValue}/><Field label="Unidade corrigida" value={unit} onChange={setUnit}/><Field label="Data e hora com fuso horário (ISO)" value={date} onChange={setDate}/><T kind="small">O valor anterior e a evidência original são preservados. Se só existia a data, a hora técnica não é uma hora clínica.</T><Button label="Guardar correção" disabled={busy} onPress={()=>{if(!/^\d+(?:[.,]\d+)?$/.test(value)){setError('Introduz um número válido.');return;}void act(()=>clinicalRepository.editResult(r.ownerId,r.id,{value:Number(value.replace(',','.')),unit,measuredAt:date}),'Correção guardada.');}}/><Button label="Cancelar correção" disabled={busy} onPress={()=>{setEdit(false);setError('');}}/></>}
  <Button label="Eliminar medição" disabled={busy} onPress={()=>{setRemove(true);setEdit(false);}}/>
  {remove&&<><T>Eliminar apenas esta medição? O exame original e os restantes resultados serão mantidos.</T><Button label="Confirmar eliminação da medição" disabled={busy} onPress={()=>void act(()=>clinicalRepository.deleteResult(r.ownerId,r.id),'Medição eliminada na base local.')}/><Button label="Cancelar eliminação" disabled={busy} onPress={()=>setRemove(false)}/></>}
  {busy&&<T accessibilityLiveRegion="polite">A guardar na base local…</T>}{error&&<T accessibilityRole="alert">{error}</T>}

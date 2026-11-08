@@ -6,6 +6,7 @@ import {parameterLabels,MedicalDocument,labParameters} from './data';
 import {Extraction,Candidate,ReviewRow,confirmRows,rowLabel} from './importData';
 import {DocumentView} from './RecordViews';
 import {PdfPicker} from './PdfPicker';
+import {MedicalTerm} from '../learning/Learning';
 const MAX_BYTES=2*1024*1024;
 const mimeFor=(file:File)=>file.name.toLowerCase().endsWith('.pdf')?'application/pdf':file.name.toLowerCase().endsWith('.png')?'image/png':/\.jpe?g$/i.test(file.name)?'image/jpeg':null;
 async function original(file:File){
@@ -19,7 +20,7 @@ export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
  const [parsed,setParsed]=useState<Extraction|null>(null),[rows,setRows]=useState<ReviewRow[]>([]),[fileData,setFileData]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [selected,setSelected]=useState<File|null>(null),[stage,setStage]=useState(''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
- useEffect(()=>{active.current=true;fetch(API+'/demo/extraction/status',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(s=>{if(active.current)setEngine(s.available?'Motor local disponível · leitura no teu computador':'Motor local indisponível · parser e introdução manual disponíveis');}).catch(()=>{if(active.current)setEngine('Não foi possível verificar o motor local.');});return()=>{active.current=false;};},[]);
+ useEffect(()=>{active.current=true;fetch(API+'/demo/extraction/status',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(s=>{if(active.current)setEngine(s.available?'Motor local disponível · leitura no teu computador':'Motor local indisponível · leitura de texto e introdução manual disponíveis');}).catch(()=>{if(active.current)setEngine('Não foi possível verificar o motor local.');});return()=>{active.current=false;};},[]);
  function setExtraction(data:Extraction,url:string){
   setFileData(url);setParsed(data);setChoosing(null);
   setRows(data.candidates.map(c=>({parameter:c.parameter,value:c.value,unit:c.unit,method:c.method??'',context:c.context??'',date:(c.date===undefined?data.date:c.date)??'',laboratory:(c.laboratory===undefined?data.laboratory:c.laboratory)??'',include:true,reviewed:false})));
@@ -32,7 +33,7 @@ export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
    const response=await new Promise<Response>((resolve,reject)=>{
     const xhr=new XMLHttpRequest();xhr.open('POST',API+'/demo/extract');xhr.setRequestHeader('Content-Type',mimeFor(file)!);xhr.setRequestHeader('X-Pulso-Demo','synthetic-only');
     xhr.upload.onload=()=>{if(active.current)setStage('A ler as páginas localmente. Pode demorar alguns minutos.');};
-    xhr.onload=()=>resolve(new Response(xhr.responseText,{status:xhr.status}));xhr.onerror=()=>reject(Error('API indisponível. Inicia o PULSO com .\\dev.cmd e tenta novamente.'));xhr.onabort=()=>reject(Error('Tempo de leitura excedido. Podes repetir ou introduzir manualmente.'));
+    xhr.onload=()=>resolve(new Response(xhr.responseText,{status:xhr.status}));xhr.onerror=()=>reject(Error('Serviço local indisponível. Inicia o PULSO com .\\dev.cmd e tenta novamente.'));xhr.onabort=()=>reject(Error('Tempo de leitura excedido. Podes repetir ou introduzir manualmente.'));
     controller.signal.addEventListener('abort',()=>xhr.abort(),{once:true});xhr.send(source.bytes);
    });
    const data=await response.json();
@@ -82,8 +83,8 @@ export function DocumentImport({owner,onSaved}:{owner:string;onSaved:()=>void}){
  {preview&&<DocumentView doc={preview}/>}
  <T kind="small">Campos desconhecidos podem ficar vazios. Datas/métodos em falta impedem comparações seguras nos gráficos. A confirmação não equivale a validação médica.</T>
  {rows.map((r,i)=>{const raw=parsed.candidates[i],p=rowLabel(r,raw),label=p?parameterLabels[p]:'Parâmetro por identificar';return <Card key={i}>
- <T kind="heading">{label}</T><T kind="small">Nome no original: {raw.originalParameter??'Introdução manual'} · Página {raw.page??'não indicada'}</T>
- <T kind="small">Leitura: {raw.extractionMethod==='deterministic'?'parser determinístico':raw.extractionMethod==='manual'?'manual':'modelo local'}{raw.model?' · '+raw.model:''}</T>
+ {p?<MedicalTerm parameter={p} label={label}/>:<T kind="heading">{label}</T>}<T kind="small">Nome no original: {raw.originalParameter??'Introdução manual'} · Página {raw.page??'não indicada'}</T>
+ <T kind="small">Leitura: {raw.extractionMethod==='deterministic'?'leitura automática de texto':raw.extractionMethod==='manual'?'manual':'modelo local'}{raw.model?' · '+raw.model:''}</T>
  <T>Referência: {raw.referenceText??'Não fornecida'}</T><T kind="small">{raw.excerpt}</T>{raw.issues.map((issue,j)=><T key={j} kind="small">{issue}</T>)}
  <Button label={(r.include?'Excluir ':'Incluir ')+label} selected={r.include} onPress={()=>change(i,{include:!r.include})}/>
  {r.include&&<><Button label={'Parâmetro: '+label} onPress={()=>setChoosing(choosing===i?null:i)}/>

@@ -5,10 +5,10 @@ test('editar e eliminar uma medição preserva as restantes após recarregar',as
  await page.goto('/');await page.getByRole('button',{name:'Adicionar medição',exact:true}).click();
  await page.getByLabel('Sistólica (mmHg)',{exact:true}).fill('129');await page.getByLabel('Diastólica (mmHg)',{exact:true}).fill('82');
  await page.getByRole('button',{name:'Rever medição',exact:true}).click();await page.getByRole('button',{name:'Confirmar e guardar medição',exact:true}).click();
- await page.getByText('Tensão sistólica: 129 mmHg',{exact:true}).locator('..').getByRole('button').click();
+ await page.getByTestId('history-record').filter({has:page.getByText('Tensão sistólica: 129 mmHg',{exact:true})}).getByRole('button',{name:/^Consultar /}).click();
  await page.getByRole('button',{name:'Editar medição',exact:true}).click();await page.getByLabel('Valor corrigido',{exact:true}).fill('130');
  await page.getByRole('button',{name:'Guardar correção',exact:true}).click();await expect(page.getByText('Tensão sistólica: 130 mmHg',{exact:true})).toBeVisible();
- await page.getByText('Tensão sistólica: 130 mmHg',{exact:true}).locator('..').getByRole('button').click();
+ await page.getByTestId('history-record').filter({has:page.getByText('Tensão sistólica: 130 mmHg',{exact:true})}).getByRole('button',{name:/^Consultar /}).click();
  await page.getByRole('button',{name:'Eliminar medição',exact:true}).click();await page.getByRole('button',{name:'Confirmar eliminação da medição',exact:true}).click();
  await expect(page.getByText('Medição eliminada na base local.',{exact:true})).toBeVisible();
  await page.reload();await page.getByRole('button',{name:'Histórico',exact:true}).click();
@@ -34,4 +34,3 @@ test('exame pode ser corrigido e eliminado com resultados numa transação',asyn
  expect(data.documents.some((d:any)=>d.id===id)).toBe(false);expect(data.results.some((r:any)=>r.documentId===id)).toBe(false);
  expect(data.documents.length).toBe(3);
 });
-

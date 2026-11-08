@@ -29,7 +29,7 @@ for(const width of [390,1100]) test('gráficos interativos e documento a '+width
 test('respiração e tensão reutilizam os gráficos',async({page})=>{
  await page.goto('/');
  await page.getByRole('button',{name:'Saúde respiratória',exact:true}).click();
- await expect(page.getByText('Saturação de oxigénio (SpO₂) · %',{exact:true})).toBeVisible();
+ await expect(page.getByText('Saturação periférica de oxigénio (SpO₂) · %',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Voltar ao início'}).click();
  await page.getByRole('button',{name:'Tensão arterial',exact:true}).click();
  await expect(page.getByText('Tensão sistólica · mmHg',{exact:true}).first()).toBeVisible();

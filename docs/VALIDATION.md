@@ -1,3 +1,23 @@
+# Validação atual — v0.5, 08/11/2026
+
+Executado em Windows: **25 testes TypeScript, 23 Chromium, 42 API e 2 de fundação — 92 aprovados**. Typecheck e exportação web Expo aprovados. Playwright: `23 passed, 2 skipped`; os dois opcionais de inferência real não foram repetidos nesta v0.5, sem alteração ao motor. Comandos reproduzíveis em [UX_LEARN.md](UX_LEARN.md); logs desta execução em `tmp/v05-browser.log` e `tmp/v05-api.log` (temporários, fora do Git).
+
+Novos testes: preferência apenas não clínica, armazenamento bloqueado, fechar/reabrir processo Chromium conservando tema; diálogo nomeado com foco inicial, ciclo Tab, Escape e retorno; estados dos botões; erros associados aos campos; foco e contraste calculado de texto/campo nos dois temas; lista textual de medições por teclado; motivo real de data ausente mantendo o registo no histórico; biblioteca com pedidos externos bloqueados e fonte solicitada só depois do clique. Catálogo verifica seis secções/23 fichas, fontes, revisão editorial e ausência de revisão clínica inventada. Testes anteriores de PDF/correção/confirmação/recarga/original/gráfico, tensão, edição/eliminação, isolamento e migração preservados e aprovados.
+
+Responsividade verificada pelas suites existentes em 320, 390, 1100 e 1280 px, incluindo tema escuro, modal, navegação, formulário e artigo com **zoom CSS 200%**. Não é zoom real do navegador. Tentativa de acesso ao Chrome pelo controlo nativo terminou por tempo de espera da autorização, antes de observar/controlar a página: nenhum ensaio de zoom real foi concluído. NVDA não encontrado nos locais habituais, PATH, registo de instalação/processos consultados; não foi instalado. Nenhum leitor de ecrã real, TalkBack, VoiceOver, dispositivo físico ou participante humano foi ensaiado. Não há certificação WCAG nem revisão clínica independente. O [protocolo](USABILITY_PROTOCOL.md) contém passos e grelha em branco, não resultados.
+
+Base normal `.local` preservada; testes API/Chromium usaram bases temporárias. Sem dependências novas. Avisos não bloqueantes Starlette/httpx, PyMuPDF/ByteString e NO_COLOR/FORCE_COLOR mantêm-se. Auditoria de dependências histórica não foi reavaliada nem declarada resolvida. Não houve commit ou push deste sprint. Limites e inventário de alterações em [UX_LEARN.md](UX_LEARN.md).
+
+## Registo histórico — Hub e Aprender, 08/11/2026
+
+Typecheck e exportação web Expo aprovados. Testes executados neste sprint: **23 TypeScript, 18 Chromium, 42 API e 2 de fundação — 85 aprovados**. Os 2 testes opcionais com inferência real não foram repetidos nem incluídos nesta contagem; backend/Ollama não foram alterados.
+
+Novos ensaios verificam contagens/isolamento no Hub e associação de tensão só na mesma sessão; catálogo/fontes/relações; pesquisa com acentos e aliases; categorias, fichas e termos relacionados; popover por teclado, Escape e restituição do foco; retorno ao parâmetro certo no histórico; modal a 320 px sem perder o formulário; biblioteca sem API; largura 390/1280, temas e navegação em artigo com ampliação CSS de 200%. Fluxos anteriores de importação/correção/confirmação, gráfico/original, tensão, edição/eliminação e isolamento continuam a passar.
+
+Capturas revistas visualmente: Hub desktop/móvel, Aprender escuro, modal de 320 px e ficha ampliada. Código e dados educativos em [UX_LEARN.md](UX_LEARN.md). Conteúdos experimentais com revisão editorial datada e **revisão clínica independente pendente**. Sem certificação de acessibilidade, leitor de ecrã, ensaio com utilizadores ou dispositivo físico. Avisos não bloqueantes de depreciação Starlette/httpx e PyMuPDF/ByteString e NO_COLOR/FORCE_COLOR; sem dependências novas. Base normal preservada; testes usaram bases temporárias.
+
+As secções seguintes são registos históricos.
+
 # Validação Sprint 0 — 07/11/2026
 Ambiente: Windows, Node 24.22.1, npm 11.19.1, Python 3.15.2. Expo 57.0.32, React Native 0.86.3 e React 19.2.3. Dependências Python em requirements-dev.txt, frontend no package-lock.json.
 

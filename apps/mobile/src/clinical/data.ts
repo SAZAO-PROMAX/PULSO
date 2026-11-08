@@ -1,6 +1,6 @@
 import fixture from '../../../../data/synthetic/clinical.json';
 import laboratory from '../../../../packages/shared/laboratory.json';
-export const parameterLabels = {glucose:'Glicose',ldl:'Colesterol LDL',creatinine:'Creatinina',hemoglobin:'Hemoglobina',hba1c:'Hemoglobina glicada',cholesterol_total:'Colesterol total',hdl:'Colesterol HDL',triglycerides:'Triglicéridos',ferritin:'Ferritina',tsh:'TSH',ft4:'T4 livre',vitamin_d:'Vitamina D',urea:'Ureia',sodium:'Sódio',potassium:'Potássio',systolic:'Tensão sistólica',diastolic:'Tensão diastólica',heart_rate:'Frequência cardíaca',spo2:'Saturação de oxigénio (SpO₂)'} as const;
+export const parameterLabels = {glucose:'Glicose',ldl:'Colesterol LDL',creatinine:'Creatinina',hemoglobin:'Hemoglobina',hba1c:'Hemoglobina glicada',cholesterol_total:'Colesterol total',hdl:'Colesterol HDL',triglycerides:'Triglicéridos',ferritin:'Ferritina',tsh:'TSH',ft4:'T4 livre',vitamin_d:'Vitamina D',urea:'Ureia',sodium:'Sódio',potassium:'Potássio',systolic:'Tensão sistólica',diastolic:'Tensão diastólica',heart_rate:'Frequência cardíaca',spo2:'Saturação periférica de oxigénio (SpO₂)'} as const;
 export type Parameter = keyof typeof parameterLabels;
 export const labParameters=laboratory.parameters.map(p=>p.id as Parameter);
 export const labUnits=Object.fromEntries(laboratory.parameters.map(p=>[p.id,p.units])) as Partial<Record<Parameter,string[]>>;
@@ -91,4 +91,4 @@ export function displayDate(iso:string) {return new Date(iso).toLocaleDateString
 export function displayTime(iso:string) {return new Date(iso).toLocaleString('pt-PT',{timeZone:'Europe/Lisbon',dateStyle:'short',timeStyle:'short'})+' (Lisboa)';}
 export const numberText=(value:number)=>value.toLocaleString('pt-PT',{maximumFractionDigits:6});
 export const resultDate=(r:Result)=>!r.measuredAt?'Data não disponível':r.datePrecision==='day'?displayDate(r.measuredAt)+' (hora não fornecida)':displayTime(r.measuredAt);
-export const confirmationLabels:Record<Confirmation,string>={user_declared:'Registo manual fictício',user_confirmed:'Confirmado pelo utilizador — sem validação clínica',extracted_pending:'Pendente de revisão',professional_verified:'Fonte profissional verificada'};
+export const confirmationLabels:Record<Confirmation,string>={user_declared:'Registo manual fictício',user_confirmed:'Confirmado pelo utilizador — sem validação clínica',extracted_pending:'Resultado pendente de confirmação',professional_verified:'Verificação profissional — exemplo fictício'};

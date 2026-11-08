@@ -1,4 +1,15 @@
 # PULSO no Windows — arranque e estabilização
+## Hub e Aprender
+O arranque continua a ser `.\dev.cmd`, descrito abaixo. Atualiza o separador http://localhost:8081 para ver o Hub atualizado. As cinco áreas mantêm os acessos habituais; os resumos usam os registos do perfil selecionado.
+
+Na barra inferior, escolhe **Aprender**. Pesquisa, por exemplo, «glicada», «creatinina» ou «consulta»; escolhe uma categoria e abre uma ficha. Os termos relacionados permitem continuar a leitura. O botão **Ver histórico deste parâmetro** abre a evolução correspondente.
+
+Nos gráficos, resultados, revisão de exames e formulário de tensão, o botão **i** abre uma explicação. No computador podes usar Tab e Enter; Escape fecha e devolve o foco. Em largura reduzida, aparece um painel inferior que podes percorrer sem perder os campos preenchidos.
+
+Com ampliação grande, podes deslocar verticalmente o menu inferior para chegar às restantes opções, mantendo espaço para ler a página.
+
+A biblioteca funciona localmente mesmo se a API estiver indisponível; abrir as fontes externas necessita de Internet. Os textos são educativos, com fontes e data editorial, e revisão clínica independente pendente. Não interpretam os teus valores. Detalhes e limitações em [UX_LEARN.md](UX_LEARN.md).
+
 ## Leitura local v0.4 com Ollama
 O Ollama e qwen3-vl:4b já foram encontrados neste ASUS; não é necessário reinstalar nem voltar a descarregar o modelo. Abre Ollama no menu Iniciar e mantém a aplicação em execução. Num PowerShell normal podes verificar:
 ```powershell
@@ -107,4 +118,15 @@ npx.cmd expo export --platform web
 npm.cmd run test:web
 ```
 Playwright usa uma base SQLite temporária em tmp e nunca reutiliza a API normal. Os testes são sequenciais e repõem apenas essa base temporária.
-Ver STABILIZATION.md para checkpoints e VALIDATION.md para resultados. O repositório foi sincronizado anteriormente com GitHub; este incremento v0.4 não faz publicação automática.
+Ver STABILIZATION.md para checkpoints e VALIDATION.md para resultados. O repositório foi sincronizado anteriormente com GitHub; os incrementos não fazem publicação automática.
+
+## Experimentar a v0.5
+
+1. Na raiz, executar `.\dev.cmd`. Abrir http://localhost:8081 no navegador do PC. Se já estiver aberto, recarregar a página.
+2. No Hub, escolher Análises ao sangue → parâmetro/período. Consultar um ponto ou usar os botões de «Registos do gráfico», com data, unidade e origem. Dados excluídos têm motivo visível e continuam no Histórico.
+3. Usar o botão «i» por clique ou Tab/Enter. O foco começa em Fechar explicação; Escape fecha e volta ao botão. «Abrir em Aprender» mostra seis secções, fontes e estado de revisão. Todas as fichas aguardam revisão clínica independente.
+4. Em Aprender, pesquisar «glicemia», «HbA1c» ou «tensão». A biblioteca funciona sem Internet, desde que o serviço web local esteja a correr; só abrir uma fonte externa exige Internet. Não existe instalação offline/service worker.
+5. Alternar modo claro/escuro, fechar e reabrir o navegador no mesmo endereço: a preferência mantém-se nesse navegador. Se o armazenamento estiver bloqueado, aparece um aviso. Não são guardados dados clínicos nesta preferência. A versão nativa ainda não persiste tema.
+6. Adicionar medição → tentar rever com os campos vazios para verificar erros → preencher apenas valores fictícios → rever/guardar. Importação, correção, confirmação, edição e eliminação mantêm o fluxo descrito acima.
+
+Ensaios manuais de zoom real e leitores de ecrã: seguir USABILITY_PROTOCOL.md. São testes pendentes; não foi feita certificação de acessibilidade ou estudo com pessoas. Resultados automáticos executados em VALIDATION.md.

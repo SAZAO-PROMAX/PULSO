@@ -21,6 +21,7 @@ DocumentImport reutiliza a revisão e permite associação de parâmetro, corre�
 GET /demo/profiles/{owner}/preview/{result_id} verifica âmbito e recalcula uma região textual única no PDF guardado, devolvendo PNG sem cache. Não usa coordenadas do modelo nem altera o original.
 Sem autenticação de produção: X-Pulso-Profile é só âmbito demonstrativo. Configuração, evidência, limites e fontes em LOCAL_EXTRACTION.md.
 ## Limites e evolução
+Hub.tsx reutiliza os componentes visuais e as rotas de App; hubData.ts calcula apenas contagens/cronologia por perfil. learning/content.ts é um catálogo educativo estático, sem dependência dos valores clínicos. LearningProvider/InfoButton/MedicalTerm são partilhados por resultados, gráficos e formulários; LearnScreen oferece pesquisa/categorias/fichas. Conteúdo e referências não são guardados como medições nem interpretam o estado clínico. Sem novo backend/DB/dependência. Detalhes em UX_LEARN.md.
 Sem PostgreSQL/SQLAlchemy/Alembic, contas de produção, auditoria de acessos, gestão de chaves, backups ou sincronização. Escritas da API são transacionais; não há sincronização externa.
 Registos confirmados podem ser corrigidos ou eliminados no Histórico, com validação no backend; revisões da extração original ficam preservadas. Cancelar uma revisão não guarda resultados. Rascunhos não persistem entre reinícios.
 Instituições, objetivos clínicos, OCR independente e interpretação clínica continuam fora do âmbito.
@@ -28,6 +29,9 @@ Documentos originais, acesso por recurso, encriptação e migrações de servido
 
 ## Correção PDF Windows
 Parser executado por subprocess.run numa thread (asyncio.to_thread), compatível com event loop Selector usado por reload no Windows. Timeout e isolamento de processo preservados. Exemplo estático também em apps/mobile/public; download não requer API. Script scripts/start.ps1 inicia API e frontend. Estados de envio/espera extração derivam de eventos XMLHttpRequest; conclusão é apenas após resposta de gravação da API.
+
+## Educação e preferências v0.5
+Preferências v0.5: `preferences.web.ts` persiste apenas tema em localStorage; resolução por plataforma mantém `preferences.ts` nativo com aviso de sessão, sem nova dependência. Dados clínicos continuam exclusivamente no repositório/API existente. Catálogo educativo tipado separa estado editorial, revisão clínica e evidência profissional; `LearningProvider` continua único. A lista textual do gráfico e os motivos de exclusão derivam das mesmas medições/regras do desenho, sem fonte paralela.
 
 ## Arranque independente
 package.json raiz encaminha npm run dev para scripts/dev.mjs. dev.cmd encontra Node instalado sem PATH do Codex; scripts/start.ps1 delega no mesmo launcher. Portas ocupadas são recusadas, sem reutilizar APIs antigas. Logs visíveis, --reload no backend e Metro normal. Ctrl+C termina apenas os processos filhos iniciados pelo launcher. Ver GUIA_WINDOWS.md para LAN e limites do QR.

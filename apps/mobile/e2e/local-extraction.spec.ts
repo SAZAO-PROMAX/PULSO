@@ -5,7 +5,7 @@ import path from 'node:path';
 test('imagem com Ollama desligado: introdução manual, revisão, SQLite, gráfico e proveniência',async({page,request})=>{
  await page.goto('/');
  await page.getByRole('button',{name:'Adicionar exame',exact:true}).click();
- await expect(page.getByText('Motor local indisponível · parser e introdução manual disponíveis',{exact:true})).toBeVisible();
+ await expect(page.getByText('Motor local indisponível · leitura de texto e introdução manual disponíveis',{exact:true})).toBeVisible();
  await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../tmp/v04-benchmark/photo.png'));
  await page.getByRole('button',{name:'Importar PDF',exact:true}).click();
  await expect(page.getByText('Leitura automática não concluída. Podes introduzir os resultados manualmente.',{exact:true})).toBeVisible();

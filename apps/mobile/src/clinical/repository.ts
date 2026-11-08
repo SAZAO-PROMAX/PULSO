@@ -8,7 +8,7 @@ export class ApiRepository implements ClinicalRepository {
   if(!['demo-a','demo-b'].includes(owner))throw Error('Perfil de demonstração inválido.');
   let response:Response;
   try{response=await this.transport(API+'/demo/profiles/'+owner+path,{method,headers:{'Content-Type':'application/json','X-Pulso-Profile':owner},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(15000)});}
-  catch{throw Error('Não foi possível contactar a API. Inicia o PULSO com .\\dev.cmd. Os campos continuam disponíveis para tentar novamente.');}
+  catch{throw Error('Não foi possível ligar ao serviço local. Inicia o PULSO com .\\dev.cmd. Os campos continuam disponíveis para tentar novamente.');}
   const payload=await response.json().catch(()=>({}));
   if(!response.ok)throw Error(typeof payload.detail==='string'?payload.detail:'Não foi possível guardar ou recuperar os dados. Tenta novamente.');
   return payload;
