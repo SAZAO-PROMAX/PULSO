@@ -1,4 +1,4 @@
-# Arquitetura atual — PULSO v0.7
+# Arquitetura atual — PULSO v0.7.1
 Frontend Expo 57 / React Native 0.86.3 / React 19.2.3 / TypeScript estrito, com react-native-web. Backend Python/FastAPI/Pydantic e PyMuPDF. Stack mantida.
 
 ## Interface
@@ -10,7 +10,7 @@ App carrega dados por perfil, cancela apresentação de respostas tardias e atua
 ApiRepository é a única fonte ativa do frontend. SQLite da biblioteca Python padrão, num único ficheiro .local/pulso.sqlite3, guarda snapshots JSON versionados por perfil. Não há dependência SQL adicional ou PostgreSQL operacional.
 GET /demo/profiles/{owner}/data lê a base. POST confirm/pressure gravam com confirmação do backend; PATCH e DELETE gerem registos e documentos. BEGIN IMMEDIATE, validação integral e commit/rollback protegem consistência e concorrência. A eliminação de exame remove os resultados associados na mesma transação; uma medição pode ser removida sem apagar o original.
 A migração localStorage é só leitura e remoção após confirmação da API, uma vez por perfil. Se a base já tiver alterações, uma migração conflitante é recusada sem sobrescrever dados. A base nunca é reposta por estar vazia: apenas a ação explícita de reset reinstala as fixtures. Originais, hash, evidência e versões anteriores das correções são preservados; PDFs permanecem na base.
-O backend verifica o perfil do pedido e os proprietários dos recursos. O cabeçalho X-Pulso-Profile é um âmbito demonstrativo, não autenticação. Não existem contas reais.
+O prefixo histórico /demo está protegido por sessão no funcionamento normal. X-Pulso-Profile não autentica contas; estas são ligadas à sessão/dono. Perfis demo só são aceites com configuração explícita e base temporária dentro de tmp.
 
 ## Incremento v0.6
 
@@ -79,3 +79,9 @@ Uma conta deverá usar um backend central autenticado em HTTPS para Personal web
 | Administrador | Operação autorizada; sem acesso indiscriminado ao conteúdo médico |
 
 Negar por defeito; não atribuir papel profissional por opção no perfil. Prever identidade/credenciais verificadas, concessão por recurso/finalidade, auditoria de acessos sem conteúdo clínico, revogação no servidor e invalidação de cópias quando aplicável. Modo Simples/Equilibrado/Detalhado nunca modifica concessões. Não há portais, delegação ou partilha clínica de produção nesta versão.
+
+
+## Entrada e navegação na simplificação v0.7.1
+SessionGate aguarda AuthProvider e separa PublicEntry da Shell privada. A verificação do contexto demonstrativo é feita pelo servidor, sem confiar na compilação do cliente; testes usam a mesma interface com backend explicitamente isolado. Rotas hash permitidas em routes.ts retomam apenas destinos internos conhecidos. No modo normal não há seletor/reset de perfis demo. AuthProvider revoga/limpa sessão e ignora respostas antigas; ApiRepository continua único, sem cache clínica persistente no navegador.
+Novas contas recebem snapshot vazio diretamente em store.seed, sem ler fixtures. FixtureRepository foi movido para auxiliar de testes; dados sintéticos de ensaio não integram o modelo clínico carregado pela aplicação. Não foram removidos dados da base normal nem criadas migrações de limpeza.
+Callback SavedRecord identifica documento, sessão de tensão ou acontecimento após confirmação do backend. Histórico abre o detalhe correspondente; edição atualiza-o preservando filtros e conflitos, eliminação regressa à lista. Evolução documental é uma ação no detalhe, mantendo ClinicalPanel/TimelineChart existentes. Modos partilham componentes/dados; filtros, métodos, períodos e catálogo completo usam divulgação progressiva. Perfil e onboarding reutilizam os mesmos controlos; há conclusão rápida após escolher modo.

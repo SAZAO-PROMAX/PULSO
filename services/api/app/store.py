@@ -91,6 +91,7 @@ def validate(owner,data):
     return data
 
 def seed(owner):
+    if owner not in {'demo-a','demo-b'}:return validate(owner,{'schemaVersion':1,'documents':[],'results':[]})
     data=json.loads((ROOT/"data/synthetic/clinical.json").read_text(encoding="utf-8-sig"))
     data["documents"]=[d for d in data["documents"] if d["ownerId"]==owner]
     data["results"]=[r for r in data["results"] if r["ownerId"]==owner]

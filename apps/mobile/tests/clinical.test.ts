@@ -1,6 +1,7 @@
+import {FixtureRepository} from './fixtureRepository';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {FixtureRepository,buildSeries,coordinates,validateData,Result} from '../src/clinical/data';
+import {buildSeries,coordinates,validateData,Result} from '../src/clinical/data';
 import {exclusionReason} from '../src/clinical/data';
 async function sample(){return new FixtureRepository().load('demo-a');}
 test('datas cronológicas, valores e unidades originais sem mutação',async()=>{

@@ -12,8 +12,8 @@ export async function authRequest(path:string,body?:unknown,method='POST',versio
 }
 const Auth=createContext<{user:User|null;ready:boolean;testAccess:boolean;sessionError:string;photo:string|null;refresh:()=>Promise<User|null>;signIn:(email:string,password:string)=>Promise<void>;signOut:()=>Promise<void>}>({user:null,ready:false,testAccess:false,sessionError:'',photo:null,refresh:async()=>null,signIn:async()=>{},signOut:async()=>{}});
 export function AuthProvider({children}:{children:React.ReactNode}){
- const [testAccess,setTestAccess]=useState(false);
- useEffect(()=>{if(process.env.EXPO_PUBLIC_PULSO_TEST_DEMO==='true')void apiFetch('/auth/test-context').then(r=>r.json()).then(data=>setTestAccess(data.enabled===true)).catch(()=>{});},[]);
+ const [testAccess,setTestAccess]=useState(false),[contextReady,setContextReady]=useState(false);
+ useEffect(()=>{void apiFetch('/auth/test-context',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(data=>setTestAccess(data.enabled===true)).catch(()=>{}).finally(()=>setContextReady(true));},[]);
  const generation=useRef(0);const [ready,setReady]=useState(false),[sessionError,setSessionError]=useState('');
  const [user,setUser]=useState<User|null>(null),[photo,setPhoto]=useState<{owner:string;url:string}|null>(null);
  const apply=useCallback((data:Session)=>{setCsrf(data.csrf);setUser(data.user);setReady(true);setSessionError('');return data.user;},[]);
@@ -33,6 +33,6 @@ export function AuthProvider({children}:{children:React.ReactNode}){
   if(before===generation.current)apply(confirmed);
  }
  async function signOut(){generation.current++;try{await authRequest('logout');}catch(e){if(!(e instanceof ApiError&&e.status===401))throw e;}if(Platform.OS==='web')window.location.hash='/';apply({user:null,csrf:null});}
- return <Auth.Provider value={{user,ready,testAccess,sessionError,photo:user?.hasPhoto&&photo?.owner===user.id?photo.url:null,refresh,signIn,signOut}}>{children}</Auth.Provider>;
+ return <Auth.Provider value={{user,ready:ready&&contextReady,testAccess,sessionError,photo:user?.hasPhoto&&photo?.owner===user.id?photo.url:null,refresh,signIn,signOut}}>{children}</Auth.Provider>;
 }
 export const useAuth=()=>useContext(Auth);

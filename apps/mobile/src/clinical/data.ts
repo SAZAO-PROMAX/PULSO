@@ -1,5 +1,4 @@
 import {HealthEvent,eventTypes} from './events';
-import fixture from '../../../../data/synthetic/clinical.json';
 import laboratory from '../../../../packages/shared/laboratory.json';
 import {validateClassification} from './classification';
 export const parameterLabels = {glucose:'Glicose',ldl:'Colesterol LDL',creatinine:'Creatinina',hemoglobin:'Hemoglobina',hba1c:'Hemoglobina glicada',cholesterol_total:'Colesterol total',hdl:'Colesterol HDL',triglycerides:'Triglicéridos',ferritin:'Ferritina',tsh:'TSH',ft4:'T4 livre',vitamin_d:'Vitamina D',urea:'Ureia',sodium:'Sódio',potassium:'Potássio',systolic:'Tensão sistólica',diastolic:'Tensão diastólica',heart_rate:'Frequência cardíaca',spo2:'Saturação periférica de oxigénio (SpO₂)'} as const;
@@ -60,13 +59,6 @@ export function validateData(data:ClinicalData):void {
  }
 }
 export interface ClinicalRepository {load(ownerId:string):Promise<ClinicalData>}
-export class FixtureRepository implements ClinicalRepository {
- constructor(private data:ClinicalData=fixture as ClinicalData){}
- async load(ownerId:string):Promise<ClinicalData> {
-  validateData(this.data);
-  return JSON.parse(JSON.stringify({...this.data, events:(this.data.events??[]).filter(e=>e.ownerId===ownerId),documents:this.data.documents.filter(d=>d.ownerId===ownerId),results:this.data.results.filter(r=>r.ownerId===ownerId)})) as ClinicalData;
- }
-}
 export type Point = Result & {value:number;measuredAt:string};
 export interface Series {key:string;parameter:Parameter;unit:string;method:string;context:string;points:Point[]}
 const canonicalText=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toLowerCase();

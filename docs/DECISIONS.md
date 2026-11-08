@@ -70,3 +70,8 @@ Marcadores agrupados por dia UTC, duração sombreada e alternativa textual nos 
 
 ## v0.7.1 — transição após confirmação documental
 Callback de gravação recebe ID/parâmetros só para resultados confirmados, após sucesso da API. Recarregar pela revisão atual antes de apresentar o novo gráfico, mantendo guardas de dono. Navegar para a evolução e restaurar foco/rolagem; selecionar pontos do documento importado sem os confundir com pontos históricos. Dados incompletos mantêm exclusão/proveniência. Não filtrar os dados persistidos nem reconstruir gráficos; usar ClinicalPanel/TimelineChart/DocumentView existentes. Tensão, acontecimentos e documento sem extração mantêm fluxo do Histórico. Nenhuma mudança à autorização, comparabilidade, persistência ou pipeline de extração.
+
+
+## Simplificação v0.7.1 — 08/11/2026
+O novo pedido substitui o destino automático para gráficos: exames com/sem resultados abrem detalhe, com ação de evolução. Sessão obrigatória, página pública separada e demo só em contexto confirmado pelo servidor e DB dentro de tmp. Flag de compilação nunca concede autorização. Fixtures clínicas saem do modelo da aplicação; contas novas inicializam vazias. Nenhuma limpeza automática ou migração destrutiva; reposições só em testes com confirmação do perfil.
+Reutilizar Shell, componentes, repositório e persistência; manter filtros/seleção ao editar e voltar à lista após eliminar. Hub sem métricas vazias, categorias/filtros/opções progressivos, Perfil por grupos e onboarding rápido opcional. Nascimento permanece obrigatório por resposta explícita do utilizador, apesar de ainda não personalizar o Hub. Auditoria de todos os 19 parâmetros distingue catálogo/modelo/API/UI de parser determinístico/LLM; sem expansão clínica ou novas dependências.

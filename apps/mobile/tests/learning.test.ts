@@ -1,7 +1,8 @@
+import {FixtureRepository} from './fixtureRepository';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {topics,publishedTopics,topicById,topicForParameter,categories,searchTopics,todayTopic,clinicallyReviewed} from '../src/learning/content';
-import {parameterLabels,FixtureRepository} from '../src/clinical/data';
+import {parameterLabels} from '../src/clinical/data';
 import {hubSummary} from '../src/hubData';
 
 test('termos dos parâmetros têm ficha pública, fonte, data e relações resolvidas',()=>{

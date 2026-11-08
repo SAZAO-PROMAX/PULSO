@@ -1,4 +1,35 @@
-# Validação atual — v0.7.1, 08/11/2026
+# Validação atual — simplificação v0.7.1, 08/11/2026
+
+**198 testes distintos aprovados:** 100 API, 55 TypeScript, 34 Chromium em demonstração explicitamente isolada e 4 Chromium na configuração normal sem demonstração, 2 de estrutura e 3 do gerador. Dois Chromium opcionais de inferência real omitidos. Typecheck, pip check e exportação web aprovados. Sem nova inferência GPU, teste de carga, exportação nativa ou dependência instalada. Logs finais locais: `tmp/simplification-api-final2.log`, `tmp/simplification-unit-final.log`, `tmp/simplification-browser-release.log`, `tmp/simplification-public-release.log`. Todos os testes escrevem apenas em bases temporárias; nenhuma limpeza da base normal.
+
+A: entrada pública sem pedidos clínicos, verificação neutra, rota privada/retorno interno permitido, conta vazia, cookie recusado, logout/Voltar e sessão ausente sem dados anteriores. Endpoints /demo protegidos no normal, mesmo com cabeçalhos falsos; modo demonstrativo recusa DB normal. Reposição exige confirmação do dono demo e preserva a conta de ensaio. O cliente depende do contexto confirmado pelo servidor, não de uma flag de compilação. Um desvio de retorno à rota no teste da compilação estática foi corrigido e o percurso repetido na suite normal.
+
+B: exame com resultados e documento sem extração abrem detalhe após persistência; tensão abre o registo, acontecimentos a cronologia. Evolução é ação no exame. Edição mantém contexto/filtros, conflito mantém campos; exclusão regressa à lista e preserva recursos não abrangidos. Testes de acontecimentos aguardam confirmação de gravação antes de ler a versão, evitando uma leitura prematura no próprio teste. C: catálogo de 19 parâmetros percorrido na API/modelo e UI; matriz abaixo, sem alegar reconhecimento universal por IA. D: Hub compacto sem métricas vazias, categorias/filtros/opções progressivos, Perfil por grupos, onboarding rápido e textos mais curtos.
+
+E: 320, 390, 768, 1100 e 1280 px nos três modos na aplicação normal; teclado/foco, Escape/modais, contraste de tokens e zoom CSS 200% na regressão. Capturas revistas, todas fictícias. Antes: imagens existentes do commit `cb954f5` extraídas para `tmp/before-hub-390.png`, `tmp/before-graph-390.png` e `tmp/before-graph-1100.png`. Depois: `tmp/after-public-*.png`, `tmp/after-hub-*.png`, `tmp/after-Histórico-390.png`, `tmp/after-Registar-390.png`, `tmp/after-Perfil-390.png` e capturas gráficas documentais atualizadas. Não existia página pública anterior para comparar. Artefactos locais não são publicados. Sem leitor de ecrã real, zoom real, dispositivos físicos, participantes ou certificação WCAG; sem auditoria clínica/legal/segurança independente.
+
+Comandos PowerShell na raiz (parar previamente o servidor normal, sem terminar processos desconhecidos):
+
+```powershell
+npm.cmd run typecheck --prefix apps/mobile
+npm.cmd test --prefix apps/mobile
+.\.venv\Scripts\python.exe -m pytest services/api/tests -q --basetemp=tmp/repeat-simplification
+.\.venv\Scripts\python.exe -m pip check
+node --test tests/foundation.test.mjs
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p test_load_runner.py -v
+Push-Location apps/mobile
+$env:PULSO_TEST_PUBLIC = 'false'
+npm.cmd run test:web
+$env:PULSO_TEST_PUBLIC = 'true'
+npm.cmd run test:web
+Remove-Item Env:PULSO_TEST_PUBLIC
+Pop-Location
+```
+
+Pytest configura modo de teste e DB temporária; para os testes demo o basetemp deve estar dentro de tmp, como no comando. Playwright exporta a interface para tmp e configura o servidor com base única descartável; a suite pública desativa o bypass demonstrativo. O frontend normal não importa FixtureRepository ou o conjunto clínico de fixtures, e contas novas não leem seed demonstrativo. Avisos de depreciação existentes continuam; auditoria histórica de dependências não foi reavaliada.
+
+## Registo histórico — correção de transição v0.7.1 (destino anterior, substituído neste sprint)
+
 
 Correção do destino após confirmação de resultados: DocumentImport comunica o documento/parâmetros apenas depois da gravação confirmada pela API; App recarrega a revisão atual e abre Análises ao sangue, em vez do Histórico. Foco/rolagem vão para o resumo da análise e TimelineChart seleciona o respetivo ponto quando comparável. No modo combinado só os parâmetros importados começam ativos. Os históricos anteriores comparáveis e o original são preservados; campos em falta não geram pontos. Documentos sem extração, tensão e acontecimentos continuam no Histórico.
 
@@ -186,7 +217,7 @@ Typecheck/exportação aprovados; 42 testes API, 20 TypeScript, 2 de fundação,
 
 ## Matriz funcional do catálogo — sprint de simplificação
 
-Auditoria programática em bases temporárias: 19 testes API, 19 testes do modelo de gráficos e um percurso de navegador que seleciona os 19 parâmetros e confere unidade/proveniência do ponto. A = aprovado; F = falhou; NS = não suportado nesta via; NT = não testado. CRUD/proveniência abaixo refere-se à API, com persistência, datas repetidas/diferentes, decimal com vírgula, valores/data ausentes, unidades/métodos/amostras distintos e edição/eliminação. UI de editar/eliminar é partilhada e testada nos fluxos comuns, não repetida para cada parâmetro.
+Auditoria programática em bases temporárias: 19 testes API, 19 testes do modelo de gráficos e um percurso de navegador que seleciona os 19 parâmetros e confere unidade/proveniência do ponto. A = aprovado; F = falhou; NS = não suportado nesta via; NT = não testado. CRUD/proveniência abaixo refere-se à API com a unidade principal; unidades alternativas foram verificadas no catálogo, sem conversão ou alegação de UI repetida para cada uma. Inclui persistência, datas repetidas/diferentes, decimal com vírgula, valores/data ausentes, unidades/métodos/amostras distintos e edição/eliminação. UI de editar/eliminar é partilhada e testada nos fluxos comuns, não repetida para cada parâmetro.
 
 | Parâmetro | Alias/unidade de extração | API CRUD/origem | Modelo gráfico | Seleção UI/origem | Parser PDF conhecido | Formulário domiciliário |
 |---|---|---|---|---|---|---|

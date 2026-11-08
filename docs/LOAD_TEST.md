@@ -1,5 +1,7 @@
 # Teste de carga PULSO — 08/11/2026
 
+Os resultados abaixo são históricos. Na simplificação v0.7.1, demos não são acesso público: o runner usa contexto explícito de teste e SQLite em tmp; resets exigem confirmação do dono. O ambiente pessoal exige sessão. Nenhum novo ensaio de carga foi executado neste sprint.
+
 ## Comparação curta v0.6 — escrita
 
 Mesma máquina/percurso de sete pedidos, pausa 0,3 s, rampa 2 s e 8 s a carga plena por patamar; Ollama desligado, base temporária. Referência v0.5 capturada antes de modificar a API (`tmp/v06-before`), com cópia do hash normal preservada. A v0.6 acrescenta If-Match às mesmas operações; não foram removidas verificações ou alterado o percurso para favorecer resultados.

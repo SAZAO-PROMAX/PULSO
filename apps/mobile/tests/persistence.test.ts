@@ -1,7 +1,8 @@
+import {FixtureRepository} from './fixtureRepository';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {ApiRepository,StoragePort,ApiError} from '../src/clinical/repository';
-import {validateData,FixtureRepository,buildSeries,exclusionReason} from '../src/clinical/data';
+import {validateData,buildSeries,exclusionReason} from '../src/clinical/data';
 import {confirmRows,Extraction,ReviewRow,localDateTime} from '../src/clinical/importData';
 const parsed:Extraction={parserVersion:'test',sha256:'a'.repeat(64),laboratory:'Laboratorio Demo X',date:'2026-11-07',text:'PULSO SYNTHETIC LAB V1',candidates:[{parameter:'glucose',value:'98,5',unit:'mg/dL',referenceText:'70-110',method:'hexoquinase',context:'plasma',page:1,excerpt:'Glicose | 98,5 | mg/dL',issues:[]}]};
 const review:ReviewRow={value:'99,2',unit:'mg/dL',method:'hexoquinase',context:'plasma',include:true,reviewed:true};

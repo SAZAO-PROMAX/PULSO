@@ -8,7 +8,7 @@ import {EventEditor} from './src/clinical/EventViews';
 import {History} from './src/clinical/RecordViews';
 import {ThemeProvider,T,Card,Button,useTheme,layout} from './src/ui';
 import {PublicEntry} from './src/PublicEntry';
-import {currentRoute,goRoute,safePrivateRoute,testDemo} from './src/routes';
+import {currentRoute,goRoute,safePrivateRoute} from './src/routes';
 import {Onboarding} from './src/Onboarding';
 import {Hub} from './src/Hub';
 import {RegisterHub} from './src/RegisterHub';
@@ -21,11 +21,11 @@ export default function App(){return <AuthProvider><ThemeProvider><SessionGate/>
 function SessionGate(){
  const auth=useAuth(),{colors:c}=useTheme(),[requested]=useState(()=>safePrivateRoute(currentRoute()));
  if(!auth.ready)return <SafeAreaView style={{flex:1,padding:24,backgroundColor:c.bg}}><T accessibilityLiveRegion="polite">A verificar sessão…</T></SafeAreaView>;
- if(!auth.user&&!(testDemo&&auth.testAccess))return <PublicEntry/>;
+ if(!auth.user&&!auth.testAccess)return <PublicEntry/>;
  return <Shell key={auth.user?.id??'isolated-demo'} requested={requested}/>;
 }
 function Shell({requested}:{requested:ReturnType<typeof safePrivateRoute>}){
- const auth=useAuth();
+ const auth=useAuth(),isolatedDemo=auth.testAccess;
  const [destination,setDestination]=useState<(SavedRecord&{owner:string})|null>(null);
  const [historyVisit,setHistoryVisit]=useState(0);
  const scroll=useRef<ScrollView>(null);
@@ -40,15 +40,15 @@ function Shell({requested}:{requested:ReturnType<typeof safePrivateRoute>}){
  useEffect(()=>{if(Platform.OS==='web')document.getElementById(learnTopic&&(state.tab==='Aprender'||state.area==='Saúde geral e prevenção')?'learning-topic-title':'page-title')?.focus();},[owner,state.tab,state.area,learnTopic]);
  useEffect(()=>{let active=true;setLoad(previous=>previous.owner===owner?previous:{owner});clinicalRepository.load(owner).then(data=>{if(active)setLoad({owner,revision,data});}).catch(e=>{if(active)setLoad({owner,revision,error:e instanceof Error?e.message:'Não foi possível carregar a base local. Inicia o PULSO com o comando conjunto e tenta novamente.'});});return()=>{active=false;};},[owner,revision]);
  useEffect(()=>{setDestination(null);setAnalysis(null);setOnboarding(false);setMessage('');setForm(null);setLearnTopic(null);setProfileView('profile');dispatch({type:'tab',tab:'Início'});},[auth.user?.id]);
- useEffect(()=>{if(testDemo)return;const route=safePrivateRoute(currentRoute())??requested??'/app';const applyRoute=()=>{const next=safePrivateRoute(currentRoute())??'/app';const tab=next==='/history'||next==='/events'?'Histórico':next==='/record'?'Registar':next==='/learn'?'Aprender':next==='/profile'?'Perfil':'Início';dispatch({type:'tab',tab});if(next==='/evolution')dispatch({type:'area',area:'Análises ao sangue'});};goRoute(route);applyRoute();if(Platform.OS==='web')window.addEventListener('hashchange',applyRoute);return()=>{if(Platform.OS==='web')window.removeEventListener('hashchange',applyRoute);};},[]);
+ useEffect(()=>{if(isolatedDemo)return;const route=safePrivateRoute(currentRoute())??requested??'/app';const applyRoute=()=>{const next=safePrivateRoute(currentRoute())??'/app';const tab=next==='/history'||next==='/events'?'Histórico':next==='/record'?'Registar':next==='/learn'?'Aprender':next==='/profile'?'Perfil':'Início';dispatch({type:'tab',tab});if(next==='/evolution')dispatch({type:'area',area:'Análises ao sangue'});};goRoute(route);applyRoute();if(Platform.OS==='web')window.addEventListener('hashchange',applyRoute);return()=>{if(Platform.OS==='web')window.removeEventListener('hashchange',applyRoute);};},[]);
  const data=load.owner===owner?load.data:undefined;
  useEffect(()=>{scroll.current?.scrollTo({y:0,animated:false});},[owner,state.tab,state.area]);
  useEffect(()=>{if(analysis?.owner!==owner||!data||Platform.OS!=='web')return;const target=document.getElementById('analysis-evolution-title');target?.focus({preventScroll:true});target?.scrollIntoView({block:'start'});},[analysis,owner,data]);
- const navigate=(tab:typeof tabs[number])=>{if(tab==='Histórico')setHistoryVisit(n=>n+1);setDestination(null);if(!testDemo)goRoute(tab==='Histórico'?'/history':tab==='Registar'?'/record':tab==='Aprender'?'/learn':tab==='Perfil'?'/profile':'/app');setAnalysis(null);setMessage('');setLearnTopic(null);if(tab==='Registar')setForm(null);dispatch({type:'tab',tab});};
+ const navigate=(tab:typeof tabs[number])=>{if(tab==='Perfil')setProfileView('profile');if(tab==='Histórico')setHistoryVisit(n=>n+1);setDestination(null);if(!isolatedDemo)goRoute(tab==='Histórico'?'/history':tab==='Registar'?'/record':tab==='Aprender'?'/learn':tab==='Perfil'?'/profile':'/app');setAnalysis(null);setMessage('');setLearnTopic(null);if(tab==='Registar')setForm(null);dispatch({type:'tab',tab});};
  const goArea=(area:Area)=>{setDestination(null);setAnalysis(null);setMessage('');setSelectedParameter(null);setLearnTopic(null);dispatch({type:'area',area});};
  const goParameter=(parameter:Parameter)=>{setDestination(null);setAnalysis(null);setMessage('');setLearnTopic(null);setSelectedParameter(parameter);dispatch({type:'area',area:labParameters.includes(parameter)?'Análises ao sangue':parameter==='spo2'?'Saúde respiratória':'Tensão arterial'});};
  const goTopic=(id:string)=>{setDestination(null);setAnalysis(null);setMessage('');setLearnTopic(id);dispatch({type:'tab',tab:'Aprender'});};
- const saved=(record?:SavedRecord)=>{setRevision(x=>x+1);setForm(null);setAnalysis(null);setDestination(record?{...record,owner}:null);dispatch({type:'tab',tab:'Histórico'});if(!testDemo)goRoute('/history');setMessage(record?.kind==='document'?'Exame guardado.':record?.kind==='event'?'Acontecimento guardado.':'Medição guardada.');};
+ const saved=(record?:SavedRecord)=>{setRevision(x=>x+1);setForm(null);setAnalysis(null);setDestination(record?{...record,owner}:null);dispatch({type:'tab',tab:'Histórico'});if(!isolatedDemo)goRoute('/history');setMessage(record?.kind==='document'?'Exame guardado.':record?.kind==='event'?'Acontecimento guardado.':'Medição guardada.');};
  const openEvolution=(documentId:string,parameter?:Parameter)=>{const params=[...new Set((data?.results??[]).filter(r=>r.documentId===documentId).map(r=>r.parameter))];setDestination(null);setAnalysis({owner,documentId,parameters:params});setSelectedParameter(parameter??params[0]??null);dispatch({type:'area',area:parameter&&!labParameters.includes(parameter)?parameter==='spo2'?'Saúde respiratória':'Tensão arterial':'Análises ao sangue'});};
 
  const start=(which:'pressure'|'pdf'|'event')=>{navigate('Registar');setForm(which);};
@@ -72,7 +72,7 @@ function Shell({requested}:{requested:ReturnType<typeof safePrivateRoute>}){
  state.tab==='Início'?<Hub data={data} ownerId={owner} profileName={profile.displayName} topicCount={publishedTopics.length} featured={todayTopic()} onEvent={()=>start('event')} onImport={()=>start('pdf')} onPressure={()=>start('pressure')} onHistory={()=>navigate('Histórico')} onArea={goArea} onParameter={goParameter} onLearn={()=>navigate('Aprender')} onTopic={goTopic}/>:
  state.tab==='Histórico'?<History onImport={()=>start('pdf')} onPressure={()=>start('pressure')} onEvent={()=>start('event')} key={owner+'-'+historyVisit} data={data} initialRecord={destination?.owner===owner?destination:undefined} onEvolution={openEvolution} onChanged={message=>{setDestination(null);setRevision(x=>x+1);setMessage(message);}}/>:
  state.tab==='Registar'&&form==='event'?<EventEditor owner={owner} data={data} onSaved={id=>saved({kind:'event',id})} onCancel={()=>setForm(null)}/>:state.tab==='Registar'?<View style={layout.stack}><RegisterHub onEvent={()=>setForm('event')} key={owner+'-'+form} owner={owner} onSaved={saved} initialMode={form==='event'?null:form}/></View>:
- state.tab==='Perfil'?<View style={layout.stack}><AccountPanel onOnboarding={()=>setOnboarding(true)} view={profileView} onView={setProfileView} onHistory={()=>navigate('Histórico')}/>{!auth.user&&testDemo&&<><Card><T kind="heading">Perfis de demonstração</T><T kind="small">Estes perfis não são contas autenticadas. A troca limpa detalhes e formulários não guardados.</T>{profiles.map(p=><Button key={p.id} label={p.displayName} selected={p.id===state.profileId} onPress={()=>{setMessage('');setResetConfirm(false);dispatch({type:'profile',id:p.id});}}/>)}</Card>
+ state.tab==='Perfil'?<View style={layout.stack}><AccountPanel onOnboarding={()=>setOnboarding(true)} view={profileView} onView={setProfileView} onHistory={()=>navigate('Histórico')}/>{!auth.user&&isolatedDemo&&<><Card><T kind="heading">Perfis de demonstração</T><T kind="small">Estes perfis não são contas autenticadas. A troca limpa detalhes e formulários não guardados.</T>{profiles.map(p=><Button key={p.id} label={p.displayName} selected={p.id===state.profileId} onPress={()=>{setMessage('');setResetConfirm(false);dispatch({type:'profile',id:p.id});}}/>)}</Card>
  <Card><T kind="heading">Dados locais</T><T kind="small">Guardados neste computador pelo serviço local. Sem sincronização externa. Apenas dados fictícios.</T><Button label="Repor demonstração deste perfil" onPress={()=>setResetConfirm(true)}/>{resetConfirm&&<><T>Os registos e PDFs adicionados neste perfil serão removidos. Os exemplos iniciais serão repostos.</T><Button label="Confirmar reposição" onPress={()=>void clinicalRepository.reset(state.profileId).then(()=>{setRevision(x=>x+1);setResetConfirm(false);setMessage('Demonstração reposta.');}).catch(()=>setMessage('Não foi possível repor.'))}/><Button label="Cancelar reposição" onPress={()=>setResetConfirm(false)}/></>}</Card></>}</View>:
  null}
  {auth.user&&!settings.onboardingCompleted&&!onboarding&&state.tab==='Início'&&<Card><T kind="heading">O PULSO ao seu ritmo</T><T>Escolha a apresentação e as áreas que quer ver primeiro. Pode alterar tudo mais tarde.</T><Button label="Configurar a minha experiência" onPress={()=>setOnboarding(true)}/><Button label="Saltar primeiros passos" onPress={()=>void save({...settings,onboardingCompleted:true}).catch(()=>{})}/></Card>}

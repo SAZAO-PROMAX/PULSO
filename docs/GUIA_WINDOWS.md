@@ -1,5 +1,34 @@
 # PULSO no Windows — arranque e estabilização
 
+## Entrada atual — simplificação v0.7.1
+
+Na raiz, execute `.\dev.cmd` e abra `http://localhost:8081`. Atualize com Ctrl+F5. Sem sessão, verá a página pública; com sessão válida, entra na sua conta. **Terminar sessão** permite ver a nova entrada pública. Não existem botões de demonstração no ambiente normal.
+
+Contas novas começam vazias. Nada foi apagado das contas anteriores. Adicionar exame/documento abre o detalhe após guardar; **Ver evolução de…** abre os gráficos. Tensão abre o registo e acontecimentos abrem a cronologia. No Histórico, **Filtros** abre categorias, tipos, especialidades, origem e período. **Voltar ao Histórico** sai do detalhe. Nos gráficos, **Opções do gráfico**, **Ver todos os parâmetros** e **Lista completa de resultados** mostram o detalhe adicional.
+
+Em Perfil, escolha Conta, Informação de saúde, Aparência e acessibilidade ou Privacidade. Nascimento continua obrigatório nesta fase; condições são opcionais. Nos primeiros passos pode escolher o modo e **Guardar modo e entrar**, deixando o resto para depois. As funções autorizadas são as mesmas nos três modos.
+
+### Repetir verificações no Windows
+
+Pare primeiro o servidor normal na respetiva janela com Ctrl+C. Os testes de demonstração estão isolados e não abrem a base normal:
+
+```powershell
+npm.cmd run typecheck --prefix apps/mobile
+npm.cmd test --prefix apps/mobile
+.\.venv\Scripts\python.exe -m pytest services/api/tests -q --basetemp=tmp/repeat-simplification
+Push-Location apps/mobile
+$env:PULSO_TEST_PUBLIC = 'false'
+npm.cmd run test:web
+$env:PULSO_TEST_PUBLIC = 'true'
+npm.cmd run test:web
+Remove-Item Env:PULSO_TEST_PUBLIC
+Pop-Location
+```
+
+Playwright cria SQLite e exportações em tmp; demo exige flag do servidor e caminho temporário confirmado, e a reposição confirma o dono. O runner de carga configura o mesmo modo isolado; nenhum ensaio de carga foi repetido neste sprint. Não ative este contexto para o ambiente pessoal. Depois volte a iniciar `.\dev.cmd`.
+
+As secções abaixo conservam detalhes operacionais e incrementos anteriores; a entrada e os destinos atuais são os descritos acima.
+
 ## Correção de login v0.6.1
 
 Inicia com `.\dev.cmd`, abre `http://localhost:8081` e atualiza com **Ctrl+F5**. Inicia sessão com a conta já criada; não é necessário voltar a registar ou apagar a base. O arranque deixou de forçar a API para `127.0.0.1`; utiliza o hostname do navegador para o cookie acompanhar os pedidos. Se definiste `EXPO_PUBLIC_API_URL` manualmente, usa o mesmo hostname da interface. Cookies recusados impedem a entrada e apresentam mensagem explícita.
@@ -82,7 +111,7 @@ Se Node estiver noutro local, usar npm.cmd pelo PATH. A instalação atual usa E
 
 A base única é .local/pulso.sqlite3. Contém snapshots transacionais por perfil, incluindo o PDF original e evidência da extração. NÃO apagar .local para reiniciar os servidores: isso apagaria a base. Para uma cópia de segurança manual, parar os servidores antes de copiar o ficheiro.
 Os dados antigos do navegador migram para a API na primeira leitura desse perfil. A cópia antiga só é removida após confirmação. Uma migração que conflite com dados já alterados na base é recusada e a cópia é preservada; não apagar cópias para contornar o erro.
-No modo de demonstração, os dois perfis não são contas autenticadas: o cabeçalho só verifica âmbito. A v0.6 acrescenta contas experimentais separadas, com sessão; não transfere os dados demo para essas contas. Não usar identidade ou documentos reais.
+Apenas no ambiente de teste isolado, os dois perfis demo não são contas autenticadas: o cabeçalho verifica âmbito. A v0.6 acrescenta contas experimentais separadas, com sessão; não transfere os dados demo para essas contas. Não usar identidade ou documentos reais.
 
 ## QR Code e telemóvel
 O arranque normal usa localhost por segurança. O QR impresso pode indicar exp://127.0.0.1:8081: no telefone, esse endereço é o próprio telefone, pelo que não serve para ligar ao PC.
