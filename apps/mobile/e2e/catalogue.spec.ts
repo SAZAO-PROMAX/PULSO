@@ -1,0 +1,13 @@
+import {test,expect} from './fixtures';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {parameterLabels,labParameters,labUnits,Parameter} from '../src/clinical/data';
+
+test('todos os 19 parâmetros: seleção do gráfico e proveniência do ponto',async({page,request,baseURL})=>{
+ const params=Object.keys(parameterLabels) as Parameter[],lines=params.map(p=>parameterLabels[p]+' | 1,25 | '+(labUnits[p]?.[0]??(p==='heart_rate'?'bpm':p==='spo2'?'%':'mmHg'))),text='PULSO - INTEIRAMENTE FICTICIO\n'+lines.join('\n');
+ const raw=execFileSync(path.resolve(__dirname,'../../../.venv/Scripts/python.exe'),['-c',"import sys,pymupdf; d=pymupdf.open();p=d.new_page();p.insert_text((30,30),sys.argv[1],fontsize=9);sys.stdout.buffer.write(d.tobytes())",text]),hash=await import('node:crypto').then(c=>c.createHash('sha256').update(raw).digest('hex'));
+ const owner='demo-b',doc={id:'full-catalogue',ownerId:owner,synthetic:true,title:'Catálogo inteiramente fictício',laboratory:'Laboratório fictício de ensaio',issuedAt:null,importedAt:'2026-11-08T12:00:00Z',sha256:hash,original:{fileName:'catalogue.pdf',mediaType:'application/pdf',text,dataUrl:'data:application/pdf;base64,'+raw.toString('base64')}},rows=params.map(p=>({id:'catalogue-'+p,ownerId:owner,synthetic:true,parameter:p,value:1.25,unit:labUnits[p]?.[0]??(p==='heart_rate'?'bpm':p==='spo2'?'%':'mmHg'),measuredAt:'2026-11-08T12:00:00Z',documentId:doc.id,method:'método de ensaio',context:'amostra fictícia',referenceText:null,status:'user_confirmed'}));
+ const api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':8000',response=await request.post(api+'/demo/profiles/'+owner+'/confirm',{headers:{'X-Pulso-Profile':owner},data:{document:doc,results:rows}});expect(response.ok()).toBeTruthy();
+ await page.goto('/');await page.getByRole('button',{name:'Perfil',exact:true}).click();await page.getByRole('button',{name:'Perfil fictício B',exact:true}).click();
+ for(const p of params){await page.getByRole('button',{name:'Início',exact:true}).click();await page.getByRole('button',{name:labParameters.includes(p)?'Análises ao sangue':p==='spo2'?'Saúde respiratória':'Tensão arterial',exact:true}).click();await page.getByRole('button',{name:parameterLabels[p],exact:true}).click();const point=page.getByRole('button',{name:/^Ponto /}).last();await point.click();await expect(point).toHaveAttribute('aria-pressed','true');await expect(page.getByTestId('point-detail')).toContainText('Laboratório fictício de ensaio');await expect(page.getByTestId('point-detail')).toContainText(rows.find(r=>r.parameter===p)!.unit);}
+});

@@ -182,3 +182,32 @@ Limites: SQLite contém snapshots versionados por perfil, não schema relacional
 ## v0.4 — 08/11/2026, estado atual
 
 Typecheck/exportação aprovados; 42 testes API, 20 TypeScript, 2 de fundação, 11 Chromium normais e 2 Chromium com Ollama real aprovados (77 distintos). Suite normal omite os 2 de inferência, que foram executados separadamente. Benchmark adicional: 15 documentos sintéticos/80 associações esperadas; 81 propostas, uma extra/não reconhecida e uma data não resolvida no caso denso, com revisão humana obrigatória. Hardware, tempos, recursos, comparação com parser anterior, comandos e limitações em [LOCAL_EXTRACTION.md](LOCAL_EXTRACTION.md). Secções anteriores são registos históricos, não estado atual. Não foi feita publicação deste incremento.
+
+
+## Matriz funcional do catálogo — sprint de simplificação
+
+Auditoria programática em bases temporárias: 19 testes API, 19 testes do modelo de gráficos e um percurso de navegador que seleciona os 19 parâmetros e confere unidade/proveniência do ponto. A = aprovado; F = falhou; NS = não suportado nesta via; NT = não testado. CRUD/proveniência abaixo refere-se à API, com persistência, datas repetidas/diferentes, decimal com vírgula, valores/data ausentes, unidades/métodos/amostras distintos e edição/eliminação. UI de editar/eliminar é partilhada e testada nos fluxos comuns, não repetida para cada parâmetro.
+
+| Parâmetro | Alias/unidade de extração | API CRUD/origem | Modelo gráfico | Seleção UI/origem | Parser PDF conhecido | Formulário domiciliário |
+|---|---|---|---|---|---|---|
+| Glicose | A | A | A | A | A | NS |
+| Hemoglobina glicada | A | A | A | A | A | NS |
+| Colesterol total | A | A | A | A | NS | NS |
+| Colesterol HDL | A | A | A | A | NS | NS |
+| Colesterol LDL | A | A | A | A | A | NS |
+| Triglicéridos | A | A | A | A | NS | NS |
+| Creatinina | A | A | A | A | A | NS |
+| Hemoglobina | A | A | A | A | A | NS |
+| Ferritina | A | A | A | A | NS | NS |
+| TSH | A | A | A | A | NS | NS |
+| T4 livre | A | A | A | A | NS | NS |
+| Vitamina D | A | A | A | A | NS | NS |
+| Ureia | A | A | A | A | NS | NS |
+| Sódio | A | A | A | A | NS | NS |
+| Potássio | A | A | A | A | NS | NS |
+| Tensão sistólica | NS (unidade A no modelo) | A | A | A | NS | A |
+| Tensão diastólica | NS (unidade A no modelo) | A | A | A | NS | A |
+| Frequência cardíaca | NS (unidade A no modelo) | A | A | A | NS | A |
+| SpO₂ | NS (unidade A no modelo) | A | A | A | NS | NS |
+
+Extração real por Ollama de cada parâmetro: NT nesta auditoria; o catálogo de aliases/unidades e a validação determinística de propostas não provam reconhecimento de qualquer PDF. Parser conhecido limitado aos cinco analitos indicados; os restantes requerem introdução/revisão manual ou extração local posteriormente validada. SpO₂ não tem formulário domiciliário dedicado. A matriz não valida resultados clínicos. Logs: `tmp/entry-c-api.log`, `tmp/entry-c-unit.log`, `tmp/entry-c-browser.log`. Nenhum problema de integridade/isolamento novo encontrado nestes testes.
