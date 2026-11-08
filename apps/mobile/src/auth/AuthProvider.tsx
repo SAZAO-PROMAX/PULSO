@@ -1,8 +1,9 @@
 import React,{createContext,useCallback,useContext,useEffect,useState} from 'react';
+import {Experience} from '../experience';
 import {Platform} from 'react-native';
 import {apiFetch,setCsrf} from '../api';
 import {ApiError} from '../clinical/repository';
-export interface User {id:string;email:string;emailVerified:boolean;version:number;displayName:string;fullName:string;birthDate:string|null;conditions:string[];conditionStatus:'self_declared';interests:string[];avatarPreset:string|null;hasPhoto:boolean}
+export interface User {experience:Experience;id:string;email:string;emailVerified:boolean;version:number;displayName:string;fullName:string;birthDate:string|null;conditions:string[];conditionStatus:'self_declared';interests:string[];avatarPreset:string|null;hasPhoto:boolean}
 interface Session{user:User|null;csrf:string|null}
 export async function authRequest(path:string,body?:unknown,method='POST',version?:number){
  try{const response=await apiFetch('/auth/'+path,{method,headers:{'Content-Type':'application/json',...(version===undefined?{}:{'If-Match':String(version)})},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(20000)});

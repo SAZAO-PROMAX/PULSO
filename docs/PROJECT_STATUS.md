@@ -9,6 +9,10 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 - **Branch:** `main`. **Base Git desta otimização:** `2336e3502689be1f15b8b1124b9f6def0b258dc6` (correção anterior de login). Esta ficha acompanha a otimização do perfil, mantendo v0.6.1; consultar `git log -1 -- docs/PROJECT_STATUS.md` para identificar o commit de entrega.
 - **Repositório oficial:** https://github.com/SAZAO-PROMAX/PULSO. Confirmar `git status` e a correspondência HEAD/origin/main ao retomar. Checkpoints anteriores preservam v0.5/carga, integridade/fila e organização documental; não assumir que resultados históricos descrevem a versão atual.
 
+## Desenvolvimento em curso — v0.7
+
+Checkpoint A/B/C: modos e preferências por conta, onboarding/Hub e gráficos alinhados/períodos personalizados implementados e com testes focados. Versão de entrega ainda v0.6.1; v0.7 só será declarada após integração e validação final. Acontecimentos e preparação multiplataforma ainda por concluir neste checkpoint.
+
 ## Funcionalidades realmente implementadas
 
 - Hub único, cinco áreas, resumos, estados vazios e Aprender com 23 fichas locais, pesquisa/categorias e explicações partilhadas. Tema claro/escuro persistido no navegador.

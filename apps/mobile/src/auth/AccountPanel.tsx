@@ -6,6 +6,7 @@ import {apiFetch} from '../api';
 import {ApiError} from '../clinical/repository';
 import {authRequest,useAuth,User} from './AuthProvider';
 import {ProfileView} from './ProfileMenu';
+import {ExperiencePanel} from '../ExperiencePanel';
 import {AvatarPicker} from './AvatarPicker';
 import {Avatar} from './Avatar';
 import {avatarOptions,conditionLabel,customCondition,searchConditions,validBirthDate} from './profileOptions';
@@ -19,32 +20,37 @@ function requireBirthDate(value:string|null){
  throw Error('A data de nascimento é obrigatória e deve ser válida.');
 }
 function BirthDate({draft,setDraft}:{draft:Draft;setDraft:(d:Draft)=>void}){
- return <View style={{gap:6}}><Field date label="Data de nascimento (obrigatória, AAAA-MM-DD)" value={draft.birthDate??''} placeholder="Ex.: 1970-05-23" onChange={birthDate=>setDraft({...draft,birthDate:birthDate||null})} error={draft.birthDate&&!validBirthDate(draft.birthDate)?'Introduza uma data válida entre 1900 e hoje.':undefined}/><T kind="small">Obrigatória para preparar a futura personalização do Hub. Ainda não altera as funcionalidades nem gera objetivos clínicos. Use uma data fictícia.</T></View>;
+ return <View style={{gap:6}}><Field date dateMax={new Date().toISOString().slice(0,10)} label="Data de nascimento (obrigatória, AAAA-MM-DD)" value={draft.birthDate??''} placeholder="Ex.: 1970-05-23" onChange={birthDate=>setDraft({...draft,birthDate:birthDate||null})} error={draft.birthDate&&!validBirthDate(draft.birthDate)?'Introduza uma data válida entre 1900 e hoje.':undefined}/><T kind="small">Obrigatória para preparar a futura personalização do Hub. Ainda não altera as funcionalidades nem gera objetivos clínicos. Use uma data fictícia.</T></View>;
 }
-function OptionalFields({draft,setDraft}:{draft:Draft;setDraft:(d:Draft)=>void}){
- const [search,setSearch]=useState(''),{colors:c}=useTheme(),matches=searchConditions(search),custom=customCondition(search,draft.conditions);
- function toggle(id:string){setDraft({...draft,conditions:draft.conditions.includes(id)?draft.conditions.filter(v=>v!==id):[...draft.conditions,id]});}
- return <View style={layout.stack}><Field label="Nome completo (opcional)" value={draft.fullName} onChange={fullName=>setDraft({...draft,fullName})}/>
- <T kind="heading">Condições de saúde a acompanhar</T><T kind="small">Opcional e autodeclarado. Não altera limites ou interpretações dos gráficos. Pesquise uma condição ou adicione o nome se não constar da lista.</T>
- {!!draft.conditions.length&&<><T kind="small">Selecionadas — toque para remover</T><View style={layout.row}>{draft.conditions.map(id=><Button key={id} label={conditionLabel(id)} selected onPress={()=>toggle(id)}/>)}</View></>}
+export function ConditionSelector({selected,onChange}:{selected:string[];onChange:(v:string[])=>void}){
+ const [search,setSearch]=useState(''),matches=searchConditions(search),custom=customCondition(search,selected);
+ function toggle(id:string){onChange(selected.includes(id)?selected.filter(v=>v!==id):[...selected,id]);}
+ return <View style={layout.stack}> <T kind="heading">Condições de saúde a acompanhar</T><T kind="small">Opcional e autodeclarado. Não altera limites ou interpretações dos gráficos. Pesquise uma condição ou adicione o nome se não constar da lista.</T>
+ {!!selected.length&&<><T kind="small">Selecionadas — toque para remover</T><View style={layout.row}>{selected.map(id=><Button key={id} label={conditionLabel(id)} selected onPress={()=>toggle(id)}/>)}</View></>}
  <Field label="Pesquisar condições" value={search} placeholder="Ex.: asma, tiroide, DPOC…" onChange={setSearch}/>
  <T kind="small" accessibilityLiveRegion="polite">{search.trim()?`${matches.length} resultados na lista local`:'Condições frequentes'}</T>
- <View style={layout.row}>{matches.slice(0,12).filter(o=>!draft.conditions.includes(o.id)).map(o=><Button key={o.id} label={o.label} disabled={draft.conditions.length>=30} onPress={()=>toggle(o.id)}/>)}</View>
+ <View style={layout.row}>{matches.slice(0,12).filter(o=>!selected.includes(o.id)).map(o=><Button key={o.id} label={o.label} disabled={selected.length>=30} onPress={()=>toggle(o.id)}/>)}</View>
  {matches.length>12&&<T kind="small">Escreva mais letras para reduzir os resultados.</T>}
- {!!custom&&<Button label={'Adicionar «'+conditionLabel(custom)+'»'} disabled={draft.conditions.length>=30} onPress={()=>{toggle(custom);setSearch('');}}/>}
+ {!!custom&&<Button label={'Adicionar «'+conditionLabel(custom)+'»'} disabled={selected.length>=30} onPress={()=>{toggle(custom);setSearch('');}}/>}
  <T kind="small">Lista local não exaustiva, sem códigos clínicos. Pode adicionar condições ausentes (2–100 caracteres), até 30 no total.</T>
- {!!draft.conditions.length&&<Button label="Não declarar condições" onPress={()=>setDraft({...draft,conditions:[]})}/>}
+ {!!selected.length&&<Button label="Não declarar condições" onPress={()=>onChange([])}/>}
+</View>;
+}
+function OptionalFields({draft,setDraft}:{draft:Draft;setDraft:(d:Draft)=>void}){
+ const {colors:c}=useTheme();
+ return <View style={layout.stack}><Field label="Nome completo (opcional)" value={draft.fullName} onChange={fullName=>setDraft({...draft,fullName})}/>
+ <ConditionSelector selected={draft.conditions} onChange={conditions=>setDraft({...draft,conditions})}/>
  <T kind="heading">Áreas de interesse</T><View style={layout.row}>{areas.map(area=><Button key={area} label={area} selected={draft.interests.includes(area)} onPress={()=>setDraft({...draft,interests:draft.interests.includes(area)?draft.interests.filter(v=>v!==area):[...draft.interests,area]})}/>)}</View>
  <T kind="heading">Imagem do perfil</T><View style={[layout.row,{alignItems:'center',gap:16}]}><Avatar preset={draft.avatarPreset} name={draft.displayName} size={88}/><View style={{flex:1,minWidth:140}}><T>Pré-visualização</T><T kind="small">{avatarOptions.find(a=>a.id===draft.avatarPreset)?.label??'As suas iniciais'} · guarde o perfil para aplicar.</T></View></View>
  <View style={layout.row}>{avatarOptions.map(option=><Pressable key={option.id} accessibilityRole="button" accessibilityLabel={'Escolher '+option.label} accessibilityState={Platform.OS==='web'?{}:{selected:draft.avatarPreset===option.id}} {...(Platform.OS==='web'?{'aria-pressed':draft.avatarPreset===option.id}:{})} onPress={()=>setDraft({...draft,avatarPreset:option.id})} style={{width:112,minHeight:120,alignItems:'center',gap:4,padding:8,borderWidth:draft.avatarPreset===option.id?3:1,borderColor:c.control,borderRadius:16,backgroundColor:draft.avatarPreset===option.id?c.soft:c.card}}><Avatar preset={option.id} name={draft.displayName} size={56}/><T kind="small">{option.label}</T>{draft.avatarPreset===option.id&&<T kind="small">✓ Escolhido</T>}</Pressable>)}</View><Button label="Usar iniciais" selected={draft.avatarPreset===null} onPress={()=>setDraft({...draft,avatarPreset:null})}/></View>;
 }
 
-export function AccountPanel({view,onView,onHistory}:{view:ProfileView;onView:(v:ProfileView)=>void;onHistory:()=>void}){
+export function AccountPanel({view,onView,onHistory,onOnboarding}:{onOnboarding?:()=>void;view:ProfileView;onView:(v:ProfileView)=>void;onHistory:()=>void}){
  const auth=useAuth(),theme=useTheme();
  if(!auth.user)return <GuestAccount key={view} view={view} onView={onView}/>;
- if(view==='preferences')return <Card><T kind="heading">Preferências</T><T>Tema atual: {theme.dark?'escuro':'claro'}.</T><Button label="Alternar tema" onPress={theme.toggle}/><T kind="small">A preferência é guardada neste navegador. Não existem outras preferências próprias de acessibilidade neste protótipo.</T></Card>;
+ if(view==='preferences')return <ExperiencePanel/>;
  if(view==='privacy')return <Card><T kind="heading">Privacidade e segurança</T><T>Conta experimental com sessão no servidor. A base local ainda não tem encriptação apropriada para dados reais.</T><T>Apenas identidade e documentos fictícios. Confirmação de resultados não é validação médica. Fotografias não são enviadas ao Ollama.</T><T kind="small">As sessões expiram ao fim de oito horas. Terminar sessão revoga a sessão atual; recuperar a palavra-passe revoga todas. Não existe serviço de e-mail: a confirmação por código é só de desenvolvimento e não comprova titularidade de uma caixa de correio real.</T><Button label="Voltar ao meu perfil" onPress={()=>onView('profile')}/></Card>;
- return <ProfileEditor key={auth.user.id} user={auth.user} onHistory={onHistory}/>;
+ return <View style={layout.stack}><Button label="Rever primeiros passos" onPress={()=>onOnboarding?.()}/><ProfileEditor key={auth.user.id} user={auth.user} onHistory={onHistory}/></View>;
 }
 
 function GuestAccount({view,onView}:{view:ProfileView;onView:(v:ProfileView)=>void}){

@@ -135,3 +135,19 @@ def test_conditions_custom_catalog_validation_and_legacy_account(client):
     for conditions in [['unknown-id'],['custom:x'],['custom: bad '],['custom:bad\ntext'],['asthma','custom:Asma'],['custom:ÁBC','custom:abc'],['custom:'+('x'*101)],['custom:Nome '+str(i) for i in range(31)]]:
         assert client.patch('/auth/profile',json={**current,'conditions':conditions},headers={**headers,'If-Match':'2'}).status_code==422
     assert client.get('/auth/session').json()['user']==current
+
+
+def test_experience_preferences_isolation_versions_and_profile_preservation(client):
+    register(client);user,headers=login(client)
+    defaults=user['experience'];assert defaults['mode']=='balanced' and not defaults['onboardingCompleted']
+    value={**defaults,'mode':'simple','theme':'system','highContrast':True,'primaryAreas':['Tensão arterial']}
+    assert client.patch('/auth/preferences',json=value,headers=ORIGIN).status_code==403
+    assert client.patch('/auth/preferences',json=value,headers={**headers,'If-Match':'1'}).status_code==200
+    assert client.patch('/auth/preferences',json=value,headers={**headers,'If-Match':'1'}).status_code==409
+    current=client.get('/auth/session').json()['user'];assert current['experience']==value
+    assert client.patch('/auth/profile',json={**current,'displayName':'Nome fictício'},headers={**headers,'If-Match':'2'}).status_code==200
+    assert client.get('/auth/session').json()['user']['experience']==value
+    second=TestClient(app);register(second,'two@example.test');other,_=login(second,'two@example.test');assert other['experience']==defaults
+    client.post('/auth/logout',headers=headers);restored,headers=login(client);assert restored['experience']==value
+    for patch in [{'mode':'admin'},{'theme':'invalid'},{'textSize':'tiny'},{'highContrast':1},{'primaryAreas':['unknown']},{'onboardingStep':True},{'onboardingStep':7},{'role':'doctor'}]:
+        assert client.patch('/auth/preferences',json={**value,**patch},headers={**headers,'If-Match':'3'}).status_code==422

@@ -53,8 +53,23 @@ def origin(request):
     allowed=os.getenv('PULSO_WEB_ORIGINS','http://localhost:8081,http://127.0.0.1:8081,http://127.0.0.1:8765').split(',')
     if request.headers.get('origin') not in allowed:raise HTTPException(403,'Origem do pedido não permitida.')
 
+EXPERIENCE_DEFAULTS=json.loads((ROOT/'packages/shared/experience.json').read_text(encoding='utf-8'))
+
+def experience_value(value):
+    if not isinstance(value,dict) or set(value)-set(EXPERIENCE_DEFAULTS):raise HTTPException(422,'Preferências inválidas.')
+    result={**EXPERIENCE_DEFAULTS,**value}
+    for key,allowed in {'mode':{'simple','balanced','detailed'},'theme':{'light','dark','system'},'textSize':{'standard','large','extra'},'technology':{'guided','regular','advanced','skip'}}.items():
+        if not isinstance(result[key],str) or result[key] not in allowed:raise HTTPException(422,'Preferência inválida: '+key)
+    for key in ('highContrast','reducedMotion','guidedHelp','onboardingCompleted'):
+        if not isinstance(result[key],bool):raise HTTPException(422,'Preferência booleana inválida.')
+    if type(result['onboardingStep']) is not int or not 0<=result['onboardingStep']<=6:raise HTTPException(422,'Passo inválido.')
+    areas=result['primaryAreas']
+    if not isinstance(areas,list) or len(areas)>len(INTERESTS) or any(not isinstance(a,str) or a not in INTERESTS for a in areas) or len(set(areas))!=len(areas):raise HTTPException(422,'Áreas prioritárias inválidas.')
+    return result
+
 def public_user(row):
-    return {'id':row['id'],'email':row['email'],'emailVerified':bool(row['email_verified']),'version':row['version'],'hasPhoto':row['avatar'] is not None,**json.loads(row['profile'])}
+    profile=json.loads(row['profile']);profile['experience']={**EXPERIENCE_DEFAULTS,**profile.get('experience',{})}
+    return {'id':row['id'],'email':row['email'],'emailVerified':bool(row['email_verified']),'version':row['version'],'hasPhoto':row['avatar'] is not None,**profile}
 
 def session(request,mutation=False):
     token=request.cookies.get(COOKIE,'')
@@ -183,6 +198,7 @@ def update_profile(user_id,data,expected):
     with connection(True) as db:
         row=db.execute('SELECT * FROM auth_users WHERE id=?',(user_id,)).fetchone()
         if row['version']!=expected:raise HTTPException(409,'O perfil mudou noutra sessão. Os campos foram mantidos; recarrega antes de decidir.')
+        profile['experience']=json.loads(row['profile']).get('experience',EXPERIENCE_DEFAULTS)
         db.execute('UPDATE auth_users SET profile=?,version=version+1 WHERE id=?',(json.dumps(profile,ensure_ascii=False),user_id))
     return {'saved':True}
 
@@ -296,3 +312,17 @@ def delete_avatar(request:Request):
     with connection(True) as db:
         if not db.execute('UPDATE auth_users SET avatar=NULL,version=version+1 WHERE id=? AND version=?',(row['id'],version(request))).rowcount:raise HTTPException(409,'O perfil mudou. Atualiza antes de remover a fotografia.')
     return {'saved':True}
+
+
+@router.patch('/preferences')
+async def preferences(request:Request):
+    row=session(request,True);data=await json_body(request);expected=version(request)
+    value=experience_value(data)
+    def save():
+        with connection(True) as db:
+            current=db.execute('SELECT profile,version FROM auth_users WHERE id=?',(row['id'],)).fetchone()
+            if current['version']!=expected:raise HTTPException(409,'As preferências mudaram noutra sessão. Atualize a sessão e tente novamente.')
+            profile=json.loads(current['profile']);profile['experience']=value
+            db.execute('UPDATE auth_users SET profile=?,version=version+1 WHERE id=?',(json.dumps(profile,ensure_ascii=False),row['id']))
+        return {'saved':True}
+    return await run_in_threadpool(save)

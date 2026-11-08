@@ -1,0 +1,6 @@
+import defaults from '../../../packages/shared/experience.json';
+import {Area} from './model';
+export interface Experience {mode:'simple'|'balanced'|'detailed';theme:'light'|'dark'|'system';textSize:'standard'|'large'|'extra';highContrast:boolean;reducedMotion:boolean;guidedHelp:boolean;primaryAreas:Area[];onboardingCompleted:boolean;onboardingStep:number;technology:'guided'|'regular'|'advanced'|'skip'}
+export const defaultExperience=defaults as Experience;
+export const modes=[{id:'simple',label:'Simples',description:'Orientação passo a passo, texto maior e ações amplas.'},{id:'balanced',label:'Equilibrado',description:'Resumos e ações rápidas com detalhe ao seu ritmo.'},{id:'detailed',label:'Detalhado',description:'Filtros, comparações e proveniência mais visíveis.'}] as const;
+export const design={light:{bg:'#F6F8F5',card:'#ffffff',ink:'#17372B',muted:'#4f6257',line:'#cbd7c7',control:'#728477',accent:'#B7E65A',accentInk:'#17372B',soft:'#edf3e7',hero:'#17372B',heroInk:'#f6faef',info:'#2456A6',series:'#0F766E'},dark:{bg:'#111B18',card:'#1c2b22',ink:'#f1f6ed',muted:'#bdcdbc',line:'#566b59',control:'#8da191',accent:'#B7E65A',accentInk:'#17372B',soft:'#273b2c',hero:'#203e2c',heroInk:'#f6faef',info:'#9fc4ff',series:'#83d4cb'}};

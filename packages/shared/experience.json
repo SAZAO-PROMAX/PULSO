@@ -1,0 +1,12 @@
+{
+  "mode": "balanced",
+  "theme": "system",
+  "textSize": "standard",
+  "highContrast": false,
+  "reducedMotion": false,
+  "guidedHelp": false,
+  "primaryAreas": [],
+  "onboardingCompleted": false,
+  "onboardingStep": 0,
+  "technology": "skip"
+}

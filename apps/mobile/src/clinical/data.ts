@@ -86,10 +86,10 @@ export function buildSeries(data:ClinicalData,ownerId:string,parameter:Parameter
  for(const g of groups.values()) g.points.sort((a,b)=>Date.parse(a.measuredAt)-Date.parse(b.measuredAt)||a.id.localeCompare(b.id));
  return {series:[...groups.values()].sort((a,b)=>a.key.localeCompare(b.key)),omitted};
 }
-export function coordinates(points:Point[],width:number,height:number,domain?:{min:number;max:number}) {
+export function coordinates(points:Point[],width:number,height:number,domain?:{min:number;max:number},timeDomain?:{min:number;max:number}) {
  if(!points.length) return [];
  const times=points.map(p=>Date.parse(p.measuredAt)), values=points.map(p=>p.value);
- const minT=Math.min(...times),rangeT=Math.max(...times)-minT;
+ const minT=timeDomain?.min??Math.min(...times),rangeT=(timeDomain?.max??Math.max(...times))-minT;
  const minV=domain?.min??Math.min(...values),rangeV=(domain?.max??Math.max(...values))-minV;
  return points.map((p,i)=>({x:24+(rangeT?(times[i]-minT)/rangeT:0.5)*(width-48),y:24+(rangeV?1-(p.value-minV)/rangeV:0.5)*(height-48)}));
 }
