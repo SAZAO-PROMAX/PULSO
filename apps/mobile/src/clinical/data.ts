@@ -33,7 +33,7 @@ export function validateData(data:ClinicalData):void {
  if(data?.schemaVersion!==1||!Array.isArray(data.documents)||!Array.isArray(data.results)) throw Error('Versão de dados não suportada.');
  for(const collection of [data.documents,data.results]) {
   if(collection.some(x=>x.version!==undefined&&(!Number.isSafeInteger(x.version)||x.version<1)))throw Error('Versão de registo inválida.');
-  if(collection.some(x=>!x||!nonempty(x.id)||!['demo-a','demo-b'].includes(x.ownerId))||new Set(collection.map(x=>x.id)).size!==collection.length) throw Error('Identificadores inválidos ou repetidos.');
+  if(collection.some(x=>!x||!nonempty(x.id)||!(['demo-a','demo-b'].includes(x.ownerId)||/^user-[a-f0-9]{32}$/.test(x.ownerId)))||new Set(collection.map(x=>x.id)).size!==collection.length) throw Error('Identificadores inválidos ou repetidos.');
  }
  for(const d of data.documents) {
   validateClassification(d);

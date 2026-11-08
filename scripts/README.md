@@ -1,6 +1,7 @@
 # Scripts
 
 - `dev.cmd` na raiz / `dev.mjs`: arranque local; não apaga a base.
+- `auth_dev.py`: emissão local privilegiada de códigos de recuperação/verificação para contas fictícias. Sem envio de e-mail ou endpoint público para obter códigos; usar o procedimento em `docs/GUIA_WINDOWS.md`, nunca guardar códigos em Git/relatórios.
 - `load_test.py`: carga HTTP isolada na porta 8877, SQLite nova sob `tmp`, apenas dois perfis fictícios partilhados e Ollama desligado. Reutiliza httpx da venv, sem dependências novas. Resultados/configuração em `results.json`, isolamento em `isolation.json`, servidor em `server.log`. Consultar `docs/LOAD_TEST.md` para o ensaio executado e limitações.
 
 PowerShell, na raiz:
@@ -16,6 +17,8 @@ PowerShell, na raiz:
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p test_load_runner.py -v
 # Colisões de identificadores/edições, sem carga
 .\.venv\Scripts\python.exe scripts/load_test.py --probes-only --port 8878
+# Prova pequena de admissão/cancelamento da fila, sem inferência
+.\.venv\Scripts\python.exe scripts/load_test.py --queue-probe --port 8878
 # Opcional separado: uma única inferência, com Ollama local disponível
 .\.venv\Scripts\python.exe scripts/load_test.py --inference-only --port 8878 --max-seconds 360
 ```

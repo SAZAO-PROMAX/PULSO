@@ -1,4 +1,14 @@
-# Validação atual — v0.6 em implementação, 08/11/2026
+# Validação atual — v0.6, 08/11/2026
+
+Entrega: **54 testes API, 26 TypeScript, 26 Chromium, 2 de estrutura e 3 do gerador de carga aprovados (111 distintos)**. Dois Chromium opcionais de inferência real omitidos; não incluídos na contagem. Typecheck, exportação web e pip check aprovados. Logs locais em tmp/v06-api-release.log e tmp/v06-web-release.log; testes não usam a base normal. Não houve inferência GPU real nesta v0.6; pipeline/modelo preservados, parser sem Ollama exercitado. Validação adicional do menu de perfil por teclado no teste integrado de contas.
+
+Contas: Argon2id, rotação/expiração/revogação de sessão, cookie HttpOnly/SameSite, CSRF/Origin, limites de tentativas, respostas de login/recuperação sem enumeração explícita, tokens temporários de uso único/expiração e alteração de e-mail pendente. Perfil autodeclarado/versionado; imagens sintéticas PNG/JPEG com MIME/assinatura, limite, redução e remoção de metadados; acesso de outra conta recusado. Navegador: criar duas contas fictícias, avatar e fotografia (substituir/remover), PDF corrigido/revisto/confirmado, tensão, histórico/gráfico, logout e novo login/recarga com dados recuperados; conta nova sem dados demo herdados. Nenhum token de acesso em localStorage; fotografia privada em blob da própria conta.
+
+Registar/Histórico e integridade mantêm os ensaios dos checkpoints abaixo. Menu de perfil fixo, largura 320 revista; suites também cobrem 390/1100/1280, temas e zoom CSS 200%. NVDA voltou a não ser encontrado no PATH/locais/processos habituais nesta execução; sem ensaio com leitor real, zoom nativo, Android/iOS físicos, estudo com pessoas, auditoria independente de autenticação ou validação clínica. Não declarar certificação WCAG, capacidade de produção ou segurança para dados reais. E-mail é modo de desenvolvimento sem envio nem prova de titularidade externa.
+
+Medição curta antes/depois e prova real da fila em LOAD_TEST.md: amostras isoladas, não repetição do ensaio de dez minutos nem teste de carga de login/contas. Problema de latência p99 na tentativa intermédia foi identificado e corrigido antes da entrega. Avisos Starlette/httpx, PyMuPDF/ByteString e NO_COLOR/FORCE_COLOR mantêm-se; auditoria histórica de dependências não repetida. Novas dependências limitadas a argon2-cffi e as suas três transitivas.
+
+## Checkpoints da v0.6
 
 Checkpoint Registar/Histórico: **48 API, 26 TypeScript e 25 Chromium aprovados** (2 opcionais omitidos); typecheck/exportação aprovados. Classificação validada, documento sem resultados, especialidades múltiplas, alteração de categoria sem duplicar original/alterar resultados, pesquisa/filtros/persistência e ausência de chamadas de extração no fluxo documental. Captura Registar a 320 px revista em tmp. Admissão ordenada de escrita manteve atomicidade e melhorou os percentis no ensaio curto; ver LOAD_TEST.md. Contas/perfil ainda em implementação neste checkpoint.
 

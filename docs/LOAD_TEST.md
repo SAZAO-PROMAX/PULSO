@@ -14,6 +14,8 @@ Transações de leitura deixaram de reservar o escritor; escrita síncrona saiu 
 
 O restante relatório conserva o ensaio histórico v0.5, incluindo os problemas então reproduzidos (agora com regressões e correções v0.6).
 
+Prova real adicional da fila, com a mesma pequena fixture conhecida regenerada em memória e Ollama desligado (`tmp/v06-queue-real/queue.json`): rajada de cinco pedidos no endpoint síncrono resultou em 1 HTTP 200 e 4 HTTP 429. Rajada de sete pedidos na nova fila resultou em 5 HTTP 202 e 2 HTTP 429 por capacidade; um pedido em espera foi cancelado e quatro concluíram como ready em cerca de 1,92 s. Não houve gravação de documentos/resultados nem alteração do hash da base normal. É uma prova de admissão/estados/cancelamento, não capacidade de inferência, comparação sustentada de throughput ou garantia de ausência de recusas. A nova fila tem cinco vagas e mantém uma extração por vez; deduplicação/expiração e âmbito são também ensaiados na suite API.
+
 Ensaio HTTP local executado, sem alterações funcionais à aplicação. Windows, Ryzen 7 260 (8 núcleos/16 processadores lógicos observados), 32 GB de RAM declarados. Gerador e API na mesma máquina, com serviços normais de desenvolvimento mantidos ativos. Não representa utilizadores reais, contas autenticadas, milhares de navegadores ou capacidade de produção.
 
 ## Resultado e condições

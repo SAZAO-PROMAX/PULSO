@@ -1,14 +1,14 @@
 import {ClinicalData,ClinicalRepository,MedicalDocument,Result,validateData} from './data';
+import {API,sessionHeaders} from '../api';
+export {API} from '../api';
 export interface StoragePort {getItem(key:string):string|null;setItem(key:string,value:string):void;removeItem(key:string):void}
 export class ApiError extends Error {constructor(message:string,public status:number){super(message);}}
-const host=typeof window!=='undefined'&&window.location?.hostname?window.location.hostname:'127.0.0.1';
-export const API=process.env.EXPO_PUBLIC_API_URL??('http://'+(host==='localhost'?'127.0.0.1':host)+':8000');
 export class ApiRepository implements ClinicalRepository {
  constructor(private transport:typeof fetch=(...args)=>fetch(...args),private storage?:()=>StoragePort){}
  private async request(owner:string,path:string,method='GET',body?:unknown,version?:number){
-  if(!['demo-a','demo-b'].includes(owner))throw Error('Perfil de demonstração inválido.');
+  if(!['demo-a','demo-b'].includes(owner)&&!/^user-[a-f0-9]{32}$/.test(owner))throw Error('Perfil inválido.');
   let response:Response;
-  try{response=await this.transport(API+'/demo/profiles/'+owner+path,{method,headers:{'Content-Type':'application/json','X-Pulso-Profile':owner,...(version===undefined?{}:{'If-Match':'"'+version+'"'})},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(15000)});}
+  try{response=await this.transport(API+'/demo/profiles/'+owner+path,{method,credentials:'include',headers:{'Content-Type':'application/json','X-Pulso-Profile':owner,...sessionHeaders(method),...(version===undefined?{}:{'If-Match':'"'+version+'"'})},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(15000)});}
   catch{throw Error('Não foi possível ligar ao serviço local. Inicia o PULSO com .\\dev.cmd. Os campos continuam disponíveis para tentar novamente.');}
   const payload=await response.json().catch(()=>({}));
   if(!response.ok)throw new ApiError(typeof payload.detail==='string'?payload.detail:'Não foi possível guardar ou recuperar os dados. Tenta novamente.',response.status);

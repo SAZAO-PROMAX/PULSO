@@ -17,6 +17,10 @@ async def write(operation,*args,**kwargs):
         gate=asyncio.Lock();setattr(loop,'_pulso_write_gate',gate)
     async with gate:return await run_in_threadpool(operation,*args,**kwargs)
 def scope(request,owner):
+    import re
+    if isinstance(owner,str) and re.fullmatch(r'user-[a-f0-9]{32}',owner):
+        from .accounts import authorize
+        return authorize(request,owner)
     if owner not in {"demo-a","demo-b"} or request.headers.get("x-pulso-profile")!=owner:
         raise HTTPException(403,"Seleciona o perfil de demonstração correto. Isto não é autenticação de produção.")
 async def body(request):
@@ -76,6 +80,7 @@ async def save_document(owner:str,request:Request):
     scope(request,owner);return await write(store.save_document,owner,await body(request))
 @router.post("/{owner}/reset")
 async def reset(owner:str,request:Request):
+    if owner not in {'demo-a','demo-b'}:raise HTTPException(403,'A reposição está disponível apenas nos perfis de demonstração.')
     scope(request,owner);return await write(store.reset,owner)
 @router.patch("/{owner}/{kind}/{item_id}")
 async def edit(owner:str,kind:str,item_id:str,request:Request):

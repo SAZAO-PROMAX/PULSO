@@ -1,6 +1,6 @@
 # Estado atual do PULSO
 
-**Sprint ativo v0.6:** checkpoint anterior preservado em `cca50b2` (v0.5/carga); integridade/fila em `6586bbe`. Etapas 1–5 implementadas e verificadas: IDs idempotentes, conflitos de versão, fila limitada, admissão de escrita, Registar por categorias e Histórico por metadados. Contas/perfil ainda em implementação. Resultados atuais em [VALIDATION.md](VALIDATION.md). O resumo v0.5 abaixo será consolidado no fecho; não interpretar o plano de contas como já implementado.
+**Fecho da v0.6:** etapas de integridade, fila, organização e contas/perfil implementadas; 111 testes aprovados. Histórico anterior preservado nos checkpoints `cca50b2`, `6586bbe` e `2252aed`. O resumo abaixo será substituído pela ficha consolidada no commit de entrega; o estado atual confirmado está em [VALIDATION.md](VALIDATION.md).
 
 Ponto de entrada para continuar o trabalho em Codex, ChatGPT ou Work. Resumo do estado local confirmado; os relatórios ligados abaixo conservam os detalhes e a evidência.
 

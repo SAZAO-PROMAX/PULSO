@@ -220,6 +220,37 @@ class Load:
         (self.out/'probes.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
         print('Collision probes:',json.dumps(result),flush=True)
 
+    async def queue_probe(self,client):
+        from scripts.benchmark_extraction import pdf
+        from scripts.create_sample_pdf import LINES
+        # A handful of in-memory instances of the existing synthetic fixture;
+        # distinct binary IDs, no new persistent datasets or clinical values.
+        payloads=[pdf([LINES]) for _ in range(7)]
+        headers={'Content-Type':'application/pdf','X-Pulso-Demo':'synthetic-only','X-Pulso-Profile':'demo-b'}
+        before=await self.integrity(client)
+        old=await asyncio.gather(*[client.post('/demo/extract',content=raw,headers=headers,timeout=30) for raw in payloads[:5]])
+        started=time.perf_counter()
+        submitted=await asyncio.gather(*[client.post('/demo/extractions',content=raw,headers=headers) for raw in payloads])
+        ids=[r.json()['id'] for r in submitted if r.status_code==202];cancelled=None
+        for job_id in ids:
+            state=(await client.get('/demo/extractions/'+job_id,headers=headers)).json()
+            if state['state']=='queued':
+                response=await client.delete('/demo/extractions/'+job_id,headers=headers)
+                if response.status_code==200:cancelled=job_id;break
+        states={}
+        for _ in range(150):
+            states={job_id:(await client.get('/demo/extractions/'+job_id,headers=headers)).json() for job_id in ids}
+            if all(v['state'] in {'ready','error','cancelled'} for v in states.values()):break
+            await asyncio.sleep(.1)
+        result={'legacy_codes':dict(Counter(str(r.status_code) for r in old)),
+                'queue_codes':dict(Counter(str(r.status_code) for r in submitted)),
+                'states':dict(Counter(v['state'] for v in states.values())),
+                'elapsed_seconds':time.perf_counter()-started,'cancelled':cancelled is not None,
+                'database_unchanged':await self.integrity(client)==before}
+        (self.out/'queue.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
+        print('Bounded queue probe:',json.dumps(result),flush=True)
+        assert ids and len(ids)<=5 and all(v['state'] in {'ready','cancelled'} for v in states.values()) and result['database_unchanged']
+
     async def phase(self, client, name, users, duration):
         m = dict(latencies=[], http=Counter(), outcomes=Counter(), operations=Counter(), examples=[], journeys=Counter(), samples=[], failures=[])
         started = time.perf_counter(); deadline = started + duration + self.args.ramp
@@ -343,6 +374,8 @@ class Load:
             self.baseline = await self.integrity(client)
             await self.probes(client)
             if self.args.probes_only: return None
+            if self.args.queue_probe:
+                await self.queue_probe(client);return None
             stable = None
             for users in self.args.users:
                 if users >= 500:
@@ -379,6 +412,7 @@ def main():
     parser.add_argument('--port', type=int, default=8877)
     parser.add_argument('--fixture', default='data/synthetic/laboratorio-demo.pdf')
     parser.add_argument('--probes-only', action='store_true')
+    parser.add_argument('--queue-probe', action='store_true', help='Pequena prova real de admissão, recusa e cancelamento da fila, sem Ollama.')
     parser.add_argument('--inference-only', action='store_true', help='Uma única extração local sequencial, sem guardar resultados; não executa carga.')
     parser.add_argument('--output', default='tmp/load-' + datetime.now().strftime('%Y%m%d-%H%M%S'))
     args = parser.parse_args()
@@ -401,7 +435,7 @@ def main():
         load = Load(args,out,process)
         try:
             stable = asyncio.run(asyncio.wait_for(load.run(), timeout=args.max_seconds))
-            if not args.probes_only and not args.inference_only: print('Largest all-scenario stable users:',stable,flush=True)
+            if not args.probes_only and not args.inference_only and not args.queue_probe: print('Largest all-scenario stable users:',stable,flush=True)
         except (KeyboardInterrupt, TimeoutError) as exc:
             exit_code = 130 if isinstance(exc,KeyboardInterrupt) else 124
             print('Interrupted/deadline: partial results preserved.',flush=True)

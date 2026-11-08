@@ -9,6 +9,7 @@ import {PdfPicker} from './PdfPicker';
 import {MedicalTerm} from '../learning/Learning';
 import {Classification,classificationFor,registrationCategories,validateClassification} from './classification';
 import {ClassificationFields} from './ClassificationFields';
+import {apiFetch,sessionHeaders} from '../api';
 const MAX_BYTES=2*1024*1024;
 const mimeFor=(file:File)=>file.name.toLowerCase().endsWith('.pdf')?'application/pdf':file.name.toLowerCase().endsWith('.png')?'image/png':/\.jpe?g$/i.test(file.name)?'image/jpeg':null;
 async function original(file:File){
@@ -24,7 +25,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  const [selected,setSelected]=useState<File|null>(null),[stage,setStage]=useState(''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
  const job=useRef<string|null>(null),reading=useRef<AbortController|null>(null),[waiting,setWaiting]=useState(false);
- useEffect(()=>()=>{reading.current?.abort();if(job.current)void fetch(API+'/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}}).catch(()=>{});},[owner]);
+ useEffect(()=>()=>{reading.current?.abort();if(job.current)void apiFetch('/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}}).catch(()=>{});},[owner]);
  useEffect(()=>{active.current=true;if(!documentOnly)fetch(API+'/demo/extraction/status',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(s=>{if(active.current)setEngine(s.available?'Motor local disponível · leitura no teu computador':'Motor local indisponível · leitura de texto e introdução manual disponíveis');}).catch(()=>{if(active.current)setEngine('Não foi possível verificar o motor local.');});return()=>{active.current=false;};},[]);
  function setExtraction(data:Extraction,url:string){
   setFileData(url);setParsed(data);setChoosing(null);
@@ -37,7 +38,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
   try{
    const source=await original(file);
    const response=await new Promise<Response>((resolve,reject)=>{
-    const xhr=new XMLHttpRequest();xhr.open('POST',API+'/demo/extractions');xhr.setRequestHeader('Content-Type',mimeFor(file)!);xhr.setRequestHeader('X-Pulso-Demo','synthetic-only');xhr.setRequestHeader('X-Pulso-Profile',owner);
+    const xhr=new XMLHttpRequest();xhr.open('POST',API+'/demo/extractions');xhr.withCredentials=true;xhr.setRequestHeader('Content-Type',mimeFor(file)!);xhr.setRequestHeader('X-Pulso-Demo','synthetic-only');xhr.setRequestHeader('X-Pulso-Profile',owner);for(const [key,value] of Object.entries(sessionHeaders('POST')))xhr.setRequestHeader(key,value);
     xhr.upload.onload=()=>{if(active.current)setStage('A validar o documento e a disponibilidade da fila.');};
     xhr.onload=()=>resolve(new Response(xhr.responseText,{status:xhr.status}));xhr.onerror=()=>reject(Error('Serviço local indisponível. Inicia o PULSO com .\\dev.cmd e tenta novamente.'));xhr.onabort=()=>reject(Error('Tempo de leitura excedido. Podes repetir ou introduzir manualmente.'));
     controller.signal.addEventListener('abort',()=>xhr.abort(),{once:true});xhr.send(source.bytes);
@@ -48,7 +49,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
    while(!['ready','error','cancelled'].includes(ticket.state)){
     if(active.current){setWaiting(ticket.state==='queued');setStage(ticket.state==='queued'?'A aguardar processamento · posição '+ticket.position:'A extrair · leitura local em curso.');}
     await new Promise<void>((resolve,reject)=>{const done=()=>{controller.signal.removeEventListener('abort',abort);resolve();};const timer=setTimeout(done,600);const abort=()=>{clearTimeout(timer);reject(Error('Pedido interrompido. Nada foi guardado.'));};controller.signal.addEventListener('abort',abort,{once:true});if(controller.signal.aborted)abort();});
-    const status=await fetch(API+'/demo/extractions/'+job.current,{headers:{'X-Pulso-Profile':owner},signal:controller.signal});ticket=await status.json();
+    const status=await apiFetch('/demo/extractions/'+job.current,{headers:{'X-Pulso-Profile':owner},signal:controller.signal});ticket=await status.json();
     if(!status.ok)throw Error(ticket.detail??'Pedido de leitura indisponível. Podes repetir.');
    }
    if(ticket.state!=='ready')throw Error(ticket.error??'Pedido cancelado. Nada foi guardado.');
@@ -57,7 +58,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
   }catch(e){if(active.current){setError((e as Error).message);setStage('A leitura não foi concluída. Nada foi guardado.');}}
   finally{clearTimeout(timer);reading.current=null;if(active.current){setBusy(false);setWaiting(false);}}
  }
- async function cancelWaiting(){if(!job.current)return;try{const response=await fetch(API+'/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}});const data=await response.json();if(!response.ok)throw Error(data.detail);setStage('Pedido cancelado. Nada foi guardado.');setWaiting(false);}catch(e){setError((e as Error).message);}}
+ async function cancelWaiting(){if(!job.current)return;try{const response=await apiFetch('/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}});const data=await response.json();if(!response.ok)throw Error(data.detail);setStage('Pedido cancelado. Nada foi guardado.');setWaiting(false);}catch(e){setError((e as Error).message);}}
  async function manual(){
   if(!selected)return;setBusy(true);setError('');
   try{const source=await original(selected);if(active.current){setExtraction({parserVersion:'manual-0.4',sha256:source.sha,mediaType:mimeFor(selected)!,laboratory:null,date:null,text:'[Introdução manual: consultar o documento original.]',candidates:[],status:'manual_required',processedAt:new Date().toISOString()},source.url);setStage('Introdução manual · nada guardado até confirmares.');}}

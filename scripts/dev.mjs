@@ -17,7 +17,7 @@ try{
  if(!existsSync(expo))throw Error('Faltam dependências da interface: entra em apps/mobile e executa npm.cmd ci.');
  await available(8000);await available(8081);
  if(check){console.log('Node: '+process.execPath+'\nPython e Expo encontrados. Portas 8000/8081 livres.');}
- else{run(python,['-m','uvicorn','services.api.app.main:app','--host','127.0.0.1','--port','8000','--reload','--reload-dir','services/api']);await healthy();if(!stopping){console.log('\nPULSO: http://localhost:8081\nAPI: http://127.0.0.1:8000/docs\nMantém esta janela aberta. Ctrl+C para ambos os servidores.\n');run(process.execPath,[expo,'start','--web','--localhost','--port','8081'],resolve(root,'apps/mobile'));}}
+ else{run(python,['-m','uvicorn','services.api.app.main:app','--host','127.0.0.1','--port','8000','--no-proxy-headers','--reload','--reload-dir','services/api']);await healthy();if(!stopping){console.log('\nPULSO: http://localhost:8081\nAPI: http://127.0.0.1:8000/docs\nMantém esta janela aberta. Ctrl+C para ambos os servidores.\n');run(process.execPath,[expo,'start','--web','--localhost','--port','8081'],resolve(root,'apps/mobile'));}}
 }catch(e){console.error('PULSO: '+e.message);stop(1);}
 
 

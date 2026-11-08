@@ -2,10 +2,11 @@ import React,{useState} from 'react';
 import {View,Platform} from 'react-native';
 import {Card,T,Button,Field,layout} from '../ui';
 import {ClinicalData,MedicalDocument,Result,parameterLabels,displayTime,resultDate,numberText,confirmationLabels,exclusionReason} from './data';
-import {originFor,confirmedResults,clinicalRepository,API,ApiError} from './repository';
+import {originFor,confirmedResults,clinicalRepository,ApiError} from './repository';
 import {MedicalTerm,InfoButton} from '../learning/Learning';
 import {Classification,registrationCategories,specialties,classificationLabel,documentTime} from './classification';
 import {ClassificationFields} from './ClassificationFields';
+import {apiFetch} from '../api';
 export function DocumentView({doc}:{doc:MedicalDocument}) {
  const [open,setOpen]=useState(false);
  function openPdf(){
@@ -21,7 +22,7 @@ export function ResultDetail({data,result:r}:{data:ClinicalData;result:Result}) 
  const [previewError,setPreviewError]=useState('');
  async function highlight(){
   const target=window.open('about:blank','_blank');if(target)target.opener=null;
-  try{const response=await fetch(API+'/demo/profiles/'+r.ownerId+'/preview/'+encodeURIComponent(r.id),{headers:{'X-Pulso-Profile':r.ownerId},signal:AbortSignal.timeout(10000)});
+  try{const response=await apiFetch('/demo/profiles/'+r.ownerId+'/preview/'+encodeURIComponent(r.id),{headers:{'X-Pulso-Profile':r.ownerId},signal:AbortSignal.timeout(10000)});
    if(!response.ok)throw Error('Região indisponível. Consulta o documento original.');
    const url=URL.createObjectURL(await response.blob());if(target)target.location.href=url;else throw Error('Permite abrir o documento numa nova janela.');setTimeout(()=>URL.revokeObjectURL(url),60000);setPreviewError('');
   }catch(e){target?.close();setPreviewError((e as Error).message);}
@@ -102,5 +103,5 @@ function ConflictResolver({owner,kind,id,onVersion}:{owner:string;kind:'document
  const [current,setCurrent]=useState<MedicalDocument|Result|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  async function refresh(){setBusy(true);try{const data=await clinicalRepository.load(owner);const row=(kind==='document'?data.documents:data.results).find(r=>r.id===id);if(!row)throw Error('O registo já não existe. Os teus campos continuam disponíveis; fecha a edição e atualiza o Histórico.');setCurrent(row);setError('');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
  return <Card><T kind="heading">Conflito de edição</T><T>Os teus campos não foram apagados. Consulta o que foi guardado antes de decidir se queres reaplicar as tuas alterações.</T><Button label="Consultar versão atual" disabled={busy} onPress={()=>void refresh()}/>
- {current&&<><T>Versão atual: {current.version??1} · {'title' in current?current.title:current.value===null?'Sem valor':numberText(current.value)+' '+current.unit}</T><Button label="Usar esta versão como base, mantendo os meus campos" onPress={()=>onVersion(current.version??1)}/></>}{error&&<T accessibilityRole="alert">{error}</T>}</Card>;
+ {current&&<><T>Versão atual: {current.version??1} · {'title' in current?current.title:current.value===null?'Sem valor':numberText(current.value)+' '+current.unit}</T><T kind="small">{'title' in current?'Origem atual: '+(current.laboratory??'Não indicada'):('Data atual: '+(current.measuredAt??'Não indicada'))}</T><Button label="Usar esta versão como base, mantendo os meus campos" onPress={()=>onVersion(current.version??1)}/></>}{!!error&&<T accessibilityRole="alert">{error}</T>}</Card>;
 }

@@ -48,6 +48,7 @@ def validate(owner,data):
         if d.get("issuedAt") is not None:timestamp(d["issuedAt"])
         timestamp(d.get("importedAt"))
         original=d.get("original",{})
+        if not isinstance(original,dict):raise ValueError('Original inválido.')
         if not all(text(original.get(k)) for k in ("text","fileName","mediaType")): raise ValueError("Original em falta.")
         if "dataUrl" in original:
             url=original["dataUrl"]
@@ -61,11 +62,13 @@ def validate(owner,data):
             # Manual entry must not bypass the same document/resource limits as inference.
             from .hybrid import open_source
             with open_source(raw,media):pass
+        if d.get('sha256') is not None and (not isinstance(d['sha256'],str) or not re.fullmatch(r'[a-f0-9]{64}',d['sha256'])):raise ValueError('Hash inválido.')
         if d.get("sha256"):
             if d["sha256"] in hashes: raise ValueError("Documento repetido.")
             hashes.add(d["sha256"])
     for r in data["results"]:
-        if r.get("parameter") not in PARAMETERS or r.get("status") not in STATES or not isinstance(r.get("unit"),str):
+        if r.get('source') not in (None,'manual') or (r.get('documentId') is not None and not isinstance(r.get('documentId'),str)):raise ValueError('Proveniência inválida.')
+        if not isinstance(r.get('parameter'),str) or r.get("parameter") not in PARAMETERS or not isinstance(r.get('status'),str) or r.get("status") not in STATES or not isinstance(r.get("unit"),str):
             raise ValueError("Parâmetro, unidade ou confirmação inválida.")
         value=r.get("value")
         if value is not None and (isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value)):
@@ -158,8 +161,10 @@ def migrate(owner,data):
 
 def confirm(owner,body,allow_empty=False):
     doc=copy.deepcopy(body.get("document"));rows=copy.deepcopy(body.get("results"))
-    if not isinstance(doc,dict) or not isinstance(rows,list) or (not rows and not allow_empty) or any(r.get("status")!="user_confirmed" or r.get("documentId")!=doc.get("id") for r in rows):
+    if not isinstance(doc,dict) or not isinstance(rows,list) or (not rows and not allow_empty) or any(not isinstance(r,dict) or r.get("status")!="user_confirmed" or r.get("documentId")!=doc.get("id") for r in rows):
         raise HTTPException(422,"Confirmação explícita inválida.")
+    original=doc.get('original')
+    if not isinstance(original,dict) or not text(original.get('dataUrl')) or not isinstance(original.get('mediaType'),str) or original.get('mediaType') not in {'application/pdf','image/png','image/jpeg'}:raise HTTPException(422,'É necessário preservar o original PDF, PNG ou JPEG para guardar um novo documento.')
     def operation(data):
         if any(d.get("sha256") and d.get("sha256")==doc.get("sha256") for d in data["documents"]):
             existing=next(d for d in data["documents"] if d.get("sha256")==doc.get("sha256"))
@@ -170,7 +175,8 @@ def confirm(owner,body,allow_empty=False):
                     return {"saved":True}
                 raise HTTPException(409,"O exame já foi guardado com outros dados. Consulta o Histórico.")
             raise HTTPException(409,"Este PDF já está guardado neste perfil.")
-        for item in [doc]+rows: item['version']=1
+        for item in [doc]+rows:
+            item['version']=1;item.pop('previousVersions',None)
         data["documents"].append(doc);data["results"].extend(rows)
         return {"saved":True}
     return mutate(owner,operation)

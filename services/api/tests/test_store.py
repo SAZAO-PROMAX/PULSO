@@ -132,6 +132,12 @@ def test_failure_rolls_back_whole_document(client):
     assert request(client,"GET","/data").json()["documents"]==[]
     assert request(client,"GET","/data").json()["results"]==[]
 
+def test_malformed_confirmation_is_rejected_without_losing_state(client):
+    for mutate in (lambda b:b['results'].append(4),lambda b:b['results'][0].update(parameter=[]),lambda b:b['document'].update(original=[]),lambda b:b['document']['original'].pop('dataUrl')):
+        body=document();mutate(body)
+        assert request(client,'POST','/confirm',body).status_code==422
+        assert request(client,'GET','/data').json()['documents']==[]
+
 def test_document_only_classification_multiple_specialties_and_original_not_duplicated(client):
     body=document();doc=body['document'];doc.update(category='cardiology',examType='holter',specialties=['cardiology','general'],examDate='2026-11-08')
     assert request(client,'POST','/documents',{'document':doc}).status_code==200

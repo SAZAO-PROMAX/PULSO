@@ -1,4 +1,4 @@
-# Arquitetura atual — PULSO v0.2
+# Arquitetura atual — PULSO v0.6
 Frontend Expo 57 / React Native 0.86.3 / React 19.2.3 / TypeScript estrito, com react-native-web. Backend Python/FastAPI/Pydantic e PyMuPDF. Stack mantida.
 
 ## Interface
@@ -11,6 +11,16 @@ ApiRepository é a única fonte ativa do frontend. SQLite da biblioteca Python p
 GET /demo/profiles/{owner}/data lê a base. POST confirm/pressure gravam com confirmação do backend; PATCH e DELETE gerem registos e documentos. BEGIN IMMEDIATE, validação integral e commit/rollback protegem consistência e concorrência. A eliminação de exame remove os resultados associados na mesma transação; uma medição pode ser removida sem apagar o original.
 A migração localStorage é só leitura e remoção após confirmação da API, uma vez por perfil. Se a base já tiver alterações, uma migração conflitante é recusada sem sobrescrever dados. A base nunca é reposta por estar vazia: apenas a ação explícita de reset reinstala as fixtures. Originais, hash, evidência e versões anteriores das correções são preservados; PDFs permanecem na base.
 O backend verifica o perfil do pedido e os proprietários dos recursos. O cabeçalho X-Pulso-Profile é um âmbito demonstrativo, não autenticação. Não existem contas reais.
+
+## Incremento v0.6
+
+Contas individuais experimentais existem agora, mantendo a mesma SQLite e ApiRepository. `accounts.py` acrescenta tabelas de utilizadores, sessões opacas revogáveis, hashes de tokens temporários e contadores de tentativas; não cria outra base. Donos `user-<UUID>` exigem sessão válida e correspondência ao utilizador, com Origin/CSRF em mutações. demo-a/demo-b continuam num espaço público fictício, sem conversão/migração automática para contas. A frase de ausência de contas acima descreve a estabilização anterior.
+
+Frontend: AuthProvider guarda utilizador/CSRF apenas em memória; cookie HttpOnly contém a sessão, nunca localStorage. api.ts centraliza host e pedidos com credenciais; frontend/API usam o mesmo hostname. O menu circular de perfil permanece no cabeçalho fixo; AccountPanel reutiliza componentes/tema e liga ao Histórico. Avatar PNG/JPEG é validado/redimensionado/reencodificado em PNG pelo backend e guardado como BLOB privado na tabela da conta; só `/auth/avatar` da própria sessão o devolve, sem URL pública ou acesso ao modelo.
+
+Documentos/resultados mantêm schemaVersion 1 e recebem `version` por registo (dados antigos assumem 1). PATCH/DELETE exigem If-Match; alteração de resultado também incrementa o documento pai para proteger eliminação em cascata. Confirmação/edição continuam transacionais. Leituras usam transação de leitura; a escrita é admitida por uma fila de exclusão no event loop antes do worker de I/O, sem ocupar todas as threads a disputar SQLite. BEGIN IMMEDIATE continua a autoridade entre processos.
+
+`registration.json` partilha categorias/tipos/especialidades entre frontend e backend. Metadados opcionais (`category`, `examType`, `specialties`, `examDate`) não mudam os resultados. Documentos sem extração usam o mesmo modelo/original/validação/SQLite e não criam medições. Classificação antiga ausente permanece visível em Todos os registos. A fila limitada de extração é local ao processo e partilha uma única vaga com o endpoint síncrono anterior; limites e reinício em LOCAL_EXTRACTION.md.
 Unidades/métodos/amostras agrupam séries conservadoramente; só etiquetas lexicais seguras são normalizadas, sem converter valores. Exclusões e contagens são visíveis, e originais continuam intactos. Sem deduplicação por data: duas medições legítimas no mesmo dia mantêm IDs distintos.
 Campos desconhecidos/pendentes não são inventados. Datas documentais sem hora mantêm datePrecision=day (instante técnico ao meio-dia UTC para ordenação, nunca apresentado como hora clínica).
 ## Extração documental v0.4 — implementada
@@ -22,7 +32,7 @@ GET /demo/profiles/{owner}/preview/{result_id} verifica âmbito e recalcula uma 
 Sem autenticação de produção: X-Pulso-Profile é só âmbito demonstrativo. Configuração, evidência, limites e fontes em LOCAL_EXTRACTION.md.
 ## Limites e evolução
 Hub.tsx reutiliza os componentes visuais e as rotas de App; hubData.ts calcula apenas contagens/cronologia por perfil. learning/content.ts é um catálogo educativo estático, sem dependência dos valores clínicos. LearningProvider/InfoButton/MedicalTerm são partilhados por resultados, gráficos e formulários; LearnScreen oferece pesquisa/categorias/fichas. Conteúdo e referências não são guardados como medições nem interpretam o estado clínico. Sem novo backend/DB/dependência. Detalhes em UX_LEARN.md.
-Sem PostgreSQL/SQLAlchemy/Alembic, contas de produção, auditoria de acessos, gestão de chaves, backups ou sincronização. Escritas da API são transacionais; não há sincronização externa.
+Sem PostgreSQL/SQLAlchemy/Alembic, contas auditadas para produção, auditoria completa de acessos, gestão de chaves de encriptação, serviço automatizado de backups ou sincronização. Escritas da API são transacionais; não há sincronização externa.
 Registos confirmados podem ser corrigidos ou eliminados no Histórico, com validação no backend; revisões da extração original ficam preservadas. Cancelar uma revisão não guarda resultados. Rascunhos não persistem entre reinícios.
 Instituições, objetivos clínicos, OCR independente e interpretação clínica continuam fora do âmbito.
 Documentos originais, acesso por recurso, encriptação e migrações de servidor terão de ser implementados antes de dados reais. Ver SECURITY.md.

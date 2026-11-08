@@ -78,7 +78,7 @@ Se Node estiver noutro local, usar npm.cmd pelo PATH. A instalação atual usa E
 
 A base única é .local/pulso.sqlite3. Contém snapshots transacionais por perfil, incluindo o PDF original e evidência da extração. NÃO apagar .local para reiniciar os servidores: isso apagaria a base. Para uma cópia de segurança manual, parar os servidores antes de copiar o ficheiro.
 Os dados antigos do navegador migram para a API na primeira leitura desse perfil. A cópia antiga só é removida após confirmação. Uma migração que conflite com dados já alterados na base é recusada e a cópia é preservada; não apagar cópias para contornar o erro.
-Não existe conta real: os dois perfis continuam demonstrativos. O backend verifica o âmbito do perfil e o dono do registo, mas o cabeçalho do perfil não autentica uma pessoa. Não usar dados reais.
+No modo de demonstração, os dois perfis não são contas autenticadas: o cabeçalho só verifica âmbito. A v0.6 acrescenta contas experimentais separadas, com sessão; não transfere os dados demo para essas contas. Não usar identidade ou documentos reais.
 
 ## QR Code e telemóvel
 O arranque normal usa localhost por segurança. O QR impresso pode indicar exp://127.0.0.1:8081: no telefone, esse endereço é o próprio telefone, pelo que não serve para ligar ao PC.
@@ -130,3 +130,31 @@ Ver STABILIZATION.md para checkpoints e VALIDATION.md para resultados. O reposit
 6. Adicionar medição → tentar rever com os campos vazios para verificar erros → preencher apenas valores fictícios → rever/guardar. Importação, correção, confirmação, edição e eliminação mantêm o fluxo descrito acima.
 
 Ensaios manuais de zoom real e leitores de ecrã: seguir USABILITY_PROTOCOL.md. São testes pendentes; não foi feita certificação de acessibilidade ou estudo com pessoas. Resultados automáticos executados em VALIDATION.md.
+
+## Experimentar a v0.6
+
+1. Atualizar dependências Python na raiz: `.\.venv\Scripts\python.exe -m pip install -r services/api/requirements-dev.txt`. Argon2id é a única dependência direta nova, com as suas dependências transitivas. Executar `.\dev.cmd` e abrir http://localhost:8081.
+2. O círculo no canto superior direito abre o menu de perfil. «Criar conta»: nome de apresentação, e-mail fictício, palavra-passe e confirmação. Informação adicional é opcional. Depois usar «Já tenho conta: iniciar sessão». Nenhum e-mail real é enviado.
+3. «O meu perfil»: editar informação, condições autodeclaradas e interesses; escolher avatar e guardar. Fotografia opcional apenas sintética, PNG/JPEG até 1 MB/4 MP; guardar perfil antes de alterar a fotografia. Pode substituir/remover. «Os meus exames» reutiliza o Histórico. «Terminar sessão» revoga a sessão atual.
+4. Registar abre «O que pretende registar?», com pesquisa, oito categorias e tipos. Sangue usa a revisão laboratorial; outros tipos guardam o documento sem extrair valores ou interpretar o exame. Registo estruturado de medicação continua «Em preparação». Documentos de prescrição/consulta podem ser guardados.
+5. Importação de sangue: estados reais de espera/extração/revisão; pode cancelar enquanto aguarda. Máximo de cinco trabalhos; fila cheia pede nova tentativa. O servidor processa um de cada vez. Reiniciar perde pedidos temporários; nada é guardado antes da confirmação.
+6. No Histórico, pesquisar e filtrar por categoria, tipo, especialidade e período. «Gerir exame» → «Editar exame» permite corrigir classificação, data e especialidades. O mesmo original é mantido; resultados/gráficos não são eliminados por mudar categoria. Documentos antigos sem categoria ficam em Todos os registos.
+7. Se outra sessão editar o registo, a gravação mostra conflito e mantém os campos. Consultar a versão atual, comparar e escolher explicitamente usá-la como base antes de reaplicar. Nunca é sobrescrita silenciosamente uma versão desatualizada.
+
+Usar o mesmo hostname no frontend e API (localhost com localhost, ou 127.0.0.1 com 127.0.0.1). O cliente escolhe isso por defeito; alterar EXPO_PUBLIC_API_URL para outro hostname pode impedir cookies SameSite. Não guardar sessão/tokens em localStorage. Tema continua específico do navegador/origem. API usa cookie HttpOnly, oito horas, CSRF/Origin em escritas; HTTP loopback é desenvolvimento, não transporte de produção. Não expor por tunnel/Internet. Código local, não se configura serviço de e-mail pago.
+
+### Recuperação e verificação — só desenvolvimento
+
+O formulário «Esqueci-me da palavra-passe» **não envia e-mail**. Um operador com acesso ao computador pode emitir um código na raiz, usando apenas uma conta fictícia existente:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/auth_dev.py --email '<email-ficticio>' --purpose reset
+# Verificar o endereço atual, também sem envio real:
+.\.venv\Scripts\python.exe scripts/auth_dev.py --email '<email-ficticio>' --purpose verify
+# Após pedir alteração no perfil, usar o endereço ATUAL para emitir o código:
+.\.venv\Scripts\python.exe scripts/auth_dev.py --email '<email-atual-ficticio>' --purpose email-change
+```
+
+Introduzir o código de recuperação ou verificação no respetivo formulário. Expira em 15 minutos, uma única utilização; emitir outro invalida o anterior da mesma finalidade. Não partilhar nem guardar o código em Git/relatórios. A ferramenta usa a mesma SQLite (ou PULSO_DB_PATH explícito), não cria contas nem revela códigos por endpoint público. É uma ferramenta privilegiada de operador local; não prova a titularidade de uma caixa de correio real. Alteração de e-mail só se conclui após código e termina as sessões; recuperação também revoga sessões existentes.
+
+Para HTTPS futuro, `PULSO_COOKIE_SECURE=true`; em HTTP loopback, o desenvolvimento verificado usa false. O launcher não lê .env automaticamente: usar variáveis de ambiente quando necessário. Sem autenticação auditada para produção, encriptação local, Android/iOS físicos ou leitor de ecrã ensaiados. A SQLite única preserva os dados anteriores e acrescenta tabelas de conta; nunca apagar `.local` para atualizar. Resultados e pendências atuais em PROJECT_STATUS.md/VALIDATION.md.
