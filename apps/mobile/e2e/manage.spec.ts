@@ -5,10 +5,10 @@ test('editar e eliminar uma medição preserva as restantes após recarregar',as
  await page.goto('/');await page.getByRole('button',{name:'Adicionar medição',exact:true}).click();
  await page.getByLabel('Sistólica (mmHg)',{exact:true}).fill('129');await page.getByLabel('Diastólica (mmHg)',{exact:true}).fill('82');
  await page.getByRole('button',{name:'Rever medição',exact:true}).click();await page.getByRole('button',{name:'Confirmar e guardar medição',exact:true}).click();
- await page.getByTestId('history-record').filter({has:page.getByText('Tensão sistólica: 129 mmHg',{exact:true})}).getByRole('button',{name:/^Consultar /}).click();
+ await expect(page.getByRole('heading',{name:'Detalhe do registo',exact:true})).toBeFocused();
  await page.getByRole('button',{name:'Editar medição',exact:true}).click();await page.getByLabel('Valor corrigido',{exact:true}).fill('130');
  await page.getByRole('button',{name:'Guardar correção',exact:true}).click();await expect(page.getByText('Tensão sistólica: 130 mmHg',{exact:true})).toBeVisible();
- await page.getByTestId('history-record').filter({has:page.getByText('Tensão sistólica: 130 mmHg',{exact:true})}).getByRole('button',{name:/^Consultar /}).click();
+ await expect(page.getByRole('heading',{name:'Detalhe do registo',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Eliminar medição',exact:true}).click();await page.getByRole('button',{name:'Confirmar eliminação da medição',exact:true}).click();
  await expect(page.getByText('Medição eliminada na base local.',{exact:true})).toBeVisible();
  await page.reload();await page.getByRole('button',{name:'Histórico',exact:true}).click();
@@ -26,7 +26,7 @@ test('exame pode ser corrigido e eliminado com resultados numa transação',asyn
  await page.getByRole('button',{name:'Gerir exame Exame para gerir',exact:true}).click();
  await page.getByRole('button',{name:'Editar exame',exact:true}).click();await page.getByLabel('Título do exame',{exact:true}).fill('Exame corrigido');
  await page.getByRole('button',{name:'Guardar exame',exact:true}).click();
- await page.getByRole('button',{name:'Gerir exame Exame corrigido',exact:true}).click();await page.getByRole('button',{name:'Eliminar exame completo',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Exame corrigido',exact:true})).toBeVisible();await page.getByRole('button',{name:'Eliminar exame completo',exact:true}).click();
  await expect(page.getByText(/os 5 resultados associados/)).toBeVisible();await page.getByRole('button',{name:'Confirmar eliminação do exame e resultados',exact:true}).click();
  await page.reload();await page.getByRole('button',{name:'Histórico',exact:true}).click();
  await expect(page.getByRole('button',{name:'Gerir exame Exame corrigido',exact:true})).toHaveCount(0);

@@ -1,3 +1,4 @@
+import {SavedRecord} from './data';
 import React,{useRef,useState} from 'react';
 import {TextInput} from 'react-native';
 
@@ -10,12 +11,12 @@ import {InfoButton} from '../learning/Learning';
 
 
 function nowLocal(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);}
-export function PressureForm({owner,onSaved}:{owner:string;onSaved:()=>void}){
+export function PressureForm({owner,onSaved}:{owner:string;onSaved:(record?:SavedRecord)=>void}){
  const [values,setValues]=useState({systolic:'',diastolic:'',heartRate:'',date:nowLocal()}),[error,setError]=useState(''),[review,setReview]=useState(false),[busy,setBusy]=useState(false);
  const [fieldErrors,setFieldErrors]=useState<Partial<Record<keyof typeof values,string>>>({}),inputs=useRef<Partial<Record<keyof typeof values,TextInput|null>>>({});
  const id=useRef('pressure-'+(Date.now().toString(36)+Math.random().toString(36).slice(2))),lock=useRef(false);
  const edit=(key:keyof typeof values)=>(v:string)=>{setValues(x=>({...x,[key]:v}));setFieldErrors(x=>({...x,[key]:undefined}));setReview(false);setError('');};
- async function save(){if(lock.current)return;lock.current=true;setBusy(true);try{await clinicalRepository.savePressure(owner,{...values,date:localDateTime(values.date)},id.current);onSaved();}catch(e){setError(e instanceof Error?e.message:'Não foi possível guardar.');}finally{lock.current=false;setBusy(false);}}
+ async function save(){if(lock.current)return;lock.current=true;setBusy(true);try{await clinicalRepository.savePressure(owner,{...values,date:localDateTime(values.date)},id.current);onSaved({kind:'pressure',id:id.current});}catch(e){setError(e instanceof Error?e.message:'Não foi possível guardar.');}finally{lock.current=false;setBusy(false);}}
  function prepare(){
   const errors:typeof fieldErrors={};const whole=(v:string)=>/^\d{1,3}$/.test(v)&&Number(v)>0;
   if(!whole(values.systolic))errors.systolic='Introduz a tensão sistólica: um número inteiro positivo com até três algarismos.';

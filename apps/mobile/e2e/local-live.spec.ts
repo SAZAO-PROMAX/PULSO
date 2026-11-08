@@ -36,7 +36,7 @@ test('Ollama real: fotografia, sinalização visual, confirmação e gráfico',a
  await expect(page.getByText('Valor/associação não verificável por texto independente. Conferir no original.',{exact:true})).toHaveCount(3);
  for(const p of ['Glicose','Colesterol LDL','Creatinina'])await page.getByRole('button',{name:'Marcar revisto: '+p,exact:true}).click();
  await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
- await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toBeVisible();await expect(page.getByTestId('point-detail').first()).toContainText('98,5 mg/dL');
+ await page.getByRole('button',{name:'Ver evolução de Glicose',exact:true}).click();await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toBeVisible();await expect(page.getByTestId('point-detail').first()).toContainText('98,5 mg/dL');
  await page.getByRole('button',{name:'Início',exact:true}).click();await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
  await page.getByRole('button',{name:'Ponto 08/11/2026 98,5 mg/dL',exact:true}).click();
  await expect(page.getByText(/Método de leitura: ollama_vision/)).toBeVisible();

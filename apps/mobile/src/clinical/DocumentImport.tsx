@@ -2,7 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {View,Linking} from 'react-native';
 import {Button,Card,Field,T,layout} from '../ui';
 import {clinicalRepository,API} from './repository';
-import {parameterLabels,MedicalDocument,labParameters,SavedAnalysis} from './data';
+import {parameterLabels,MedicalDocument,labParameters,SavedRecord} from './data';
 import {Extraction,Candidate,ReviewRow,confirmRows,rowLabel} from './importData';
 import {DocumentView} from './RecordViews';
 import {PdfPicker} from './PdfPicker';
@@ -19,7 +19,7 @@ async function original(file:File){
  const url=await new Promise<string>((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result));r.onerror=()=>no(Error('Falha na leitura do ficheiro.'));r.readAsDataURL(new Blob([bytes],{type:mimeFor(file)!}));});
  return {bytes,sha,url};
 }
-export function DocumentImport({owner,onSaved,classification=classificationFor('laboratory','blood'),documentOnly=false}:{owner:string;onSaved:(analysis?:SavedAnalysis)=>void;classification?:Classification;documentOnly?:boolean}){
+export function DocumentImport({owner,onSaved,classification=classificationFor('laboratory','blood'),documentOnly=false}:{owner:string;onSaved:(analysis?:SavedRecord)=>void;classification?:Classification;documentOnly?:boolean}){
  const [metadata,setMetadata]=useState(classification),[title,setTitle]=useState(documentOnly?(registrationCategories.find(c=>c.id===classification.category)?.types.find(t=>t.id===classification.examType)?.label??'Documento sintético'):'Documento laboratorial sintético'),[institution,setInstitution]=useState('');
  const [parsed,setParsed]=useState<Extraction|null>(null),[rows,setRows]=useState<ReviewRow[]>([]),[fileData,setFileData]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [selected,setSelected]=useState<File|null>(null),[stage,setStage]=useState(''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
@@ -67,7 +67,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  function change(i:number,patch:Partial<ReviewRow>){setRows(x=>x.map((r,j)=>j===i?{...r,...patch}:r));}
  async function saveOnly(){
   if(!selected||lock.current)return;lock.current=true;setBusy(true);setError('');
-  try{const source=await original(selected);const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:title.trim(),laboratory:institution.trim()||null,issuedAt:null,importedAt:new Date().toISOString(),...metadata,sha256:source.sha,original:{fileName:selected.name,mediaType:mimeFor(selected)!,text:'[Documento guardado sem extração automática. Consultar o original.]',dataUrl:source.url}};validateClassification(doc);await clinicalRepository.saveDocument(owner,doc);if(active.current)onSaved();}
+  try{const source=await original(selected);const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:title.trim(),laboratory:institution.trim()||null,issuedAt:null,importedAt:new Date().toISOString(),...metadata,sha256:source.sha,original:{fileName:selected.name,mediaType:mimeFor(selected)!,text:'[Documento guardado sem extração automática. Consultar o original.]',dataUrl:source.url}};validateClassification(doc);await clinicalRepository.saveDocument(owner,doc);if(active.current)onSaved({kind:'document',id:doc.id});}
   catch(e){if(active.current)setError((e as Error).message);}finally{lock.current=false;if(active.current)setBusy(false);}
  }
  function addRow(){
@@ -87,7 +87,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
     pageMethods:parsed.pages?.map(p=>({page:p.page,method:p.method,state:p.state})),
     original:{fileName:selected?.name??'laboratorio-'+parsed.sha256.slice(0,12)+'.'+extension,mediaType:mime,text:parsed.text,dataUrl:fileData}};
    validateClassification(doc);
-   await clinicalRepository.confirmDocument(owner,doc,results);if(active.current)onSaved({documentId:doc.id,parameters:[...new Set(results.map(r=>r.parameter))]});
+   await clinicalRepository.confirmDocument(owner,doc,results);if(active.current)onSaved({kind:'document',id:doc.id});
   }catch(e){if(active.current){setError((e as Error).message);setStage('Não foi guardado. Os campos foram preservados.');}}
   finally{lock.current=false;if(active.current)setBusy(false);}
  }

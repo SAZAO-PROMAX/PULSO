@@ -11,7 +11,7 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 
 ## Sprint de simplificação — em curso
 
-Bloco A: entrada pública e gate de sessão implementados; endpoints de saúde exigem autenticação no funcionamento normal. Demo apenas com configuração explícita e SQLite dentro de tmp; reposição exige confirmação do dono demo. Nenhuma limpeza da base normal. Testes focados: 81 API e fluxo público no launcher real aprovados. Blocos seguintes ainda pendentes neste checkpoint.
+Bloco A: entrada pública e gate de sessão implementados; endpoints de saúde exigem autenticação no funcionamento normal. Demo apenas com configuração explícita e SQLite dentro de tmp; reposição exige confirmação do dono demo. Nenhuma limpeza da base normal. Testes focados: 81 API e fluxo público no launcher real aprovados. Bloco B também concluído: guardar abre documento/medição/acontecimento, evolução acessível a partir do detalhe; edição mantém o contexto, eliminação volta à lista e conflitos preservam campos. Onze fluxos focados no launcher aprovados. Auditoria de catálogo e simplificação visual ainda pendentes neste checkpoint.
 
 ## Funcionalidades realmente implementadas
 
