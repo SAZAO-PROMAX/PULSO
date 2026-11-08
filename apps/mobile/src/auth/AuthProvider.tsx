@@ -30,5 +30,3 @@ export function AuthProvider({children}:{children:React.ReactNode}){
  return <Auth.Provider value={{user,photo:user?.hasPhoto&&photo?.owner===user.id?photo.url:null,refresh,signIn,signOut}}>{children}</Auth.Provider>;
 }
 export const useAuth=()=>useContext(Auth);
-export const avatarSymbols:Record<string,string>={leaf:'❧',sun:'☼',wave:'≈',heart:'♡'};
-export const conditionOptions=[{id:'diabetes',label:'Diabetes'},{id:'hypertension',label:'Hipertensão arterial'},{id:'asthma',label:'Asma'},{id:'dyslipidemia',label:'Dislipidemia'},{id:'other',label:'Outra condição'}];

@@ -162,3 +162,12 @@ O formulário «Esqueci-me da palavra-passe» **não envia e-mail**. Um operador
 Introduzir o código de recuperação ou verificação no respetivo formulário. Expira em 15 minutos, uma única utilização; emitir outro invalida o anterior da mesma finalidade. Não partilhar nem guardar o código em Git/relatórios. A ferramenta usa a mesma SQLite (ou PULSO_DB_PATH explícito), não cria contas nem revela códigos por endpoint público. É uma ferramenta privilegiada de operador local; não prova a titularidade de uma caixa de correio real. Alteração de e-mail só se conclui após código e termina as sessões; recuperação também revoga sessões existentes.
 
 Para HTTPS futuro, `PULSO_COOKIE_SECURE=true`; em HTTP loopback, o desenvolvimento verificado usa false. O launcher não lê .env automaticamente: usar variáveis de ambiente quando necessário. Sem autenticação auditada para produção, encriptação local, Android/iOS físicos ou leitor de ecrã ensaiados. A SQLite única preserva os dados anteriores e acrescenta tabelas de conta; nunca apagar `.local` para atualizar. Resultados e pendências atuais em PROJECT_STATUS.md/VALIDATION.md.
+
+
+## Perfil atualizado — v0.6.1
+
+Atualize `http://localhost:8081` com Ctrl+F5. No círculo do cabeçalho, escolha **O meu perfil**. Preencha a data de nascimento com o calendário (obrigatória no registo e ao guardar alterações); contas antigas continuam acessíveis e recebem aviso no Hub enquanto esse campo estiver vazio. Não volte a registar a conta nem apague a base.
+
+Em **Pesquisar condições**, procure por nome ou termo alternativo, por exemplo «DPOC». As caixas iniciais mantêm condições frequentes; as selecionadas aparecem acima e podem ser removidas com um toque. Se faltar uma condição, escreva o nome e escolha **Adicionar «…»**. A lista local não contém todas as doenças; não atribui códigos clínicos. Até 30 condições, nomes manuais de 2–100 caracteres. Tudo autodeclarado e fictício nesta fase.
+
+Escolha um dos oito avatares ou **Usar iniciais**, consulte a pré-visualização e carregue em **Guardar perfil**. A fotografia guardada continua a ter prioridade: remova-a na secção Fotografia para mostrar o avatar. Nem nascimento nem condições personalizam ainda os resultados do Hub ou os limites dos gráficos.

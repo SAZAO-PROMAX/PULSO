@@ -51,3 +51,8 @@ Contas usam a mesma SQLite e ApiRepository, sem converter perfis demo. Primitiva
 
 ## v0.6.1 — sessão no arranque Windows
 Remover o hostname da API forçado pelo launcher e reutilizar a seleção existente pelo hostname do navegador, preservando configuração explícita. Confirmar o cookie via consulta à sessão antes de aplicar login à interface; sem relaxar SameSite, Origin ou CSRF. Acrescentar modo de regressão Playwright com o launcher real e SQLite temporária, além da exportação estática. Sem migração ou alteração de contas/dados existentes.
+
+
+## v0.6.1 — otimização do perfil, 08/11/2026
+Nascimento obrigatório em novos registos e atualizações de perfil, validado no frontend/backend (1900 até hoje, calendário real). Não inventar datas nem alterar contas antigas: login mantém acesso e o Hub pede completar o campo. Sem nova personalização clínica. Condições continuam opcionais/autodeclaradas; catálogo local partilhado com nomes/sinónimos, atalhos frequentes e nomes livres limitados para não excluir condições ausentes. A lista não é completa nem usa códigos clínicos. Não integrar serviços externos na pesquisa ou enviar dados do perfil. Um catálogo oficial completo requer integração/distribuição própria; [API da OMS](https://icd.who.int/icdapi) consultada, sem credenciais ou chamadas clínicas incorporadas.
+Reutilizar componentes/temas: eliminar prefixos repetidos, apresentar selecionadas removíveis, calendário web e um Avatar comum para pré-visualização/cabeçalho. Oito opções locais, sem biblioteca ou imagens geradas; fotografia privada mantém prioridade até remoção explícita. Preservar SQLite, versões/If-Match, sessões, CSRF e contas existentes; nenhuma dependência nova.

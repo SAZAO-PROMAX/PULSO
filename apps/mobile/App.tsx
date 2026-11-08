@@ -39,6 +39,7 @@ function Shell(){
  {!!preferenceWarning&&<T accessibilityRole="alert" kind="small">{preferenceWarning}</T>}
  <View style={layout.stack}><T kind="small" style={{letterSpacing:1}}>{auth.user?'CONTA EXPERIMENTAL · DADOS FICTÍCIOS':'DEMONSTRAÇÃO · DADOS FICTÍCIOS'}</T><T kind="small">{profile.displayName} · Base local · {auth.user?'conta individual experimental':'perfis fictícios'}</T>
  <T nativeID="page-title" tabIndex={-1} accessibilityRole="header" kind="title">{state.area??(state.tab==='Início'?'A minha saúde':state.tab)}</T><T kind="small">Organizar, acompanhar e compreender. Sem avaliação clínica automática.</T></View>
+ {auth.user&&!auth.user.birthDate&&state.tab!=='Perfil'&&<Card><T kind="heading">Complete o seu perfil</T><T>A data de nascimento é agora obrigatória. Os registos existentes estão preservados.</T><Button label="Adicionar data de nascimento" primary onPress={()=>{navigate('Perfil');setProfileView('profile');}}/></Card>}
  {!!message&&<Card><T accessibilityLiveRegion="polite">{message}</T></Card>}
  {state.tab==='Aprender'&&!state.area?<LearnScreen selectedId={learnTopic} onSelect={setLearnTopic}/>:
  state.area==='Saúde geral e prevenção'?<><LearnScreen selectedId={learnTopic} onSelect={setLearnTopic} initialCategory="Prevenção"/><Button label="Voltar ao início" onPress={()=>navigate('Início')}/></>:

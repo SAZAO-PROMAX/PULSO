@@ -1,5 +1,29 @@
 # Validação atual — v0.6.1, 08/11/2026
 
+## Otimização do perfil — mesma v0.6.1
+
+**124 testes distintos aprovados:** 62 API, 28 TypeScript, 29 Chromium, 2 de estrutura e 3 do gerador; typecheck/exportação web aprovados, 2 Chromium de inferência real omitidos. Quatro casos repetidos com o launcher real, incluindo perfil. Logs locais `tmp/profile-api-release.log`, `tmp/profile-unit.log`, `tmp/profile-web-release.log`, `tmp/profile-export.log` e `tmp/profile-launcher.log`. Sem acesso aos conteúdos da base normal, migração, nova inferência ou carga.
+
+Regressões: nascimento obrigatório/ausente/inválido/futuro/bissexto no servidor e interface; conta antiga sem data entra e completa perfil sem recriação; condições por ID e nomes livres, limites e duplicados; pesquisa sem acentos/por sinónimo, seleção/remoção, interesses, avatar por teclado e persistência após recarga. As condições continuam autodeclaradas, não diagnósticos. Suite integrada mantém isolamento de contas, fotografia privada, PDF e tensão. Capturas locais do perfil revistas a 320 px escuro e 1100 px claro, sem transbordo horizontal. Não houve ensaio humano ou leitor de ecrã real.
+
+Comandos adicionais (PowerShell, raiz; testes web exigem parar primeiro o PULSO normal):
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest services/api/tests -q --basetemp=tmp/profile-api-repeat
+npm.cmd run typecheck --prefix apps/mobile
+npm.cmd test --prefix apps/mobile
+Push-Location apps/mobile
+npx.cmd expo export --platform web
+npm.cmd run test:web
+$env:PULSO_TEST_LAUNCHER = 'true'
+npx.cmd playwright test e2e/profile.spec.ts e2e/accounts.spec.ts e2e/login.spec.ts
+Remove-Item Env:PULSO_TEST_LAUNCHER
+Pop-Location
+```
+
+### Correção anterior de sessão
+
+
 Correção de login: o arranque real forçava API em `127.0.0.1` para interface em `localhost`; reproduzido antes da correção com falha de hostname. O arranque preserva agora a escolha automática pelo hostname do navegador; login confirma a sessão antes de mostrar a conta. Cookie HttpOnly/SameSite, Origin e CSRF mantidos. Sem alterações à base normal ou às contas existentes.
 
 **113 distintos aprovados:** 54 API, 26 TypeScript, 28 Chromium, 2 de estrutura e 3 do gerador. Typecheck e exportação web aprovados; 2 Chromium opcionais de inferência real omitidos. Logs locais `tmp/v061-api.log`, `tmp/v061-browser.log`, `tmp/v061-export.log`. Sem inferência real ou novo ensaio de carga.

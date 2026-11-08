@@ -8,6 +8,7 @@ import secrets
 import sqlite3
 import time
 import uuid
+import unicodedata
 from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
@@ -22,9 +23,10 @@ ROOT=Path(__file__).resolve().parents[3]
 COOKIE='pulso_session';SESSION_SECONDS=8*3600;TOKEN_SECONDS=15*60
 HASHER=PasswordHasher(time_cost=3,memory_cost=65536,parallelism=2,type=Type.ID)
 DUMMY=HASHER.hash('dummy-not-an-account-password')
-AVATARS={'leaf','sun','wave','heart'}
+AVATARS={'leaf','sun','wave','heart','mountain','flower','moon','star'}
 INTERESTS={'Análises ao sangue','Tensão arterial','Saúde respiratória','Medicação e consultas','Saúde geral e prevenção'}
-CONDITIONS={'diabetes','hypertension','asthma','dyslipidemia','other'}
+CONDITION_CATALOG=json.loads((ROOT/'packages/shared/conditions.json').read_text(encoding='utf-8'))
+CONDITIONS={c['id'] for c in CONDITION_CATALOG}
 router=APIRouter(prefix='/auth')
 SCHEMA='''
 CREATE TABLE IF NOT EXISTS auth_users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,password_hash TEXT NOT NULL,profile TEXT NOT NULL,version INTEGER NOT NULL DEFAULT 1,email_verified INTEGER NOT NULL DEFAULT 0,pending_email TEXT,avatar BLOB);
@@ -97,12 +99,18 @@ def profile_value(value):
     full=value.get('fullName','')
     if not isinstance(full,str) or len(full)>160:raise HTTPException(422,'Nome completo inválido.')
     born=value.get('birthDate') or None
+    if not born:raise HTTPException(422,'A data de nascimento é obrigatória.')
     if born:
         try:
             if not isinstance(born,str) or len(born)!=10 or date.fromisoformat(born).isoformat()!=born or not date(1900,1,1)<=date.fromisoformat(born)<=date.today():raise ValueError()
-        except ValueError:raise HTTPException(422,'Data de nascimento inválida; podes deixá-la vazia.')
+        except ValueError:raise HTTPException(422,'Data de nascimento inválida. Usa AAAA-MM-DD, entre 1900 e hoje.')
     conditions=value.get('conditions',[]);interests=value.get('interests',[]);avatar=value.get('avatarPreset')
-    for values,allowed in ((conditions,CONDITIONS),(interests,INTERESTS)):
+    if not isinstance(conditions,list) or len(conditions)>30 or any(not isinstance(v,str) or (v not in CONDITIONS and not (v.startswith('custom:') and 2<=len(v[7:])<=100 and v[7:]==v[7:].strip() and not any(ord(c)<32 or ord(c)==127 for c in v))) for v in conditions):raise HTTPException(422,'Condições inválidas; seleciona até 30, com nomes entre 2 e 100 caracteres.')
+    def normal(text):return ' '.join(''.join(c for c in unicodedata.normalize('NFD',text).casefold() if not unicodedata.combining(c)).split())
+    labels={c['id']:c['label'] for c in CONDITION_CATALOG}
+    keys=[normal(v[7:] if v.startswith('custom:') else labels[v]) for v in conditions]
+    if len(keys)!=len(set(keys)):raise HTTPException(422,'Existem condições repetidas.')
+    for values,allowed in ((interests,INTERESTS),):
         if not isinstance(values,list) or len(values)>len(allowed) or any(not isinstance(v,str) or v not in allowed for v in values) or len(set(values))!=len(values):raise HTTPException(422,'Seleções do perfil inválidas.')
     if avatar is not None and (not isinstance(avatar,str) or avatar not in AVATARS):raise HTTPException(422,'Avatar inválido.')
     return {'displayName':name.strip(),'fullName':full.strip(),'birthDate':born,'conditions':conditions,'conditionStatus':'self_declared','interests':interests,'avatarPreset':avatar}

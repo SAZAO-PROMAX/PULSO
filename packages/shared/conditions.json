@@ -1,0 +1,262 @@
+[
+  {
+    "id": "diabetes",
+    "label": "Diabetes",
+    "aliases": "diabetes mellitus"
+  },
+  {
+    "id": "hypertension",
+    "label": "Hipertensão arterial",
+    "aliases": "tensão alta"
+  },
+  {
+    "id": "asthma",
+    "label": "Asma",
+    "aliases": ""
+  },
+  {
+    "id": "dyslipidemia",
+    "label": "Dislipidemia",
+    "aliases": "colesterol elevado hipercolesterolemia"
+  },
+  {
+    "id": "copd",
+    "label": "Doença pulmonar obstrutiva crónica",
+    "aliases": "DPOC"
+  },
+  {
+    "id": "hypothyroidism",
+    "label": "Hipotiroidismo",
+    "aliases": "tiroide"
+  },
+  {
+    "id": "hyperthyroidism",
+    "label": "Hipertiroidismo",
+    "aliases": "tiroide"
+  },
+  {
+    "id": "obesity",
+    "label": "Obesidade",
+    "aliases": ""
+  },
+  {
+    "id": "anemia",
+    "label": "Anemia",
+    "aliases": ""
+  },
+  {
+    "id": "ckd",
+    "label": "Doença renal crónica",
+    "aliases": "insuficiência renal"
+  },
+  {
+    "id": "heart-failure",
+    "label": "Insuficiência cardíaca",
+    "aliases": ""
+  },
+  {
+    "id": "atrial-fibrillation",
+    "label": "Fibrilhação auricular",
+    "aliases": "arritmia"
+  },
+  {
+    "id": "coronary-disease",
+    "label": "Doença coronária",
+    "aliases": "angina"
+  },
+  {
+    "id": "stroke",
+    "label": "Acidente vascular cerebral",
+    "aliases": "AVC"
+  },
+  {
+    "id": "osteoporosis",
+    "label": "Osteoporose",
+    "aliases": ""
+  },
+  {
+    "id": "osteoarthritis",
+    "label": "Artrose",
+    "aliases": "osteoartrite"
+  },
+  {
+    "id": "rheumatoid-arthritis",
+    "label": "Artrite reumatoide",
+    "aliases": ""
+  },
+  {
+    "id": "lupus",
+    "label": "Lúpus",
+    "aliases": ""
+  },
+  {
+    "id": "fibromyalgia",
+    "label": "Fibromialgia",
+    "aliases": ""
+  },
+  {
+    "id": "gout",
+    "label": "Gota",
+    "aliases": ""
+  },
+  {
+    "id": "depression",
+    "label": "Depressão",
+    "aliases": ""
+  },
+  {
+    "id": "anxiety",
+    "label": "Perturbação de ansiedade",
+    "aliases": "ansiedade"
+  },
+  {
+    "id": "bipolar",
+    "label": "Perturbação bipolar",
+    "aliases": ""
+  },
+  {
+    "id": "adhd",
+    "label": "Perturbação de hiperatividade e défice de atenção",
+    "aliases": "PHDA"
+  },
+  {
+    "id": "autism",
+    "label": "Perturbação do espetro do autismo",
+    "aliases": "autismo PEA"
+  },
+  {
+    "id": "epilepsy",
+    "label": "Epilepsia",
+    "aliases": ""
+  },
+  {
+    "id": "migraine",
+    "label": "Enxaqueca",
+    "aliases": ""
+  },
+  {
+    "id": "parkinson",
+    "label": "Doença de Parkinson",
+    "aliases": ""
+  },
+  {
+    "id": "alzheimer",
+    "label": "Doença de Alzheimer",
+    "aliases": ""
+  },
+  {
+    "id": "multiple-sclerosis",
+    "label": "Esclerose múltipla",
+    "aliases": ""
+  },
+  {
+    "id": "sleep-apnea",
+    "label": "Apneia do sono",
+    "aliases": ""
+  },
+  {
+    "id": "allergic-rhinitis",
+    "label": "Rinite alérgica",
+    "aliases": ""
+  },
+  {
+    "id": "psoriasis",
+    "label": "Psoríase",
+    "aliases": ""
+  },
+  {
+    "id": "atopic-dermatitis",
+    "label": "Dermatite atópica",
+    "aliases": "eczema"
+  },
+  {
+    "id": "celiac",
+    "label": "Doença celíaca",
+    "aliases": "celiaquia glúten"
+  },
+  {
+    "id": "crohn",
+    "label": "Doença de Crohn",
+    "aliases": ""
+  },
+  {
+    "id": "ulcerative-colitis",
+    "label": "Colite ulcerosa",
+    "aliases": ""
+  },
+  {
+    "id": "ibs",
+    "label": "Síndrome do intestino irritável",
+    "aliases": ""
+  },
+  {
+    "id": "reflux",
+    "label": "Refluxo gastroesofágico",
+    "aliases": "azia"
+  },
+  {
+    "id": "endometriosis",
+    "label": "Endometriose",
+    "aliases": ""
+  },
+  {
+    "id": "pcos",
+    "label": "Síndrome dos ovários poliquísticos",
+    "aliases": "SOP"
+  },
+  {
+    "id": "glaucoma",
+    "label": "Glaucoma",
+    "aliases": ""
+  },
+  {
+    "id": "cataract",
+    "label": "Cataratas",
+    "aliases": ""
+  },
+  {
+    "id": "hearing-loss",
+    "label": "Perda auditiva",
+    "aliases": "surdez hipoacusia"
+  },
+  {
+    "id": "hiv",
+    "label": "Infeção por VIH",
+    "aliases": "HIV SIDA"
+  },
+  {
+    "id": "hepatitis-b",
+    "label": "Hepatite B",
+    "aliases": ""
+  },
+  {
+    "id": "hepatitis-c",
+    "label": "Hepatite C",
+    "aliases": ""
+  },
+  {
+    "id": "breast-cancer",
+    "label": "Cancro da mama",
+    "aliases": ""
+  },
+  {
+    "id": "prostate-cancer",
+    "label": "Cancro da próstata",
+    "aliases": ""
+  },
+  {
+    "id": "colorectal-cancer",
+    "label": "Cancro colorretal",
+    "aliases": "cólon reto"
+  },
+  {
+    "id": "lung-cancer",
+    "label": "Cancro do pulmão",
+    "aliases": ""
+  },
+  {
+    "id": "other",
+    "label": "Outra condição",
+    "aliases": ""
+  }
+]

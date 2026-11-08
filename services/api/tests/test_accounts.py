@@ -17,7 +17,7 @@ def client(tmp_path,monkeypatch):
     with TestClient(app) as client:yield client
 
 def register(client,email='one@example.test'):
-    return client.post('/auth/register',json={'email':email,'password':PASSWORD,'displayName':'Pessoa fictícia'},headers=ORIGIN)
+    return client.post('/auth/register',json={'email':email,'password':PASSWORD,'displayName':'Pessoa fictícia','birthDate':'1970-05-23'},headers=ORIGIN)
 
 def login(client,email='one@example.test',password=PASSWORD):
     response=client.post('/auth/login',json={'email':email,'password':password},headers=ORIGIN)
@@ -111,3 +111,27 @@ def test_avatar_private_resize_strip_metadata_replace_remove(client):
     assert client.post('/auth/avatar',content=pix.tobytes('jpeg'),headers={**headers,'Content-Type':'image/jpeg','If-Match':'2'}).status_code==200
     assert client.delete('/auth/avatar',headers={**headers,'If-Match':'3'}).status_code==200
     assert client.get('/auth/avatar').status_code==404 and client.get('/auth/session').json()['user']['hasPhoto'] is False
+
+
+@pytest.mark.parametrize('born',[None,'','2035-01-01','1899-12-31','2001-02-29','23/05/1970',True])
+def test_birth_date_required_and_validated(client,born):
+    body={'email':'invalid@example.test','password':PASSWORD,'displayName':'Pessoa fictícia','birthDate':born}
+    assert client.post('/auth/register',json=body,headers=ORIGIN).status_code==422
+    register(client);user,headers=login(client)
+    assert client.patch('/auth/profile',json={**user,'birthDate':born},headers={**headers,'If-Match':str(user['version'])}).status_code==422
+    assert client.get('/auth/session').json()['user']['birthDate']=='1970-05-23'
+
+
+def test_conditions_custom_catalog_validation_and_legacy_account(client):
+    register(client)
+    # Simulate a pre-update account only in this temporary test SQLite.
+    with accounts.connection(True) as db:
+        row=db.execute('SELECT id,profile FROM auth_users').fetchone();profile=json.loads(row['profile']);profile['birthDate']=None
+        db.execute('UPDATE auth_users SET profile=? WHERE id=?',(json.dumps(profile),row['id']))
+    user,headers=login(client);assert user['birthDate'] is None
+    body={**user,'birthDate':'1972-02-29','conditions':['copd','custom:Condição fictícia rara'],'avatarPreset':'flower'}
+    assert client.patch('/auth/profile',json=body,headers={**headers,'If-Match':'1'}).status_code==200
+    current=client.get('/auth/session').json()['user'];assert current['conditions']==body['conditions'] and current['avatarPreset']=='flower'
+    for conditions in [['unknown-id'],['custom:x'],['custom: bad '],['custom:bad\ntext'],['asthma','custom:Asma'],['custom:ÁBC','custom:abc'],['custom:'+('x'*101)],['custom:Nome '+str(i) for i in range(31)]]:
+        assert client.patch('/auth/profile',json={**current,'conditions':conditions},headers={**headers,'If-Match':'2'}).status_code==422
+    assert client.get('/auth/session').json()['user']==current

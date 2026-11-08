@@ -6,7 +6,7 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 
 - **Atualizado:** 08/11/2026 (Europe/Lisbon).
 - **Versão:** PULSO **v0.6.1**, experimental; frontend/Expo e API identificados como `0.6.1`.
-- **Branch:** `main`. **Base Git da correção:** `f3b5d8666cb904d8004ea28cb17b4b258af2886f` (entrega anterior). Esta ficha acompanha a correção de login; consultar `git log -1 -- docs/PROJECT_STATUS.md` para identificar o commit de entrega.
+- **Branch:** `main`. **Base Git desta otimização:** `2336e3502689be1f15b8b1124b9f6def0b258dc6` (correção anterior de login). Esta ficha acompanha a otimização do perfil, mantendo v0.6.1; consultar `git log -1 -- docs/PROJECT_STATUS.md` para identificar o commit de entrega.
 - **Repositório oficial:** https://github.com/SAZAO-PROMAX/PULSO. Confirmar `git status` e a correspondência HEAD/origin/main ao retomar. Checkpoints anteriores preservam v0.5/carga, integridade/fila e organização documental; não assumir que resultados históricos descrevem a versão atual.
 
 ## Funcionalidades realmente implementadas
@@ -17,10 +17,12 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 - Registar: oito categorias, pesquisa, tipos e atalhos. Só sangue suportado segue para extração/revisão de resultados; outros tipos guardam documentos sem interpretação ou medições automáticas.
 - Histórico pesquisável por categoria/tipo/especialidade/período, com metadados editáveis e várias especialidades no mesmo documento. Reclassificar não duplica original nem altera resultados/gráficos. Documentos antigos sem categoria continuam em Todos os registos.
 - Importação sintética PDF/PNG/JPEG: validação, parser conhecido ou Ollama local, propostas corrigíveis e confirmação humana antes de guardar. Fila limitada com estados reais, deduplicação e cancelamento em espera; uma extração de cada vez.
-- Contas individuais experimentais: registo/login/logout, perfil opcional, condições autodeclaradas/interesses, avatar/iniciais e fotografia sintética privada, substituível/removível. Sessões e autorização ligam os dados à conta; nova conta não herda os perfis demo. Menu de perfil fixo e Histórico reutilizado.
+- Contas individuais experimentais: registo/login/logout, data de nascimento obrigatória no registo/atualização do perfil, outros campos opcionais, condições autodeclaradas/interesses, oito avatares com pré-visualização/iniciais e fotografia sintética privada, substituível/removível. Sessões e autorização ligam os dados à conta; nova conta não herda os perfis demo. Menu de perfil fixo e Histórico reutilizado.
 - Recuperação/verificação/alteração de e-mail com códigos locais temporários de uso único. **Sem serviço ou envio real de e-mail; confirmação de desenvolvimento não prova titularidade externa.**
 
 Ver [guia Windows](GUIA_WINDOWS.md), [arquitetura](ARCHITECTURE.md), [extração](LOCAL_EXTRACTION.md) e [conteúdos educativos](UX_LEARN.md).
+
+Perfil v0.6.1: pesquisa local por nome/sinónimos, condições frequentes e nomes adicionados manualmente; seleções removíveis sem prefixos repetidos. Não é catálogo completo de doenças nem classificação clínica. Contas antigas sem nascimento mantêm acesso/dados e recebem pedido para completar o perfil. Sem personalização clínica automática.
 
 Correção v0.6.1: o arranque deixou de forçar API num hostname diferente do navegador; login só apresenta a conta após confirmar o cookie numa consulta à sessão. Cookies recusados produzem erro explícito.
 
@@ -41,6 +43,7 @@ Configuração não é uma sondagem contínua de disponibilidade. Não iniciar v
 ## Demonstrativo, incompleto ou não validado
 
 - Todos os nomes, contas, fotografias e documentos têm de ser fictícios. demo-a/demo-b continuam públicos no loopback e não são contas autenticadas.
+- Lista de condições é local e não exaustiva; integração de classificação oficial completa permanece pendente. É possível adicionar nomes ausentes, sem códigos ou diagnóstico.
 - Calendário e medicação estruturada continuam em preparação; documentos de prescrição/consulta já podem ser guardados. Sem instituições reais, partilha, Arquivar, diagnóstico, alertas clínicos ou metas automáticas.
 - Sem formulário domiciliário dedicado de SpO₂ ou múltiplas leituras de tensão numa sessão; gráficos existentes mantidos.
 - Android/iOS físicos não verificados; seletor documental/fotografia nativos não implementados e tema nativo só de sessão. Biblioteca local não é instalação offline independente do servidor.
@@ -61,7 +64,7 @@ Os dois problemas de integridade do ensaio v0.5 foram corrigidos com regressões
 
 ## Últimas verificações — 08/11/2026
 
-- **113 distintos aprovados na v0.6.1:** 54 API, 26 TypeScript, 28 Chromium, 2 de estrutura e 3 do gerador. Typecheck e exportação web aprovados; 2 Chromium opcionais de inferência real omitidos. Três casos também passaram com o arranque real: sessão/recarga, cookie recusado e fluxo integrado de contas. Bases temporárias; base normal preservada. Pip check aprovado na entrega anterior, não repetido. Sem validação clínica ou auditoria independente.
+- **124 distintos aprovados nesta otimização v0.6.1:** 62 API, 28 TypeScript, 29 Chromium, 2 de estrutura e 3 do gerador. Typecheck e exportação web aprovados; 2 Chromium opcionais de inferência real omitidos. Quatro casos também passaram com o arranque real: perfil, sessão/recarga, cookie recusado e fluxo integrado de contas. Calendário, datas inválidas/ausentes, pesquisa/sinónimos, condições livres/duplicadas, persistência e avatar por teclado verificados. Capturas de perfil revistas a 320 px escuro e 1100 px claro; bases temporárias. Sem nova inferência ou carga. Pip check da entrega v0.6 não repetido.
 - Fluxo de duas contas fictícias verificado: registo/login, perfil/condições autodeclaradas, avatar/fotografia, PDF confirmado, tensão, histórico/gráfico, logout e recarga/novo login com dados recuperados; acesso da outra conta recusado. Menu por teclado/Escape/foco e cabeçalho permanente verificados.
 - Regressões de ID/versão, edição concorrente, originais, classificação e fila aprovadas. Parser sem Ollama testado; modelo/pipeline mantidos, sem nova inferência GPU real nesta v0.6.
 - Na entrega anterior, sem repetição nesta correção: escrita curta comparável a 50 clientes: p95 de aproximadamente 1674 ms para 272 ms; zero erros inesperados e integridade final preservada. Uma amostra curta, dois perfis demo, não capacidade de produção.
