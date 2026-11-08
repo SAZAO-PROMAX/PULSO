@@ -2,14 +2,17 @@ import React,{useState} from 'react';
 import {View} from 'react-native';
 import {T,Button,Field,layout,Card,useTheme} from '../ui';
 import {ClinicalData,Parameter,parameterLabels,buildSeries,exclusionReason} from './data';
+import {DocumentView} from './DocumentView';
 import {TimelineChart} from './TimelineChart';
 import {eventsInRange} from './events';
 import {EventDetail} from './EventViews';
 import {periods,timeRange,filterTime} from './timeRange';
 import {MedicalTerm} from '../learning/Learning';
-export function ClinicalPanel({ownerId,parameters,data,initialParameter}:{ownerId:string;parameters:Parameter[];data:ClinicalData;initialParameter?:Parameter|null}) {
+export function ClinicalPanel({ownerId,parameters,data,initialParameter,importedDocumentId}:{importedDocumentId?:string;ownerId:string;parameters:Parameter[];data:ClinicalData;initialParameter?:Parameter|null}) {
  const {settings,colors:c}=useTheme();
- const [combined,setCombined]=useState(settings.mode==='detailed'),[chosen,setChosen]=useState<Parameter[]>(parameters),[more,setMore]=useState(false),[start,setStart]=useState(''),[end,setEnd]=useState('');
+ const imported=data.documents.find(d=>d.id===importedDocumentId&&d.ownerId===ownerId);
+ const importedParameters=[...new Set(data.results.filter(r=>r.ownerId===ownerId&&r.documentId===imported?.id&&r.status!=='extracted_pending').map(r=>r.parameter))];
+ const [combined,setCombined]=useState(settings.mode==='detailed'),[chosen,setChosen]=useState<Parameter[]>(importedParameters.length?importedParameters:parameters),[more,setMore]=useState(false),[start,setStart]=useState(''),[end,setEnd]=useState('');
  const [parameter,setParameter]=useState(initialParameter&&parameters.includes(initialParameter)?initialParameter:parameters[0]),[period,setPeriod]=useState('all');
  let range:{min:number;max:number}|null=null,rangeError='';try{range=timeRange(period,start,end);}catch(e){rangeError=(e as Error).message;}
  const visible=rangeError?{...data,results:[]}:filterTime(data,range);
@@ -23,7 +26,7 @@ export function ClinicalPanel({ownerId,parameters,data,initialParameter}:{ownerI
  const outside=all.filter(r=>!visible.results.some(v=>v.id===r.id)).length;
  const reasons=new Map<string,number>();
  for(const row of visible.results.filter(r=>r.ownerId===ownerId&&selected.includes(r.parameter))){const reason=exclusionReason(data,row);if(reason)reasons.set(reason,(reasons.get(reason)??0)+1);}
- return <View style={layout.stack}><T kind="small">Evolução descritiva · dados fictícios. Sem diagnósticos ou conversões automáticas.</T>
+ return <View style={layout.stack}>{imported&&<Card><T kind="heading" nativeID="analysis-evolution-title" tabIndex={-1}>Evolução dos resultados desta análise</T><T>{imported.title}</T><T kind="small">Parâmetros confirmados: {importedParameters.map(p=>parameterLabels[p]).join(', ')}. O ponto desta análise é selecionado quando tem dados comparáveis; resultados incompletos mantêm-se no Histórico.</T><DocumentView doc={imported}/></Card>}<T kind="small">Evolução descritiva · dados fictícios. Sem diagnósticos ou conversões automáticas.</T>
  <View style={layout.row}><Button label="Individual" selected={!combined} onPress={()=>setCombined(false)}/><Button label="Combinado" selected={combined} onPress={()=>setCombined(true)}/></View>{combined&&<T>Gráficos alinhados no tempo, com escalas independentes e unidades identificadas. Não há normalização nem equivalência entre parâmetros.</T>}
  <View accessibilityLabel="Parâmetro" style={layout.row}>{parameters.map(p=><Button key={p} label={parameterLabels[p]} selected={combined?chosen.includes(p):p===parameter} onPress={()=>combined?setChosen(chosen.includes(p)?chosen.filter(v=>v!==p):[...chosen,p]):setParameter(p)}/>)}</View>
  <MedicalTerm parameter={parameter} label={parameterLabels[parameter]}/>
@@ -36,7 +39,7 @@ export function ClinicalPanel({ownerId,parameters,data,initialParameter}:{ownerI
  {!!reasons.size&&<Card><T kind="heading">Porque há registos fora do gráfico?</T>{[...reasons].map(([reason,count])=><T key={reason}>{count} {count===1?'registo':'registos'}: {reason}</T>)}<T kind="small">Os registos mantêm-se no Histórico, com o documento e os dados originais.</T></Card>}
  {!!events.length&&<><Button label="Consultar acontecimentos deste período" onPress={()=>setShowEvents(!showEvents)}/>{showEvents&&events.map(event=><Card key={event.id}><EventDetail event={event} data={data}/></Card>)}</>}
  {!series.length&&<Card><T kind="heading">Ainda sem resultados neste período</T><T>Sem medições comparáveis disponíveis.</T><T kind="small">Escolhe outro parâmetro ou período. Não são preenchidos valores em falta.</T></Card>}
- {series.map((s,i)=><View key={s.key+period+start+end} style={layout.stack}>{combined&&<Button label={'Ocultar série '+parameterLabels[s.parameter]+' · '+s.unit+' · '+s.method+' · '+s.context} onPress={()=>setChosen(chosen.filter(p=>p!==s.parameter))}/>}<TimelineChart series={s} data={data} events={events} timeDomain={combined||events.length?domain:undefined} color={combined?(i%2?c.info:c.series):undefined}/></View>)}
+ {series.map((s,i)=><View key={s.key+period+start+end} style={layout.stack}>{combined&&<Button label={'Ocultar série '+parameterLabels[s.parameter]+' · '+s.unit+' · '+s.method+' · '+s.context} onPress={()=>setChosen(chosen.filter(p=>p!==s.parameter))}/>}<TimelineChart initialPointId={s.points.find(p=>p.documentId===imported?.id)?.id} series={s} data={data} events={events} timeDomain={combined||events.length?domain:undefined} color={combined?(i%2?c.info:c.series):undefined}/></View>)}
  </View>;
 }
 

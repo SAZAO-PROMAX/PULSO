@@ -1,4 +1,15 @@
-# Validação atual — v0.7, 08/11/2026
+# Validação atual — v0.7.1, 08/11/2026
+
+Correção do destino após confirmação de resultados: DocumentImport comunica o documento/parâmetros apenas depois da gravação confirmada pela API; App recarrega a revisão atual e abre Análises ao sangue, em vez do Histórico. Foco/rolagem vão para o resumo da análise e TimelineChart seleciona o respetivo ponto quando comparável. No modo combinado só os parâmetros importados começam ativos. Os históricos anteriores comparáveis e o original são preservados; campos em falta não geram pontos. Documentos sem extração, tensão e acontecimentos continuam no Histórico.
+
+**146 testes distintos aprovados:** 74 API, 34 TypeScript, 33 Chromium, 2 de estrutura e 3 do gerador. Typecheck, pip check e exportação web aprovados. Dois Chromium opcionais de inferência real omitidos. Logs locais: `tmp/v071-api.log`, `tmp/v071-unit.log`, `tmp/v071-browser-final.log`, `tmp/v071-export.log`; seis fluxos também passaram antes com o launcher real em `tmp/pdf-redirect-focused.log`. Testes só com SQLite temporária e documentos sintéticos, sem consultar/repor dados da conta normal.
+
+Regressões: confirmar com a página no fim da revisão abre e foca o destino no topo, seleciona a glicose corrigida e mantém origem/original; falha 503 mantém o formulário sem avanço; conta autenticada preserva isolamento; confirmar só LDL com método ausente abre LDL e explica a exclusão, sem selecionar um ponto antigo como se fosse novo; modo combinado ativa só o parâmetro desse PDF. Introdução manual sem Ollama, persistência/recarga, documentos sem resultados, tensão e restantes fluxos preservados. Testes do destino antigo foram atualizados mantendo verificações de valores/persistência. Sem alterações funcionais da API/persistência, novas dependências, nova inferência/carga ou exportações nativas nesta correção; API apenas atualiza a identificação de versão. Na revisão do lock, corrigidas duas versões de metadados (@expo/expo-modules-macros-plugin e source-map) alteradas indevidamente na v0.7; conferidas com os pacotes instalados e os URLs/integridades já existentes, sem instalar/atualizar bibliotecas.
+
+Repetir com os comandos web/API/estrutura abaixo, substituindo a pasta temporária de pytest por uma nova (por exemplo `tmp/v071-repeat`). Android/iOS continuam limitados à evidência de exportação JS da v0.7, sem dispositivo físico, leitor real ou validação clínica.
+
+## Registo histórico — v0.7
+
 
 **145 testes distintos aprovados:** 74 API, 34 TypeScript, 32 Chromium, 2 de estrutura e 3 do gerador de carga. Dois Chromium opcionais de inferência real omitidos. Typecheck, pip check, exportação web e exportações JavaScript Android/iOS concluídos. Sem novas dependências ou inferência GPU/carga real. Logs locais em `tmp/v07-api-release.log`, `tmp/v07-unit-release.log`, `tmp/v07-web-final.log`, `tmp/v07-web-export-final.log`, `tmp/v07-android-export.log` e `tmp/v07-ios-export.log`. Bases temporárias; base normal não foi reposta nem usada pelos testes.
 

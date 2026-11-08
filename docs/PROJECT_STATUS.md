@@ -5,8 +5,8 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 ## Versão e Git
 
 - **Atualizado:** 08/11/2026 (Europe/Lisbon).
-- **Versão:** PULSO **v0.7**, experimental; frontend/Expo e API identificados como `0.7.0`.
-- **Branch:** `main`. **Base de código desta validação:** `056fced07c40da7015c021b21896ff253f4bec49` (checkpoint de acontecimentos), após `d07179c` (experiência/gráficos). Esta ficha acompanha a entrega final v0.7, incluindo correção de foco; consultar `git log -1 -- docs/PROJECT_STATUS.md` para o commit de entrega.
+- **Versão:** PULSO **v0.7.1**, experimental; frontend/Expo e API identificados como `0.7.1`.
+- **Branch:** `main`. **Base Git desta correção:** `309247c3a0ecdb0e9ae1d7d1800c0e716152752c` (entrega v0.7). Esta ficha acompanha a correção da transição após confirmar um exame; consultar `git log -1 -- docs/PROJECT_STATUS.md` para o commit de entrega.
 - **Repositório oficial:** https://github.com/SAZAO-PROMAX/PULSO. Confirmar `git status` e a correspondência HEAD/origin/main ao retomar. Checkpoints anteriores preservam v0.5/carga, integridade/fila e organização documental; não assumir que resultados históricos descrevem a versão atual.
 
 ## Funcionalidades realmente implementadas
@@ -14,6 +14,7 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 - Hub único adaptativo: modos Simples/Equilibrado/Detalhado, prioridades explícitas de áreas, resumos expansíveis e ajuda opcional. Mesmos dados/permissões nos três modos; sem inferir capacidade ou modo pela idade.
 - Onboarding opcional retomável de sete passos; conclusão/progresso, tema sistema/claro/escuro, tamanho de texto, contraste, movimento e ajuda persistem no JSON da conta na mesma SQLite, com versão/CSRF. Tema anónimo mantém a chave local anterior.
 - Cinco áreas e Aprender com 23 fichas locais, pesquisa/categorias e explicações partilhadas, sem nova revisão clínica nesta versão.
+- Após confirmar resultados de um exame, a interface abre automaticamente a evolução dos seus parâmetros, seleciona o ponto importado quando comparável e reposiciona foco/rolagem. Original acessível; valores incompletos permanecem no Histórico com motivo de exclusão. Tensão, acontecimentos e documentos sem extração mantêm destino no Histórico.
 - Gráficos individuais ou painéis combinados com eixo temporal comum e escalas/unidades próprias; séries por método/amostra separadas. Períodos de 7/30/90 dias, 6 meses, 1/2/5 anos, histórico completo e personalizado UTC inclusivo. Desenho denso limitado; lista paginada conserva todos os pontos, origem/original e motivos de exclusão. Sem conversões, interpolação de valores ou diagnóstico.
 - Acontecimentos fictícios: oito tipos, datas/duração, descrição/instituição, referências a documentos do mesmo dono, estados autodeclarado/documentado sem validação clínica. Criar/rever/guardar, pesquisar/filtrar, editar/eliminar com versão, histórico de edições e marcadores agrupados no gráfico. Eliminar exame retira ligações ativas atomicamente; eliminar acontecimento preserva exames/medições. Sem causalidade inferida.
 - Tensão manual com revisão/persistência. Repetição de ID com conteúdo equivalente é idempotente; conteúdo diferente dá conflito. Editar/eliminar exige versão atual; conflito mantém os campos e requer decisão explícita.
@@ -68,7 +69,7 @@ Os dois problemas de integridade do ensaio v0.5 foram corrigidos com regressões
 
 ## Últimas verificações — 08/11/2026
 
-- **145 distintos aprovados na v0.7:** 74 API, 34 TypeScript, 32 Chromium, 2 de estrutura e 3 do gerador. Typecheck, pip check, exportação web e pacotes JavaScript Android/iOS aprovados. Dois Chromium opcionais de inferência real omitidos; sem nova inferência GPU/carga. Testes só em bases temporárias. Uma regressão de foco em Registar foi corrigida antes da suite final; sete casos também passaram novamente com o launcher real. Detalhes/comandos em VALIDATION.md.
+- **146 distintos aprovados na v0.7.1:** 74 API, 34 TypeScript, 33 Chromium, 2 de estrutura e 3 do gerador. Typecheck, pip check e exportação web aprovados; 2 Chromium opcionais de inferência real omitidos. Seis fluxos focados também passaram com o launcher real antes da suite final. Verificados destino/foco/rolagem, ponto importado, falha sem avanço/perda de campos, parâmetro LDL isolado com método ausente, persistência/isolamento e documentos sem resultados. Bases temporárias; sem nova inferência/carga ou exportação nativa nesta correção. Exportações JS Android/iOS da v0.7 são evidência histórica. Detalhes em VALIDATION.md.
 - Fluxo de duas contas fictícias novamente verificado: registo/login, perfil/condições autodeclaradas, avatar/fotografia, PDF confirmado, tensão, histórico/gráfico, logout e recarga/novo login com dados recuperados; acesso da outra conta recusado. Menu por teclado/Escape/foco e cabeçalho permanente verificados.
 - Regressões de ID/versão, edição concorrente, originais, classificação e fila aprovadas. Preferências isoladas por conta, onboarding, modos sem alteração de dados, períodos, séries e acontecimentos com documentos/conflitos verificados. Parser sem Ollama testado; motor/modelo preservados.
 - Contraste dos tokens texto/controlos nos dois temas, foco/teclado/modais e layout a 320/390/1100/1280 px verificados. Capturas novas revistas; zoom CSS 200% continua diferente de zoom real. Sem certificação WCAG, leitor real ou validação clínica.

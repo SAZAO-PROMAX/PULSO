@@ -4,6 +4,7 @@ import laboratory from '../../../../packages/shared/laboratory.json';
 import {validateClassification} from './classification';
 export const parameterLabels = {glucose:'Glicose',ldl:'Colesterol LDL',creatinine:'Creatinina',hemoglobin:'Hemoglobina',hba1c:'Hemoglobina glicada',cholesterol_total:'Colesterol total',hdl:'Colesterol HDL',triglycerides:'Triglicéridos',ferritin:'Ferritina',tsh:'TSH',ft4:'T4 livre',vitamin_d:'Vitamina D',urea:'Ureia',sodium:'Sódio',potassium:'Potássio',systolic:'Tensão sistólica',diastolic:'Tensão diastólica',heart_rate:'Frequência cardíaca',spo2:'Saturação periférica de oxigénio (SpO₂)'} as const;
 export type Parameter = keyof typeof parameterLabels;
+export interface SavedAnalysis {documentId:string;parameters:Parameter[]}
 export const labParameters=laboratory.parameters.map(p=>p.id as Parameter);
 export const labUnits=Object.fromEntries(laboratory.parameters.map(p=>[p.id,p.units])) as Partial<Record<Parameter,string[]>>;
 export type Confirmation = 'user_declared'|'extracted_pending'|'user_confirmed'|'professional_verified';

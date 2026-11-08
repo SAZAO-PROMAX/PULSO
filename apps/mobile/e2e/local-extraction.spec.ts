@@ -21,7 +21,7 @@ test('imagem com Ollama desligado: introdução manual, revisão, SQLite, gráfi
  await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('101,5');
  await page.getByRole('button',{name:'Marcar revisto: Glicose',exact:true}).click();
  await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
- await expect(page.getByText('Glicose: 101,5 mg/dL',{exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toBeFocused();await expect(page.getByTestId('point-detail')).toContainText('101,5 mg/dL');await page.getByRole('button',{name:'Histórico',exact:true}).click();await expect(page.getByText('Glicose: 101,5 mg/dL',{exact:true})).toBeVisible();
  await page.reload();await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
  await page.getByRole('button',{name:'Ponto 08/11/2026 101,5 mg/dL',exact:true}).click();
  await expect(page.getByText('Origem: Laboratório fictício manual',{exact:true})).toBeVisible();

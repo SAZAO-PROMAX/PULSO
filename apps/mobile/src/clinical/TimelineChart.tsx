@@ -8,9 +8,9 @@ import {drawPoints} from './timeRange';
 import {ResultDetail} from './RecordViews';
 import {MedicalTerm} from '../learning/Learning';
 import {originFor} from './repository';
-export function TimelineChart({series,data,timeDomain,color,events=[]}:{series:Series;data:ClinicalData;events?:HealthEvent[];timeDomain?:{min:number;max:number};color?:string}) {
+export function TimelineChart({series,data,timeDomain,color,events=[],initialPointId}:{initialPointId?:string;series:Series;data:ClinicalData;events?:HealthEvent[];timeDomain?:{min:number;max:number};color?:string}) {
  const {colors:c}=useTheme();
- const [width,setWidth]=useState(260),[selected,setSelected]=useState<string|null>(null);
+ const [width,setWidth]=useState(260),[selected,setSelected]=useState<string|null>(initialPointId??null);
  const [page,setPage]=useState(0);const plotted=drawPoints(series.points),rows=series.points.slice(page*50,(page+1)*50);
  const [eventDay,setEventDay]=useState<string|null>(null);
  const minTime=timeDomain?.min??Date.parse(series.points[0].measuredAt),maxTime=timeDomain?.max??Date.parse(series.points[series.points.length-1].measuredAt),eventGroups=groupEvents(eventsInRange(events,minTime,maxTime));

@@ -182,3 +182,8 @@ Nos gráficos, escolha **Individual** ou **Combinado**, ative os parâmetros e s
 No Hub ou em Registar, escolha **Registar acontecimento**, preencha título/tipo/datas fictícias, associe documentos já guardados se necessário e reveja antes de confirmar. No Histórico, **Acontecimentos** permite pesquisar/filtrar/consultar/editar/eliminar. Nos gráficos, marcadores e botões textuais abrem os acontecimentos do dia; faixas mostram duração. Não significam causa e efeito. Eliminar acontecimento preserva exames; eliminar exame retira as suas ligações aos acontecimentos.
 
 A aplicação continua experimental e local. Exportações Android/iOS são apenas pacotes JavaScript; não há aplicação instalada/publicada nem ligação móvel de produção. Limitações e especificações em ARCHITECTURE.md.
+
+
+## Correção v0.7.1 — depois de confirmar resultados
+Depois de **Confirmar e guardar resultados**, aguarde a gravação: a aplicação abre **Evolução dos resultados desta análise**, reposiciona a página e seleciona o ponto do PDF quando comparável. Os gráficos mantêm resultados anteriores compatíveis para acompanhar evolução. O resumo identifica o exame e permite abrir o original. Resultados sem método/amostra/data/valor suficiente ficam no Histórico com explicação, sem valores inventados. Se a gravação falhar, os campos permanecem e não há avanço.
+Atualize com Ctrl+F5. Para um exame já guardado, consulte Análises ao sangue ou Histórico; não é necessário importá-lo outra vez. Documentos guardados sem resultados continuam a abrir o Histórico.

@@ -32,9 +32,17 @@ test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({
  await page.route('**/demo/profiles/demo-a/confirm',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({detail:'Falha de gravação de teste'})}));
  await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
  await expect(page.getByRole('alert')).toContainText('Falha de gravação');
- await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');
+ await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toHaveCount(0);
  await page.unroute('**/demo/profiles/demo-a/confirm');
  await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
+ const destination=page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true});
+ await expect(destination).toBeVisible();await expect(destination).toBeFocused();
+ const position=await destination.boundingBox();expect(position!.y).toBeLessThan(250);
+ await expect(page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:'Glicose',exact:true})).toHaveAttribute('aria-pressed','true');
+ await expect(page.getByRole('button',{name:'Ponto 07/11/2026 99,2 mg/dL',exact:true})).toHaveAttribute('aria-pressed','true');
+ await expect(page.getByTestId('point-detail')).toContainText('99,2 mg/dL');
+ await page.getByRole('button',{name:'Histórico',exact:true}).click();
  await expect(page.getByText('Glicose: 99,2 mg/dL',{exact:true})).toBeVisible();
  await page.reload();
  await page.getByRole('button',{name:'Análises ao sangue',exact:true}).click();
@@ -79,4 +87,14 @@ test('interface a 200% de ampliação CSS mantém formulário e navegação util
  await page.getByLabel('Diastólica (mmHg)',{exact:true}).fill('80');
  await page.getByRole('button',{name:'Rever medição',exact:true}).click();
  await expect(page.getByRole('button',{name:'Confirmar e guardar medição',exact:true})).toBeVisible();
+});
+
+
+test('PDF com apenas LDL e método ausente abre o parâmetro confirmado sem inventar ponto',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:'Adicionar exame',exact:true}).click();await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));await page.getByRole('button',{name:'Importar PDF',exact:true}).click();await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
+ for(const parameter of ['Glicose','Creatinina','Hemoglobina','Hemoglobina glicada'])await page.getByRole('button',{name:'Excluir '+parameter,exact:true}).click();
+ await page.getByLabel('Método Colesterol LDL',{exact:true}).fill('');await page.getByRole('button',{name:'Marcar revisto: Colesterol LDL',exact:true}).click();await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toBeFocused();await expect(page.getByRole('button',{name:'Colesterol LDL',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByText('1 registo: Método ou amostra em falta: não é possível garantir comparabilidade.',{exact:true})).toBeVisible();await expect(page.getByTestId('point-detail')).toHaveCount(0);
+ await page.getByRole('button',{name:'Combinado',exact:true}).click();await expect(page.getByRole('button',{name:'Glicose',exact:true})).toHaveAttribute('aria-pressed','false');await expect(page.getByRole('button',{name:'Colesterol LDL',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('list',{name:'Medições de Glicose',exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:'Histórico',exact:true}).click();await expect(page.getByRole('button',{name:'Gerir exame Documento laboratorial sintético',exact:true})).toBeVisible();
 });

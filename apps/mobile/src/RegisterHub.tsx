@@ -2,10 +2,11 @@ import React,{useState} from 'react';
 import {View,Pressable} from 'react-native';
 import {Button,Card,Field,T,layout,useTheme} from './ui';
 import {registrationCategories,classificationFor} from './clinical/classification';
+import {SavedAnalysis} from './clinical/data';
 import {PressureForm,PdfForm} from './clinical/Forms';
 type Selection={category:string;type:string}|null;
 const norm=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-PT');
-export function RegisterHub({owner,onSaved,initialMode,onEvent}:{onEvent?:()=>void;owner:string;onSaved:()=>void;initialMode:'pressure'|'pdf'|null}){
+export function RegisterHub({owner,onSaved,initialMode,onEvent}:{onEvent?:()=>void;owner:string;onSaved:(analysis?:SavedAnalysis)=>void;initialMode:'pressure'|'pdf'|null}){
  const {colors:c}=useTheme(),[query,setQuery]=useState(''),[category,setCategory]=useState<string|null>(null),[selected,setSelected]=useState<Selection>(initialMode==='pressure'?{category:'pressure',type:'manual-pressure'}:initialMode==='pdf'?{category:'laboratory',type:'blood'}:null);
  const item=registrationCategories.find(c=>c.id===(selected?.category??category)),type=item?.types.find(t=>t.id===selected?.type);
  if(selected&&item&&type)return <View style={layout.stack}><Button label="Voltar às categorias de registo" onPress={()=>{setSelected(null);setCategory(null);}}/>
