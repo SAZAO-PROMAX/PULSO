@@ -82,6 +82,20 @@ async def save_document(owner:str,request:Request):
 async def reset(owner:str,request:Request):
     if owner not in {'demo-a','demo-b'}:raise HTTPException(403,'A reposição está disponível apenas nos perfis de demonstração.')
     scope(request,owner);return await write(store.reset,owner)
+@router.post('/{owner}/events')
+async def create_event(owner:str,request:Request):
+    from .events import edit
+    scope(request,owner);data=await body(request)
+    return await write(edit,owner,data.get('id'),data,create=True)
+@router.patch('/{owner}/events/{event_id}')
+async def edit_event(owner:str,event_id:str,request:Request):
+    from .events import edit
+    scope(request,owner);return await write(edit,owner,event_id,await body(request),expected=expected_version(request))
+@router.delete('/{owner}/events/{event_id}')
+async def delete_event(owner:str,event_id:str,request:Request):
+    from .events import edit
+    scope(request,owner);return await write(edit,owner,event_id,expected=expected_version(request))
+
 @router.patch("/{owner}/{kind}/{item_id}")
 async def edit(owner:str,kind:str,item_id:str,request:Request):
     scope(request,owner)

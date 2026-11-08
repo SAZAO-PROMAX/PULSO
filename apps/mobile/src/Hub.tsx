@@ -10,20 +10,21 @@ const descriptions=['Exames e evolução dos teus indicadores.','As tuas leitura
 const icons=['≡','＋','≈','□','↗'];
 interface Props{
  data:ClinicalData;ownerId:string;profileName:string;topicCount:number;featured:{id:string;title:string;summary:string};
- onImport:()=>void;onPressure:()=>void;onHistory:()=>void;onArea:(area:Area)=>void;onParameter:(parameter:Parameter)=>void;onLearn:()=>void;onTopic:(id:string)=>void;
+ onEvent:()=>void;onImport:()=>void;onPressure:()=>void;onHistory:()=>void;onArea:(area:Area)=>void;onParameter:(parameter:Parameter)=>void;onLearn:()=>void;onTopic:(id:string)=>void;
 }
-export function Hub({data,ownerId,profileName,topicCount,featured,onImport,onPressure,onHistory,onArea,onParameter,onLearn,onTopic}:Props){
+export function Hub({data,ownerId,profileName,topicCount,featured,onEvent,onImport,onPressure,onHistory,onArea,onParameter,onLearn,onTopic}:Props){
  const {colors:c,settings}=useTheme();const [expanded,setExpanded]=React.useState(false);const simple=settings.mode==='simple';const ordered=[...areas].sort((a,b)=>Number(settings.primaryAreas.includes(b))-Number(settings.primaryAreas.includes(a)));const {documents,latest,systolic,diastolic}=hubSummary(data,ownerId);
  return <View style={{gap:24}}>
  <View style={{backgroundColor:c.hero,borderRadius:24,padding:22,gap:14}}>
   <T style={{color:c.accent}}>Olá, {profileName}</T>
   <T style={{fontSize:30,lineHeight:38,fontWeight:'700',color:c.heroInk,maxWidth:650}}>Os teus registos, mais claros.</T>
   <T style={{color:c.heroInk,maxWidth:650}}>Exames, medições e explicações. Tudo ao teu ritmo.</T>
-  <View style={layout.row}><Button label="Adicionar exame" primary onPress={onImport}/><Button label="Adicionar medição" onPress={onPressure}/>{settings.mode==='detailed'&&<Button label="Abrir filtros do Histórico" onPress={onHistory}/>}</View>{settings.guidedHelp&&<T style={{color:c.heroInk}}>1. Adicione um documento fictício. 2. Reveja os dados. 3. Confirme para os ver no Histórico.</T>}
+  <View style={layout.row}><Button label="Adicionar exame" primary onPress={onImport}/><Button label="Adicionar medição" onPress={onPressure}/><Button label="Registar acontecimento" onPress={onEvent}/>{settings.mode==='detailed'&&<Button label="Abrir filtros do Histórico" onPress={onHistory}/>}</View>{settings.guidedHelp&&<T style={{color:c.heroInk}}>1. Adicione um documento fictício. 2. Reveja os dados. 3. Confirme para os ver no Histórico.</T>}
  </View>
  {(!simple||expanded)&&<View accessibilityLabel="Resumo dos teus registos" style={layout.row}>
   {[{value:documents.length,label:'exames guardados'},{value:latest.length,label:'parâmetros atualizados'},{value:topicCount,label:'tópicos para explorar'}].map(item=><View key={item.label} style={[layout.grow,{flexBasis:120}]}><Card style={{flex:1}}><T style={{fontSize:32,lineHeight:40,fontWeight:'700'}}>{item.value}</T><T kind="small">{item.label}</T></Card></View>)}
  </View>}
+ {!!data.events?.length&&<Card><T kind="heading">Acontecimentos recentes</T>{[...data.events].sort((a,b)=>Date.parse(b.startsAt)-Date.parse(a.startsAt)).slice(0,simple?1:3).map(e=><T key={e.id}>{displayDate(e.startsAt)} · {e.title}</T>)}<Button label="Consultar cronologia" onPress={onHistory}/><T kind="small">Proximidade temporal não demonstra causalidade.</T></Card>}
  <View style={{gap:12}}><T kind="heading">As tuas áreas de saúde</T><T kind="small">Um caminho simples para cada tipo de registo.</T>
  <View style={layout.row}>{ordered.map((area)=><Pressable key={area} accessibilityRole="button" accessibilityLabel={area} onPress={()=>onArea(area)} style={({pressed})=>({flexBasis:280,flexGrow:1,flexShrink:1,minWidth:0,borderRadius:20,padding:22,gap:12,borderWidth:1,borderColor:c.control,backgroundColor:pressed?c.soft:c.card})}>
   <View accessible={false} style={{backgroundColor:c.soft,width:44,height:44,borderRadius:14,alignItems:'center',justifyContent:'center'}}><T style={{fontSize:26,color:c.ink}}>{icons[areas.indexOf(area)]}</T></View><T kind="heading">{area}</T><T kind="small">{descriptions[areas.indexOf(area)]}</T><T style={{fontWeight:'600'}}>Explorar →</T>

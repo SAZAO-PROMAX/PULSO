@@ -1,3 +1,4 @@
+import {HealthEvent,eventTypes} from './events';
 import fixture from '../../../../data/synthetic/clinical.json';
 import laboratory from '../../../../packages/shared/laboratory.json';
 import {validateClassification} from './classification';
@@ -21,7 +22,7 @@ export interface Result {
  datePrecision?:'day';
  referenceText:string|null; status:Confirmation;
 }
-export interface ClinicalData {schemaVersion:number;documents:MedicalDocument[];results:Result[]}
+export interface ClinicalData {events?:HealthEvent[];schemaVersion:number;documents:MedicalDocument[];results:Result[]}
 const statuses:Confirmation[]=['user_declared','extracted_pending','user_confirmed','professional_verified'];
 export function validTimestamp(value:unknown):value is string {
  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)||!Number.isFinite(Date.parse(value))) return false;
@@ -41,6 +42,11 @@ export function validateData(data:ClinicalData):void {
   if(d.original.dataUrl!==undefined && (typeof d.original.dataUrl!=='string'||d.original.dataUrl.length>2900000||!/^data:(?:application\/pdf|image\/png|image\/jpeg);base64,[A-Za-z0-9+/]+=*$/.test(d.original.dataUrl))) throw Error('Original inválido.');
   if(d.sha256!==undefined && !/^[a-f0-9]{64}$/.test(d.sha256)) throw Error('Identificação do PDF inválida.');
  }
+ if(data.events!==undefined){
+  if(!Array.isArray(data.events)||data.events.length>200||new Set(data.events.map(e=>e.id)).size!==data.events.length)throw Error('Acontecimentos inválidos.');
+  for(const e of data.events){if(!e||e.synthetic!==true||!nonempty(e.id)||!(['demo-a','demo-b'].includes(e.ownerId)||/^user-[a-f0-9]{32}$/.test(e.ownerId))||!Object.hasOwn(eventTypes,e.type)||!nonempty(e.title)||!validTimestamp(e.startsAt)||!validTimestamp(e.createdAt)||!validTimestamp(e.updatedAt)||e.endsAt!==null&&(!validTimestamp(e.endsAt)||Date.parse(e.endsAt)<Date.parse(e.startsAt))||e.source!=='user_declared'||!['user_declared','documented'].includes(e.verification)||!Number.isSafeInteger(e.version)||e.version<1||!Array.isArray(e.documentIds)||e.documentIds.some(id=>!data.documents.some(d=>d.id===id&&d.ownerId===e.ownerId))||e.verification==='documented'&&!e.documentIds.length)throw Error('Acontecimento ou ligação ao documento inválido.');}
+ }
+
  for(const r of data.results) {
   const doc=data.documents.find(d=>d.id===r.documentId && d.ownerId===r.ownerId);
   if((!doc && !(r.documentId===null && r.source==='manual' && nonempty(r.sessionId))) || r.synthetic!==true || !Object.hasOwn(parameterLabels,r.parameter) || !statuses.includes(r.status) ||
@@ -56,7 +62,7 @@ export class FixtureRepository implements ClinicalRepository {
  constructor(private data:ClinicalData=fixture as ClinicalData){}
  async load(ownerId:string):Promise<ClinicalData> {
   validateData(this.data);
-  return JSON.parse(JSON.stringify({...this.data, documents:this.data.documents.filter(d=>d.ownerId===ownerId),results:this.data.results.filter(r=>r.ownerId===ownerId)})) as ClinicalData;
+  return JSON.parse(JSON.stringify({...this.data, events:(this.data.events??[]).filter(e=>e.ownerId===ownerId),documents:this.data.documents.filter(d=>d.ownerId===ownerId),results:this.data.results.filter(r=>r.ownerId===ownerId)})) as ClinicalData;
  }
 }
 export type Point = Result & {value:number;measuredAt:string};

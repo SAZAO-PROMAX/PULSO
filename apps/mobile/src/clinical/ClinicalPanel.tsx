@@ -3,6 +3,8 @@ import {View} from 'react-native';
 import {T,Button,Field,layout,Card,useTheme} from '../ui';
 import {ClinicalData,Parameter,parameterLabels,buildSeries,exclusionReason} from './data';
 import {TimelineChart} from './TimelineChart';
+import {eventsInRange} from './events';
+import {EventDetail} from './EventViews';
 import {periods,timeRange,filterTime} from './timeRange';
 import {MedicalTerm} from '../learning/Learning';
 export function ClinicalPanel({ownerId,parameters,data,initialParameter}:{ownerId:string;parameters:Parameter[];data:ClinicalData;initialParameter?:Parameter|null}) {
@@ -13,7 +15,9 @@ export function ClinicalPanel({ownerId,parameters,data,initialParameter}:{ownerI
  const visible=rangeError?{...data,results:[]}:filterTime(data,range);
  const selected=combined?chosen:[parameter],groups=selected.map(p=>buildSeries(visible,ownerId,p));
  const series=groups.flatMap(g=>g.series),omitted=groups.reduce((n,g)=>n+g.omitted,0);
- const times=series.flatMap(s=>s.points.map(p=>Date.parse(p.measuredAt))),domain=times.length?{min:Math.min(...times),max:Math.max(...times)}:undefined;
+ const events=rangeError?[]:eventsInRange((data.events??[]).filter(e=>e.ownerId===ownerId),range?.min??-Infinity,range?.max??Infinity);
+ const [showEvents,setShowEvents]=useState(false);
+ const times=[...series.flatMap(s=>s.points.map(p=>Date.parse(p.measuredAt))),...events.flatMap(e=>[Math.max(range?.min??-Infinity,Date.parse(e.startsAt)),Math.min(range?.max??Infinity,Date.parse(e.endsAt??e.startsAt))])],domain=times.length?{min:Math.min(...times),max:Math.max(...times)}:undefined;
  const all=data.results.filter(r=>r.ownerId===ownerId&&selected.includes(r.parameter)&&r.status!=='extracted_pending');
  const shown=series.reduce((n,s)=>n+s.points.length,0);
  const outside=all.filter(r=>!visible.results.some(v=>v.id===r.id)).length;
@@ -30,8 +34,9 @@ export function ClinicalPanel({ownerId,parameters,data,initialParameter}:{ownerI
  <T kind="small">{all.length} confirmados no histórico · {shown} representados neste período · {outside} fora do período.</T><T kind="small">Períodos relativos a hoje. Unidades, métodos e amostras diferentes permanecem em séries independentes.</T>
  {!!omitted&&<T kind="small">{omitted} registo(s) pendentes ou incompletos fora do gráfico.</T>}
  {!!reasons.size&&<Card><T kind="heading">Porque há registos fora do gráfico?</T>{[...reasons].map(([reason,count])=><T key={reason}>{count} {count===1?'registo':'registos'}: {reason}</T>)}<T kind="small">Os registos mantêm-se no Histórico, com o documento e os dados originais.</T></Card>}
+ {!!events.length&&<><Button label="Consultar acontecimentos deste período" onPress={()=>setShowEvents(!showEvents)}/>{showEvents&&events.map(event=><Card key={event.id}><EventDetail event={event} data={data}/></Card>)}</>}
  {!series.length&&<Card><T kind="heading">Ainda sem resultados neste período</T><T>Sem medições comparáveis disponíveis.</T><T kind="small">Escolhe outro parâmetro ou período. Não são preenchidos valores em falta.</T></Card>}
- {series.map((s,i)=><View key={s.key+period+start+end} style={layout.stack}>{combined&&<Button label={'Ocultar série '+parameterLabels[s.parameter]+' · '+s.unit+' · '+s.method+' · '+s.context} onPress={()=>setChosen(chosen.filter(p=>p!==s.parameter))}/>}<TimelineChart series={s} data={data} timeDomain={combined?domain:undefined} color={combined?(i%2?c.info:c.series):undefined}/></View>)}
+ {series.map((s,i)=><View key={s.key+period+start+end} style={layout.stack}>{combined&&<Button label={'Ocultar série '+parameterLabels[s.parameter]+' · '+s.unit+' · '+s.method+' · '+s.context} onPress={()=>setChosen(chosen.filter(p=>p!==s.parameter))}/>}<TimelineChart series={s} data={data} events={events} timeDomain={combined||events.length?domain:undefined} color={combined?(i%2?c.info:c.series):undefined}/></View>)}
  </View>;
 }
 

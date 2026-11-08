@@ -14,7 +14,7 @@ from .extraction_jobs import queue,processing_slot,process_document,validate_sou
 from .accounts import router as accounts_router
 import os
 
-app = FastAPI(title="PULSO — experimental", version="0.6.1")
+app = FastAPI(title="PULSO — experimental", version="0.7.0")
 app.add_middleware(CORSMiddleware, allow_origins=os.environ.get('PULSO_WEB_ORIGINS','http://localhost:8081,http://127.0.0.1:8081,http://127.0.0.1:8765').split(','), allow_credentials=True,allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Content-Type", "X-Pulso-Demo", "X-Pulso-Profile", "If-Match", "X-Pulso-CSRF"])
 app.include_router(data_router)
 app.include_router(accounts_router)

@@ -86,6 +86,8 @@ def validate(owner,data):
             page=evidence.get('page')
             if page is not None and (isinstance(page,bool) or not isinstance(page,int) or page<1):raise ValueError('Página inválida.')
             if any(not isinstance(evidence.get(k),str) for k in ('excerpt','extractedValue','extractedUnit')):raise ValueError('Evidência inválida.')
+    from .events import validate_events
+    validate_events(owner,data)
     return data
 
 def seed(owner):
@@ -222,7 +224,10 @@ def manage(owner,kind,item_id,patch=None,expected_version=None):
         if expected_version!=item.get('version',1): raise HTTPException(409,'Outra sessão alterou este registo. Os teus campos foram mantidos. Consulta a versão atual antes de voltar a guardar ou eliminar.')
         if patch is None:
             collection.remove(item)
-            if kind=="document": data["results"]=[r for r in data["results"] if r.get("documentId")!=item_id]
+            if kind=="document":
+                data["results"]=[r for r in data["results"] if r.get("documentId")!=item_id]
+                from .events import unlink_document
+                unlink_document(data,item_id)
         else:
             allowed={"title","laboratory","category","specialties","examType","examDate"} if kind=="document" else {"value","unit","measuredAt","method","context","referenceText"}
             if not patch or set(patch)-allowed: raise HTTPException(422,"Campos não editáveis.")

@@ -7,16 +7,9 @@ import {MedicalTerm,InfoButton} from '../learning/Learning';
 import {Classification,registrationCategories,specialties,classificationLabel,documentTime} from './classification';
 import {ClassificationFields} from './ClassificationFields';
 import {apiFetch} from '../api';
-export function DocumentView({doc}:{doc:MedicalDocument}) {
- const [open,setOpen]=useState(false);
- function openPdf(){
-  if(Platform.OS!=='web'||!doc.original.dataUrl)return;
-  const raw=atob(doc.original.dataUrl.split(',')[1]);const bytes=Uint8Array.from(raw,x=>x.charCodeAt(0));
-  const url=URL.createObjectURL(new Blob([bytes],{type:doc.original.mediaType}));window.open(url,'_blank','noopener,noreferrer');setTimeout(()=>URL.revokeObjectURL(url),60000);
- }
- return <View style={layout.stack}><Button label={open?'Fechar documento original':'Ver documento original fictício'} onPress={()=>setOpen(!open)}/>
- {open&&<><T kind="heading">{doc.original.fileName}</T>{doc.original.dataUrl&&<Button label={doc.original.mediaType==='application/pdf'?'Abrir PDF original':'Abrir imagem original'} onPress={openPdf}/>}<T selectable>{doc.original.text}</T></>}</View>;
-}
+import {EventHistory} from './EventViews';
+import {DocumentView} from './DocumentView';
+export {DocumentView} from './DocumentView';
 export function ResultDetail({data,result:r}:{data:ClinicalData;result:Result}) {
  const doc=data.documents.find(d=>d.id===r.documentId&&d.ownerId===r.ownerId);
  const [previewError,setPreviewError]=useState('');
@@ -53,11 +46,12 @@ export function History({data,onChanged}:{data:ClinicalData;onChanged:(message:s
  const result=rows.find(r=>r.id===selected),doc=documents.find(d=>d.id===selectedDoc);
  return <View style={layout.stack}><T kind="heading">Registos de demonstração</T><T kind="small">Documentos e medições por categoria, com a origem preservada. A classificação não altera os gráficos.</T>
  <Field label="Pesquisar no Histórico" value={query} onChange={setQuery} placeholder="Nome, origem, tipo ou parâmetro"/>
- <View style={layout.row}><Button label="Todos os registos" selected={category==='all'} onPress={()=>{setCategory('all');setType('all');}}/>{registrationCategories.map(c=><Button key={c.id} label={'Histórico: '+c.label} selected={category===c.id} onPress={()=>{setCategory(c.id);setType('all');setSelected(null);setSelectedDoc(null);}}/>)}</View>
- {category!=='all'&&<View style={layout.row}><Button label="Todos os tipos de exame" selected={type==='all'} onPress={()=>setType('all')}/>{registrationCategories.find(c=>c.id===category)?.types.filter(t=>t.mode!=='planned').map(t=><Button key={t.id} label={'Filtrar tipo: '+t.label} selected={type===t.id} onPress={()=>setType(t.id)}/>)}</View>}
+ <View style={layout.row}><Button label="Todos os registos" selected={category==='all'} onPress={()=>{setCategory('all');setType('all');}}/><Button label="Acontecimentos" selected={category==='events'} onPress={()=>{setCategory('events');setType('all');}}/>{registrationCategories.map(c=><Button key={c.id} label={'Histórico: '+c.label} selected={category===c.id} onPress={()=>{setCategory(c.id);setType('all');setSelected(null);setSelectedDoc(null);}}/>)}</View>
+ {category!=='all'&&category!=='events'&&<View style={layout.row}><Button label="Todos os tipos de exame" selected={type==='all'} onPress={()=>setType('all')}/>{registrationCategories.find(c=>c.id===category)?.types.filter(t=>t.mode!=='planned').map(t=><Button key={t.id} label={'Filtrar tipo: '+t.label} selected={type===t.id} onPress={()=>setType(t.id)}/>)}</View>}
  <View style={layout.row}><Button label="Todas as especialidades" selected={specialty==='all'} onPress={()=>setSpecialty('all')}/>{specialties.map(s=><Button key={s.id} label={'Filtrar especialidade: '+s.label} selected={specialty===s.id} onPress={()=>setSpecialty(s.id)}/>)}</View>
  <View style={layout.row}>{[[0,'Todo o período'],[90,'Últimos 90 dias'],[365,'Último ano']].map(([n,label])=><Button key={n} label={String(label)} selected={period===n} onPress={()=>setPeriod(Number(n))}/>)}</View><T kind="small">Período pela data do documento; se desconhecida, pela importação. Documentos antigos sem categoria permanecem em Todos os registos até serem classificados.</T>
- {!rows.length&&!documents.length&&<Card><T>{data.results.length||data.documents.length?'Nenhum registo corresponde aos filtros.':'Este perfil ainda não tem registos.'}</T></Card>}
+ {(category==='all'||category==='events')&&<EventHistory data={data} onChanged={onChanged} query={query} period={period}/>}
+ {!rows.length&&!documents.length&&category!=='events'&&<Card><T>{data.results.length||data.documents.length?'Nenhum registo corresponde aos filtros.':'Este perfil ainda não tem registos.'}</T></Card>}
  {documents.map(d=><Card key={d.id}><T kind="heading">{d.title}</T><T kind="small">{d.laboratory??'Instituição não indicada'} · {classificationLabel(d)}</T><T kind="small">{d.examDate?'Data do exame: '+d.examDate:'Data do exame não indicada'} · Importado {displayTime(d.importedAt)}</T><Button label={'Gerir exame '+d.title} onPress={()=>{setSelected(null);setSelectedDoc(d.id);}}/></Card>)}
  {doc&&<Card><DocumentView doc={doc}/><DocumentActions doc={doc} count={data.results.filter(r=>r.documentId===doc.id).length} onChanged={onChanged}/><Button label="Fechar exame" onPress={()=>setSelectedDoc(null)}/></Card>}
  {result&&<Card><ResultDetail data={data} result={result}/><ResultActions result={result} onChanged={onChanged}/><Button label="Fechar detalhe" onPress={()=>setSelected(null)}/></Card>}
@@ -93,7 +87,7 @@ function DocumentActions({doc,count,onChanged}:{doc:MedicalDocument;count:number
  return <View style={layout.stack}><Button label="Editar exame" disabled={busy} onPress={()=>{setEdit(true);setRemove(false);}}/>
  {edit&&<><Field label="Título do exame" value={title} onChange={setTitle}/><Field label="Laboratório do exame" value={lab} onChange={setLab}/><ClassificationFields value={classification} onChange={setClassification} editableCategory/><Button label="Guardar exame" disabled={busy||conflict} onPress={()=>void act(()=>clinicalRepository.editDocument(doc.ownerId,doc.id,{title,laboratory:lab.trim()||null,specialties:classification.specialties,examDate:classification.examDate,...(classification.category?{category:classification.category,examType:classification.examType}:{})},version),'Exame corrigido na base local.')}/><Button label="Cancelar edição do exame" disabled={busy} onPress={()=>setEdit(false)}/></>}
  <Button label="Eliminar exame completo" disabled={busy} onPress={()=>{setEdit(false);setRemove(true);}}/>
- {remove&&<><T>Eliminar este exame e os {count} resultados associados? O documento original e esses resultados serão eliminados em conjunto.</T><Button label="Confirmar eliminação do exame e resultados" disabled={busy||conflict} onPress={()=>void act(()=>clinicalRepository.deleteDocument(doc.ownerId,doc.id,version),'Exame e resultados associados eliminados.')}/><Button label="Cancelar eliminação do exame" disabled={busy} onPress={()=>setRemove(false)}/></>}
+ {remove&&<><T>Eliminar este exame e os {count} resultados associados? O documento original e esses resultados serão eliminados em conjunto; as suas associações a acontecimentos serão removidas, preservando os acontecimentos.</T><Button label="Confirmar eliminação do exame e resultados" disabled={busy||conflict} onPress={()=>void act(()=>clinicalRepository.deleteDocument(doc.ownerId,doc.id,version),'Exame e resultados associados eliminados.')}/><Button label="Cancelar eliminação do exame" disabled={busy} onPress={()=>setRemove(false)}/></>}
  {conflict&&<ConflictResolver owner={doc.ownerId} kind="document" id={doc.id} onVersion={v=>{setVersion(v);setConflict(false);setError('');}}/>}
  {busy&&<T accessibilityLiveRegion="polite">A guardar na base local…</T>}{!!error&&<T accessibilityRole="alert">{error}</T>}
  </View>;

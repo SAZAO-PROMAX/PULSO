@@ -26,9 +26,12 @@ export class ApiRepository implements ClinicalRepository {
   }
   const data=await this.request(owner,'/data') as ClinicalData;
   validateData(data);
-  if([...data.documents,...data.results].some(r=>r.ownerId!==owner))throw Error('Resposta de perfil inválida.');
+  if([...data.documents,...data.results,...(data.events??[])].some(r=>r.ownerId!==owner))throw Error('Resposta de perfil inválida.');
   return data;
  }
+ async saveEvent(owner:string,event:unknown){await this.request(owner,'/events','POST',event);}
+ async editEvent(owner:string,id:string,event:unknown,version:number){await this.request(owner,'/events/'+encodeURIComponent(id),'PATCH',event,version);}
+ async deleteEvent(owner:string,id:string,version:number){await this.request(owner,'/events/'+encodeURIComponent(id),'DELETE',undefined,version);}
  async savePressure(owner:string,input:{systolic:string;diastolic:string;heartRate:string;date:string},id:string){await this.request(owner,'/pressure','POST',{...input,id});}
  async confirmDocument(owner:string,document:MedicalDocument,results:Result[]){await this.request(owner,'/confirm','POST',{document,results});}
  async saveDocument(owner:string,document:MedicalDocument){await this.request(owner,'/documents','POST',{document});}
