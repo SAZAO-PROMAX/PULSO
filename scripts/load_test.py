@@ -392,7 +392,7 @@ class Load:
                 # then restore only this owned temporary server before the soak.
                 if await self.integrity(client) != self.baseline:
                     for owner in ('demo-a','demo-b'):
-                        response = await client.post(f'/demo/profiles/{owner}/reset',headers={'X-Pulso-Profile':owner})
+                        response = await client.post(f'/demo/profiles/{owner}/reset',headers={'X-Pulso-Profile':owner},json={'confirm':owner})
                         response.raise_for_status()
                     assert await self.integrity(client) == self.baseline
                     print('Temporary baseline restored after failed phase; see recorded integrity result.',flush=True)
@@ -426,7 +426,7 @@ def main():
         sock.bind(('127.0.0.1',args.port))
     out = safe_output(ROOT / args.output)
     normal = ROOT / '.local/pulso.sqlite3'; before = digest(normal)
-    env = dict(os.environ, PULSO_DB_PATH=str(out / 'load.sqlite3'), LLM_EXTRACTION_ENABLED='true' if args.inference_only else 'false')
+    env = dict(os.environ, PULSO_TEST_MODE='synthetic-only', PULSO_DB_PATH=str(out / 'load.sqlite3'), LLM_EXTRACTION_ENABLED='true' if args.inference_only else 'false')
     print('ISOLATED:', out, 'port', args.port, 'Ollama: single probe only' if args.inference_only else 'Ollama disabled; 2 shared demo profiles', flush=True)
     print('Provisional SLO: unexpected <=1%, p95<=1500ms, p99<=5000ms, no integrity/flow failures. Stop: >5% and >=10 unexpected, 3 failed health probes, RAM limits.',flush=True)
     exit_code = 0

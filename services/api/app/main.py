@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi import Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pathlib import Path
 import asyncio
 from .hybrid import MAX_UPLOAD, MIMES
@@ -11,20 +11,24 @@ from .local_ollama import LocalOllama, EngineError
 from .data_routes import router as data_router
 from .data_routes import scope
 from .extraction_jobs import queue,processing_slot,process_document,validate_source
-from .accounts import router as accounts_router
+from .accounts import router as accounts_router, session
+from .test_mode import synthetic_test_mode
 import os
 
 app = FastAPI(title="PULSO — experimental", version="0.7.1")
-app.add_middleware(CORSMiddleware, allow_origins=os.environ.get('PULSO_WEB_ORIGINS','http://localhost:8081,http://127.0.0.1:8081,http://127.0.0.1:8765').split(','), allow_credentials=True,allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Content-Type", "X-Pulso-Demo", "X-Pulso-Profile", "If-Match", "X-Pulso-CSRF"])
 app.include_router(data_router)
 app.include_router(accounts_router)
 
 @app.middleware('http')
 async def private_responses(request,call_next):
+    if request.url.path.startswith('/demo/') and not synthetic_test_mode():
+        try:session(request,mutation=request.method not in {'GET','HEAD','OPTIONS'})
+        except HTTPException as exc:return JSONResponse({'detail':exc.detail},status_code=exc.status_code,headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'})
     response=await call_next(request)
     if request.url.path.startswith(('/auth/','/demo/profiles/','/demo/extractions')):
         response.headers['Cache-Control']='no-store';response.headers['X-Content-Type-Options']='nosniff'
     return response
+app.add_middleware(CORSMiddleware, allow_origins=os.environ.get('PULSO_WEB_ORIGINS','http://localhost:8081,http://127.0.0.1:8081,http://127.0.0.1:8765').split(','), allow_credentials=True,allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Content-Type", "X-Pulso-Demo", "X-Pulso-Profile", "If-Match", "X-Pulso-CSRF"])
 extraction_lock=processing_slot
 
 @app.get('/demo/extraction/status')

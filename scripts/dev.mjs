@@ -5,6 +5,7 @@ import {spawn} from 'node:child_process';
 import net from 'node:net';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const python=resolve(root,'.venv/Scripts/python.exe'),expo=resolve(root,'apps/mobile/node_modules/expo/bin/cli');
+if(process.env.EXPO_PUBLIC_PULSO_TEST_DEMO==='true'&&!(process.env.PULSO_TEST_MODE==='synthetic-only'&&process.env.PULSO_DB_PATH&&resolve(process.env.PULSO_DB_PATH).startsWith(resolve(root,'tmp')+'\\')))throw Error('O modo demonstrativo exige uma base temporária dentro de tmp e configuração explícita de teste.');
 const check=process.argv.includes('--check'),children=[];
 let stopping=false;
 function available(port){return new Promise((ok,no)=>{const s=net.createServer();s.once('error',()=>no(Error('Porta '+port+' ocupada. Para o servidor anterior na respetiva janela (Ctrl+C), sem abrir outro.')));s.listen(port,'127.0.0.1',()=>s.close(ok));});}

@@ -1,0 +1,11 @@
+import {test,expect} from '@playwright/test';
+test('entrada pública, rota protegida, conta vazia, logout e voltar sem dados',async({page,baseURL})=>{
+ const api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':8000',origin=new URL(baseURL!).origin,email='public-'+Date.now()+'@example.test',password='fictitious-public-password-2026',privateRequests:string[]=[];
+ page.on('request',r=>{if(r.url().includes('/demo/'))privateRequests.push(r.url());});await page.goto('/');await expect(page.getByText('A sua informação de saúde, organizada num só lugar.',{exact:true})).toBeVisible();expect(privateRequests).toEqual([]);await expect(page.getByRole('button',{name:'Histórico',exact:true})).toHaveCount(0);await expect(page.getByRole('button',{name:'Perfil fictício A',exact:true})).toHaveCount(0);
+ expect((await page.request.get(api+'/demo/profiles/demo-a/data',{headers:{'X-Pulso-Profile':'demo-a'}})).status()).toBe(401);
+ await page.goto('/#/history');await expect(page.getByRole('button',{name:'Iniciar sessão',exact:true})).toBeVisible();expect(privateRequests).toEqual([]);
+ await page.request.post(api+'/auth/register',{headers:{Origin:origin},data:{email,password,displayName:'Conta inteiramente fictícia',birthDate:'1970-05-23'}});
+ await page.getByLabel('E-mail',{exact:true}).fill(email);await page.getByLabel('Palavra-passe',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sessão',exact:true}).click();await expect(page.getByRole('heading',{name:'Histórico',exact:true})).toBeVisible();await expect(page.getByText('Este perfil ainda não tem registos.',{exact:true})).toBeVisible();
+ const user=(await (await page.request.get(api+'/auth/session')).json()).user;expect(await (await page.request.get(api+'/demo/profiles/'+user.id+'/data')).json()).toEqual({schemaVersion:1,documents:[],results:[]});
+ await page.getByRole('button',{name:'Abrir menu de perfil',exact:true}).click();await page.getByRole('button',{name:'Terminar sessão',exact:true}).click();await expect(page.getByText('A sua informação de saúde, organizada num só lugar.',{exact:true})).toBeVisible();await page.goBack();await expect(page.getByRole('button',{name:'Histórico',exact:true})).toHaveCount(0);await expect(page.getByText('Conta inteiramente fictícia',{exact:true})).toHaveCount(0);
+});

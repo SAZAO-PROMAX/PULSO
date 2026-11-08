@@ -1,5 +1,5 @@
 import {ClinicalData,ClinicalRepository,MedicalDocument,Result,validateData} from './data';
-import {API,sessionHeaders} from '../api';
+import {API,sessionHeaders,sessionEpoch,expireSession} from '../api';
 export {API} from '../api';
 export interface StoragePort {getItem(key:string):string|null;setItem(key:string,value:string):void;removeItem(key:string):void}
 export class ApiError extends Error {constructor(message:string,public status:number){super(message);}}
@@ -7,9 +7,10 @@ export class ApiRepository implements ClinicalRepository {
  constructor(private transport:typeof fetch=(...args)=>fetch(...args),private storage?:()=>StoragePort){}
  private async request(owner:string,path:string,method='GET',body?:unknown,version?:number){
   if(!['demo-a','demo-b'].includes(owner)&&!/^user-[a-f0-9]{32}$/.test(owner))throw Error('Perfil inválido.');
-  let response:Response;
+  const requestEpoch=sessionEpoch();let response:Response;
   try{response=await this.transport(API+'/demo/profiles/'+owner+path,{method,credentials:'include',headers:{'Content-Type':'application/json','X-Pulso-Profile':owner,...sessionHeaders(method),...(version===undefined?{}:{'If-Match':'"'+version+'"'})},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(15000)});}
   catch{throw Error('Não foi possível ligar ao serviço local. Inicia o PULSO com .\\dev.cmd. Os campos continuam disponíveis para tentar novamente.');}
+  if(response.status===401)expireSession(requestEpoch);
   const payload=await response.json().catch(()=>({}));
   if(!response.ok)throw new ApiError(typeof payload.detail==='string'?payload.detail:'Não foi possível guardar ou recuperar os dados. Tenta novamente.',response.status);
   return payload;

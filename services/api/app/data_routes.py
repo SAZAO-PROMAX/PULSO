@@ -5,6 +5,7 @@ import asyncio
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import Response
 from . import store
+from .test_mode import synthetic_test_mode
 from starlette.concurrency import run_in_threadpool
 router=APIRouter(prefix="/demo/profiles")
 
@@ -21,6 +22,7 @@ def scope(request,owner):
     if isinstance(owner,str) and re.fullmatch(r'user-[a-f0-9]{32}',owner):
         from .accounts import authorize
         return authorize(request,owner)
+    if not synthetic_test_mode():raise HTTPException(403,'Perfis de demonstração disponíveis apenas em testes isolados.')
     if owner not in {"demo-a","demo-b"} or request.headers.get("x-pulso-profile")!=owner:
         raise HTTPException(403,"Seleciona o perfil de demonstração correto. Isto não é autenticação de produção.")
 async def body(request):
@@ -81,7 +83,9 @@ async def save_document(owner:str,request:Request):
 @router.post("/{owner}/reset")
 async def reset(owner:str,request:Request):
     if owner not in {'demo-a','demo-b'}:raise HTTPException(403,'A reposição está disponível apenas nos perfis de demonstração.')
-    scope(request,owner);return await write(store.reset,owner)
+    scope(request,owner)
+    if await body(request)!={'confirm':owner}:raise HTTPException(422,'Confirma explicitamente o perfil de teste a repor.')
+    return await write(store.reset,owner)
 @router.post('/{owner}/events')
 async def create_event(owner:str,request:Request):
     from .events import edit
