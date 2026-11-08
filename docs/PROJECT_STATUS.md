@@ -5,7 +5,7 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 ## Versão e Git
 
 - **Atualização:** 08/11/2026, Europe/Lisbon. **Versão:** v0.7.2 experimental, frontend/Expo/API `0.7.2`.
-- **Branch:** main. **Base desta entrega:** `07e8ba1c11901fe42bd453eaa801b8563cd2d66e`, entrega anterior v0.7.1. Esta ficha acompanha a entrega final; consultar `git log -1 -- docs/PROJECT_STATUS.md` para o commit correspondente, sem inventar um hash futuro.
+- **Branch:** main. **Base desta entrega:** `f4026939fc911358f895f3e2baf3fe854532a0f4`, redesign v0.7.2; correção pontual da seleção de documentos nesta entrega. Esta ficha acompanha a entrega final; consultar `git log -1 -- docs/PROJECT_STATUS.md` para o commit correspondente, sem inventar um hash futuro.
 - **Repositório:** https://github.com/SAZAO-PROMAX/PULSO. Confirmar estado local/remoto ao retomar. Publicar versões está autorizado, sem force push e sem dados/segredos.
 
 ## Funcionalidades realmente implementadas
@@ -21,6 +21,7 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 - Navegação superior a partir de 900 px e inferior nas larguras menores, reservando espaço no layout. Tema discreto, estados selecionados também sublinhados, ações secundárias sem contorno e seletores partilhados. Aprender mantém as 23 fichas, cartões editoriais/resumo limitado e ação curta com nome acessível completo.
 - Gráficos de 15 parâmetros laboratoriais e quatro vitais; unidades/métodos/amostras incompatíveis separados. Comparação por painéis alinhados, períodos e intervalo personalizado, pontos/origem/original, exclusões explícitas e lista completa paginada. Opções avançadas recolhidas por defeito no modo Equilibrado.
 - Acontecimentos versionados, referências documentais, histórico de edição, marcadores/duração e alternativa textual. Sem causalidade automática. Eliminar acontecimento preserva exames; eliminar exame retira referências ativas atomicamente.
+- Seleção de documento ocupa a própria área de importação: nome, formato, tamanho, estado real e indicação de que ainda não foi guardado. Troca/cancelamento no mesmo bloco, animação breve com movimento reduzido respeitado e rejeição de formato/tamanho inválidos sem perder a seleção válida anterior.
 - Importação sintética PDF/PNG/JPEG: parser conhecido ou Ollama local, revisão/correção e confirmação humana antes de persistir. Fila limitada, uma extração de cada vez. Aprender mantém 23 fichas, sem nova revisão clínica nesta entrega.
 
 ## Arquitetura em utilização
@@ -51,7 +52,9 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 
 ## Última validação — 08/11/2026
 
-**202 testes distintos aprovados:** 100 API, 56 TypeScript, 36 Chromium em contexto demonstrativo isolado, 5 Chromium na aplicação normal sem demonstração, 2 de estrutura e 3 do gerador. Dois testes opcionais de inferência real omitidos. Typecheck, pip check e exportação web aprovados. Sem carga/inferência GPU ou exportação nativa nova.
+**Correção pontual da seleção:** typecheck/exportação web e 68 testes aprovados (56 TypeScript, 5 Chromium na configuração normal e 7 de regressão dos fluxos demonstrativos isolados). Seleção/troca/arrasto/cancelamento, limites, falha de leitura, movimento reduzido e larguras 320/1100 verificados. Detalhes em VALIDATION.md; API/inferência real não repetidas nesta correção, sem alterações ao backend.
+
+**Regressão completa anterior do redesign — 202 testes distintos aprovados:** 100 API, 56 TypeScript, 36 Chromium em contexto demonstrativo isolado, 5 Chromium na aplicação normal sem demonstração, 2 de estrutura e 3 do gerador. Dois testes opcionais de inferência real omitidos. Typecheck, pip check e exportação web aprovados. Sem carga/inferência GPU ou exportação nativa nova.
 
 Catálogo completo percorrido programaticamente: 19 casos API, 19 casos do modelo e seleção/proveniência dos 19 no navegador. Matriz e limites em VALIDATION.md. Verificados cinco tamanhos (320/390/768/1100/1280), três modos, contraste dos tokens, teclado/foco/modais e zoom CSS 200%. Capturas comparáveis de Hub/Histórico/Aprender/Perfil a 390/1280 px; também texto muito grande em tema escuro nas cinco larguras, com teste geométrico do conteúdo e navegação. Comparação e comandos em UX_LEARN.md/VALIDATION.md; artefactos detalhados e bases em tmp, fora do Git. Não houve leitores reais, zoom real, participantes ou certificação.
 
