@@ -5,8 +5,8 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 ## Versão e Git
 
 - **Atualizado:** 08/11/2026 (Europe/Lisbon).
-- **Versão:** PULSO **v0.6**, experimental; frontend/Expo e API identificados como `0.6.0`.
-- **Branch:** `main`. **Commit de código verificado:** `bba78d443c710353ad303c8e9bec6bf999524e18` (contas/perfil e integração v0.6). Esta ficha acompanha o commit documental de entrega; consultar `git log -1 -- docs/PROJECT_STATUS.md` para identificar esse commit.
+- **Versão:** PULSO **v0.6.1**, experimental; frontend/Expo e API identificados como `0.6.1`.
+- **Branch:** `main`. **Base Git da correção:** `f3b5d8666cb904d8004ea28cb17b4b258af2886f` (entrega anterior). Esta ficha acompanha a correção de login; consultar `git log -1 -- docs/PROJECT_STATUS.md` para identificar o commit de entrega.
 - **Repositório oficial:** https://github.com/SAZAO-PROMAX/PULSO. Confirmar `git status` e a correspondência HEAD/origin/main ao retomar. Checkpoints anteriores preservam v0.5/carga, integridade/fila e organização documental; não assumir que resultados históricos descrevem a versão atual.
 
 ## Funcionalidades realmente implementadas
@@ -21,6 +21,8 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 - Recuperação/verificação/alteração de e-mail com códigos locais temporários de uso único. **Sem serviço ou envio real de e-mail; confirmação de desenvolvimento não prova titularidade externa.**
 
 Ver [guia Windows](GUIA_WINDOWS.md), [arquitetura](ARCHITECTURE.md), [extração](LOCAL_EXTRACTION.md) e [conteúdos educativos](UX_LEARN.md).
+
+Correção v0.6.1: o arranque deixou de forçar API num hostname diferente do navegador; login só apresenta a conta após confirmar o cookie numa consulta à sessão. Cookies recusados produzem erro explícito.
 
 ## Arquitetura e serviços
 
@@ -59,10 +61,10 @@ Os dois problemas de integridade do ensaio v0.5 foram corrigidos com regressões
 
 ## Últimas verificações — 08/11/2026
 
-- **111 distintos aprovados:** 54 API, 26 TypeScript, 26 Chromium, 2 de estrutura e 3 do gerador. Typecheck, exportação web e pip check aprovados. Dois Chromium opcionais de inferência real omitidos; nenhuma validação clínica ou auditoria de segurança é inferida destes números.
+- **113 distintos aprovados na v0.6.1:** 54 API, 26 TypeScript, 28 Chromium, 2 de estrutura e 3 do gerador. Typecheck e exportação web aprovados; 2 Chromium opcionais de inferência real omitidos. Três casos também passaram com o arranque real: sessão/recarga, cookie recusado e fluxo integrado de contas. Bases temporárias; base normal preservada. Pip check aprovado na entrega anterior, não repetido. Sem validação clínica ou auditoria independente.
 - Fluxo de duas contas fictícias verificado: registo/login, perfil/condições autodeclaradas, avatar/fotografia, PDF confirmado, tensão, histórico/gráfico, logout e recarga/novo login com dados recuperados; acesso da outra conta recusado. Menu por teclado/Escape/foco e cabeçalho permanente verificados.
 - Regressões de ID/versão, edição concorrente, originais, classificação e fila aprovadas. Parser sem Ollama testado; modelo/pipeline mantidos, sem nova inferência GPU real nesta v0.6.
-- Escrita curta comparável a 50 clientes: p95 de aproximadamente 1674 ms para 272 ms; zero erros inesperados e integridade final preservada. Uma amostra curta, dois perfis demo, não capacidade de produção.
+- Na entrega anterior, sem repetição nesta correção: escrita curta comparável a 50 clientes: p95 de aproximadamente 1674 ms para 272 ms; zero erros inesperados e integridade final preservada. Uma amostra curta, dois perfis demo, não capacidade de produção.
 - Prova real da fila: cinco trabalhos aceites até ao limite, dois excedentes recusados, um cancelado e quatro prontos, sem gravação automática. Não é benchmark de inferência. O ensaio histórico de dez minutos/25 clientes não foi repetido nesta v0.6.
 
 Evidência/comandos: [VALIDATION.md](VALIDATION.md) e [LOAD_TEST.md](LOAD_TEST.md). Artefactos/SQLite de ensaio ficam em `tmp`, fora do Git; não copiar dados ou códigos para esta ficha. NVDA não encontrado nos locais/PATH/processos habituais; não foi ensaiado nem instalado. Sem certificação WCAG ou teste físico.

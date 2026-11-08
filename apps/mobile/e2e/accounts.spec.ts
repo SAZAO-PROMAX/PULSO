@@ -3,10 +3,10 @@ import path from 'node:path';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
 
-test('contas separadas: registo, perfil, fotografia, PDF, tensão, logout e recuperação de dados',async({page},info)=>{
+test('contas separadas: registo, perfil, fotografia, PDF, tensão, logout e recuperação de dados',async({page,baseURL},info)=>{
  test.setTimeout(90000);
  const stamp=Date.now(),email='account-'+stamp+'@example.test',other='other-'+stamp+'@example.test',password='fictitious-browser-password-2026';
- const origin='http://127.0.0.1:8000';
+ const origin=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':8000';
  async function menu(label:string){await page.getByRole('button',{name:'Abrir menu de perfil',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:label,exact:true}).click();}
  async function create(address:string){await menu('Criar conta');await page.getByLabel('E-mail',{exact:true}).fill(address);await page.getByLabel('Nome de apresentação',{exact:true}).fill('Conta inteiramente fictícia');await page.getByLabel('Palavra-passe',{exact:true}).fill(password);await page.getByLabel('Confirmar palavra-passe',{exact:true}).fill(password);await page.getByRole('button',{name:'Criar conta experimental',exact:true}).click();await expect(page.getByText(/Pedido recebido\. Pode tentar iniciar sessão/)).toBeVisible();await page.getByRole('button',{name:'Já tenho conta: iniciar sessão',exact:true}).click();await signIn(address);}
  async function signIn(address:string){await page.getByLabel('E-mail',{exact:true}).fill(address);await page.getByLabel('Palavra-passe',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sessão',exact:true}).click();await expect(page.getByText('CONTA EXPERIMENTAL · DADOS FICTÍCIOS',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Adicionar medição',exact:true})).toBeVisible();}

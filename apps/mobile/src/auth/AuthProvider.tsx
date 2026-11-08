@@ -20,7 +20,12 @@ export function AuthProvider({children}:{children:React.ReactNode}){
   const owner=user.id;void apiFetch('/auth/avatar',{signal:controller.signal}).then(r=>{if(!r.ok)throw Error('Fotografia indisponível.');return r.blob();}).then(blob=>{if(active){url=URL.createObjectURL(blob);setPhoto({owner,url});}}).catch(()=>{});
   return()=>{active=false;controller.abort();if(url)URL.revokeObjectURL(url);};
  },[user?.id,user?.version,user?.hasPhoto]);
- async function signIn(email:string,password:string){apply(await authRequest('login',{email,password}));}
+ async function signIn(email:string,password:string){
+  const signed=await authRequest('login',{email,password});
+  const confirmed:Session=await authRequest('session',undefined,'GET');
+  if(!confirmed.user||confirmed.user.id!==signed.user.id){apply({user:null,csrf:null});throw Error('O navegador não confirmou o cookie de sessão. Permite cookies e usa o mesmo endereço local para a aplicação e a API. Tenta iniciar sessão novamente.');}
+  apply(confirmed);
+ }
  async function signOut(){try{await authRequest('logout');}catch(e){if(!(e instanceof ApiError&&e.status===401))throw e;}apply({user:null,csrf:null});}
  return <Auth.Provider value={{user,photo:user?.hasPhoto&&photo?.owner===user.id?photo.url:null,refresh,signIn,signOut}}>{children}</Auth.Provider>;
 }

@@ -1,4 +1,8 @@
 # PULSO no Windows — arranque e estabilização
+
+## Correção de login v0.6.1
+
+Inicia com `.\dev.cmd`, abre `http://localhost:8081` e atualiza com **Ctrl+F5**. Inicia sessão com a conta já criada; não é necessário voltar a registar ou apagar a base. O arranque deixou de forçar a API para `127.0.0.1`; utiliza o hostname do navegador para o cookie acompanhar os pedidos. Se definiste `EXPO_PUBLIC_API_URL` manualmente, usa o mesmo hostname da interface. Cookies recusados impedem a entrada e apresentam mensagem explícita.
 ## Hub e Aprender
 O arranque continua a ser `.\dev.cmd`, descrito abaixo. Atualiza o separador http://localhost:8081 para ver o Hub atualizado. As cinco áreas mantêm os acessos habituais; os resumos usam os registos do perfil selecionado.
 

@@ -1,4 +1,18 @@
-# Validação atual — v0.6, 08/11/2026
+# Validação atual — v0.6.1, 08/11/2026
+
+Correção de login: o arranque real forçava API em `127.0.0.1` para interface em `localhost`; reproduzido antes da correção com falha de hostname. O arranque preserva agora a escolha automática pelo hostname do navegador; login confirma a sessão antes de mostrar a conta. Cookie HttpOnly/SameSite, Origin e CSRF mantidos. Sem alterações à base normal ou às contas existentes.
+
+**113 distintos aprovados:** 54 API, 26 TypeScript, 28 Chromium, 2 de estrutura e 3 do gerador. Typecheck e exportação web aprovados; 2 Chromium opcionais de inferência real omitidos. Logs locais `tmp/v061-api.log`, `tmp/v061-browser.log`, `tmp/v061-export.log`. Sem inferência real ou novo ensaio de carga.
+
+Três casos também passaram com Metro/arranque real: sessão e recarga com hostname consistente, cookie recusado sem falsa autenticação, fluxo integrado de contas. Logs `tmp/login-launcher-fixed.log` e reprodução anterior `tmp/login-before.log`. Contas fictícias e SQLite temporária. Para repetir, parar o PULSO normal e executar em `apps/mobile`:
+
+```powershell
+$env:PULSO_TEST_LAUNCHER = 'true'
+npx.cmd playwright test e2e/login.spec.ts e2e/accounts.spec.ts
+Remove-Item Env:PULSO_TEST_LAUNCHER
+```
+
+## Entrega anterior — v0.6, 08/11/2026
 
 Entrega: **54 testes API, 26 TypeScript, 26 Chromium, 2 de estrutura e 3 do gerador de carga aprovados (111 distintos)**. Dois Chromium opcionais de inferência real omitidos; não incluídos na contagem. Typecheck, exportação web e pip check aprovados. Logs locais em tmp/v06-api-release.log e tmp/v06-web-release.log; testes não usam a base normal. Não houve inferência GPU real nesta v0.6; pipeline/modelo preservados, parser sem Ollama exercitado. Validação adicional do menu de perfil por teclado no teste integrado de contas.
 
