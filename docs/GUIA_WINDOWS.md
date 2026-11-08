@@ -171,3 +171,14 @@ Atualize `http://localhost:8081` com Ctrl+F5. No círculo do cabeçalho, escolha
 Em **Pesquisar condições**, procure por nome ou termo alternativo, por exemplo «DPOC». As caixas iniciais mantêm condições frequentes; as selecionadas aparecem acima e podem ser removidas com um toque. Se faltar uma condição, escreva o nome e escolha **Adicionar «…»**. A lista local não contém todas as doenças; não atribui códigos clínicos. Até 30 condições, nomes manuais de 2–100 caracteres. Tudo autodeclarado e fictício nesta fase.
 
 Escolha um dos oito avatares ou **Usar iniciais**, consulte a pré-visualização e carregue em **Guardar perfil**. A fotografia guardada continua a ter prioridade: remova-a na secção Fotografia para mostrar o avatar. Nem nascimento nem condições personalizam ainda os resultados do Hub ou os limites dos gráficos.
+
+
+## Utilizar a v0.7
+
+Arranque com `.\dev.cmd` e abra `http://localhost:8081`; Ctrl+F5 após atualizar. A conta e os exames anteriores são preservados. No Hub, **Configurar a minha experiência** abre sete passos opcionais; **Saltar primeiros passos** dispensa a sequência. No menu circular, **Preferências** muda modo, tema, letra, contraste, ajuda e movimento; **O meu perfil → Rever primeiros passos** permite retomar/rever. As escolhas ficam na conta local; não dependem da idade.
+
+Nos gráficos, escolha **Individual** ou **Combinado**, ative os parâmetros e selecione período. **Personalizado** pede duas datas inclusivas (UTC). No modo Simples, **Mostrar todos os períodos** dá acesso às mesmas opções. Painéis combinados partilham tempo, mantendo unidades/escalas próprias; listas dos pontos dão origem/original. Não são conversões nem interpretações clínicas.
+
+No Hub ou em Registar, escolha **Registar acontecimento**, preencha título/tipo/datas fictícias, associe documentos já guardados se necessário e reveja antes de confirmar. No Histórico, **Acontecimentos** permite pesquisar/filtrar/consultar/editar/eliminar. Nos gráficos, marcadores e botões textuais abrem os acontecimentos do dia; faixas mostram duração. Não significam causa e efeito. Eliminar acontecimento preserva exames; eliminar exame retira as suas ligações aos acontecimentos.
+
+A aplicação continua experimental e local. Exportações Android/iOS são apenas pacotes JavaScript; não há aplicação instalada/publicada nem ligação móvel de produção. Limitações e especificações em ARCHITECTURE.md.

@@ -29,7 +29,7 @@ export function ClinicalPanel({ownerId,parameters,data,initialParameter}:{ownerI
  <MedicalTerm parameter={parameter} label={parameterLabels[parameter]}/>
  {settings.mode==='simple'&&<Button label={more?'Ocultar períodos adicionais':'Mostrar todos os períodos'} onPress={()=>setMore(!more)}/>}
  <View accessibilityLabel="Período" style={layout.row}>{periods.filter(([id])=>settings.mode!=='simple'||more||['all','90','1y'].includes(id)).map(([id,label])=><Button key={id} label={label} selected={period===id} onPress={()=>setPeriod(id)}/>)}</View>
- {period==='custom'&&<Card><Field date label="Data inicial do gráfico" value={start} onChange={setStart}/><Field date label="Data final do gráfico" value={end} onChange={setEnd}/><T kind="small">Inclui os dois dias completos, em UTC. Não modifica registos.</T></Card>}{!!rangeError&&<T accessibilityRole="alert">{rangeError}</T>}
+ {period==='custom'&&<Card><Field required date label="Data inicial do gráfico" value={start} onChange={setStart}/><Field required date label="Data final do gráfico" value={end} onChange={setEnd}/><T kind="small">Inclui os dois dias completos, em UTC. Não modifica registos.</T></Card>}{!!rangeError&&<T accessibilityRole="alert">{rangeError}</T>}
 
  <T kind="small">{all.length} confirmados no histórico · {shown} representados neste período · {outside} fora do período.</T><T kind="small">Períodos relativos a hoje. Unidades, métodos e amostras diferentes permanecem em séries independentes.</T>
  {!!omitted&&<T kind="small">{omitted} registo(s) pendentes ou incompletos fora do gráfico.</T>}

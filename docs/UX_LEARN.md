@@ -105,3 +105,7 @@ Novos ficheiros v0.5: dois adaptadores de preferências, testes de preferências
 - Documentação atualizada: `README.md`, `apps/mobile/README.md`, `docs/UX_LEARN.md`, `VALIDATION.md`, `GUIA_WINDOWS.md`, `ARCHITECTURE.md`, `SECURITY.md`, `DECISIONS.md`. As quatro capturas documentais existentes foram regeneradas pela suite; novos artefactos ficam em `tmp`.
 
 O estado Git inclui também os ficheiros novos do Hub/Aprender do sprint anterior, ainda sem commit. Não representam uma reconstrução adicional nesta v0.5.
+
+
+## Incremento v0.7
+Os mesmos componentes educativos e 23 fichas são usados nos três modos, sem conteúdo clínico novo ou revisão profissional alegada. ThemeProvider aplica tokens/escala/contraste; ajuda guiada é opcional e não deriva da idade. Hub reordena áreas por escolha explícita e mantém resumos expansíveis no modo Simples. Preferências/onboarding, gráficos alinhados e acontecimentos estão descritos em ARCHITECTURE.md; resultados finais em VALIDATION.md. Mantêm-se as limitações editoriais/clínicas anteriores.

@@ -9,6 +9,7 @@ test('intervalos inclusivos, datas inválidas e dados ausentes sem modificar a f
  assert.ok(filterTime(source,r).results.every(x=>x.measuredAt?.startsWith('2026-05-08')));assert.equal(JSON.stringify(source),before);
  assert.throws(()=>timeRange('custom','2026-02-30','2026-03-01'));assert.throws(()=>timeRange('custom','2026-05-09','2026-05-08'));
  for(const period of ['7','30','90','6m','1y','2y','5y']){const range=timeRange(period,'','',Date.parse('2026-11-08T12:00:00Z'))!;assert.ok(range.min<range.max);assert.equal(range.max,Date.parse('2026-11-08T12:00:00Z'));}
+ assert.equal(new Date(timeRange('6m','','',Date.parse('2026-03-31T12:00:00Z'))!.min).toISOString(),'2025-09-30T12:00:00.000Z');
  assert.equal(timeRange('all'),null);
 });
 test('eixo temporal comum e duplicados legítimos, sem unir unidades ou inventar valores',()=>{

@@ -1,4 +1,4 @@
-# Protocolo de usabilidade e tecnologias de apoio — v0.5
+# Protocolo de usabilidade e tecnologias de apoio — v0.7
 
 **Plano por executar**, preparado em 08/11/2026. Não existem participantes recrutados, entrevistas ou resultados. Apenas aplicação local, perfis fictícios e PDFs sintéticos do projeto. Não recolher informação de saúde dos participantes.
 
@@ -6,7 +6,7 @@
 
 Sessão moderada de cerca de 40 minutos, com pausa e possibilidade de desistir. Explicar a finalidade e obter concordância informada para observações manuais; sem gravação automática, telemetria ou contas reais. Usar códigos de sessão, não nomes, nas notas. Definir responsável, acesso e prazo de eliminação das notas antes do recrutamento.
 
-Plano inicial: procurar 2–3 pessoas em cada grupo 18–54, 55–64, 65–74 e 75+ (quando viável), com literacia digital variada; incluir utilizadores habituais de tecnologias de apoio quando possível. É uma amostra exploratória planeada, sem representatividade estatística nem dimensão já obtida. Adaptar duração e pausas às necessidades de cada pessoa.
+Plano inicial: procurar 2–3 pessoas em cada grupo 18–34, 35–54, 55–64, 65–74 e 75+ (quando viável), com literacia digital variada; incluir utilizadores habituais de tecnologias de apoio quando possível. É uma amostra exploratória planeada, sem representatividade estatística nem dimensão já obtida. Adaptar duração e pausas às necessidades de cada pessoa.
 
 O facilitador inicia `.\dev.cmd`, confirma serviço local e escolhe um perfil/ambiente de ensaio só com dados fictícios. **Não repor nem apagar a base normal do utilizador.** Preparar cópia de ensaio separada e PDF `data/synthetic/laboratorio-demo.pdf`. Anotar versão/commit, Windows, navegador, largura, zoom, tema e tecnologia de apoio/versões. Explicar como terminar a sessão. Pedir que a pessoa pense em voz alta, sem ensinar antecipadamente o percurso.
 
@@ -16,7 +16,7 @@ Dar uma tarefa de cada vez, sem indicar nomes de botões. Medir desde o enunciad
 
 | # | Enunciado | Conclusão observável |
 |---|---|---|
-| 1 | Entre no PULSO com o perfil fictício indicado. | Abre o Hub e identifica o perfil; não há login real. |
+| 1 | Entre no PULSO com o perfil fictício indicado. | Inicia sessão na conta experimental inteiramente fictícia e identifica o perfil; não usar conta pessoal. |
 | 2 | Encontre a última análise ao sangue. | Abre o exame e identifica data/origem; distingue importação da data do relatório. |
 | 3 | Consulte a evolução da glicose. | Escolhe parâmetro/período e consulta data, valor, unidade e origem de um ponto. |
 | 4 | Descubra o significado de HbA1c. | Abre a explicação e descreve-a pelas suas palavras, sem interpretar um resultado pessoal. |
@@ -49,3 +49,8 @@ Referência: [WCAG 2.2](https://www.w3.org/TR/WCAG22/). Registar componente, pas
 - **Zoom real Windows:** menu do navegador → Zoom 200%, depois 400% para reflow; registar percentagem e janela. Percorrer Hub, ficha completa, modal, formulário e gráfico por teclado, incluindo rolagem. Procurar cortes, sobreposição e necessidade de rolagem em duas direções; voltar a 100%. Não usar CSS zoom como substituto.
 
 Estado atual: NVDA não encontrado nos locais habituais/PATH/processos; não instalado durante o sprint. Controlo do Chrome para zoom real não autorizado dentro do tempo de espera, sem ações de zoom executadas. TalkBack, VoiceOver, dispositivos físicos, recrutamento e sessões humanas **pendentes**. Estes limites não são supridos pelos testes Playwright.
+
+
+## Comparação planeada dos modos — v0.7
+Plano ainda sem participantes/resultados. Registar modo escolhido, experiência digital autodeclarada opcional e preferências de apoio; grupos etários não atribuem modo ou competência. Contrabalançar a ordem dos três modos entre sessões e usar os mesmos dados/tarefas, permitindo mudar preferências e fazer pausas. Não esconder funções no modo Simples; observar se a expansão de resumos/períodos é compreendida. Não recolher doenças ou identidade pessoais nem gravar/ativar telemetria sem avaliação própria.
+Tarefas adicionais: concluir/retomar onboarding; mudar modo sem perder dados; escolher período personalizado; comparar tensão e pulsação distinguindo mmHg/bpm; criar acontecimento fictício e encontrar marcador/documento; explicar que coincidência temporal não é causalidade. Repetir encontrar exame, HbA1c, tensão e PDF. Medir sucesso, tempo, erros, ajuda, compreensão, satisfação e barreiras na grelha existente, sem preencher resultados fictícios. Testar teclado, leitor real e texto/zoom nos três modos. Zoom CSS e exportação JS não substituem zoom real ou ensaio físico.

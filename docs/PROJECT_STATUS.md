@@ -5,18 +5,17 @@ Resumo de continuidade para Codex, ChatGPT e Work. Usar os relatórios ligados p
 ## Versão e Git
 
 - **Atualizado:** 08/11/2026 (Europe/Lisbon).
-- **Versão:** PULSO **v0.6.1**, experimental; frontend/Expo e API identificados como `0.6.1`.
-- **Branch:** `main`. **Base Git desta otimização:** `2336e3502689be1f15b8b1124b9f6def0b258dc6` (correção anterior de login). Esta ficha acompanha a otimização do perfil, mantendo v0.6.1; consultar `git log -1 -- docs/PROJECT_STATUS.md` para identificar o commit de entrega.
+- **Versão:** PULSO **v0.7**, experimental; frontend/Expo e API identificados como `0.7.0`.
+- **Branch:** `main`. **Base de código desta validação:** `056fced07c40da7015c021b21896ff253f4bec49` (checkpoint de acontecimentos), após `d07179c` (experiência/gráficos). Esta ficha acompanha a entrega final v0.7, incluindo correção de foco; consultar `git log -1 -- docs/PROJECT_STATUS.md` para o commit de entrega.
 - **Repositório oficial:** https://github.com/SAZAO-PROMAX/PULSO. Confirmar `git status` e a correspondência HEAD/origin/main ao retomar. Checkpoints anteriores preservam v0.5/carga, integridade/fila e organização documental; não assumir que resultados históricos descrevem a versão atual.
-
-## Desenvolvimento em curso — v0.7
-
-Checkpoint A/B/C: modos e preferências por conta, onboarding/Hub e gráficos alinhados/períodos personalizados implementados e com testes focados. Versão de entrega ainda v0.6.1; v0.7 só será declarada após integração e validação final. Bloco D agora implementado com 11 testes API focados, testes de unidade e fluxo de navegador aprovados; validação final e auditoria multiplataforma ainda em curso.
 
 ## Funcionalidades realmente implementadas
 
-- Hub único, cinco áreas, resumos, estados vazios e Aprender com 23 fichas locais, pesquisa/categorias e explicações partilhadas. Tema claro/escuro persistido no navegador.
-- Gráficos por parâmetro/período, pontos e lista textual por teclado, origem/original e motivos de exclusão. Dados incompatíveis permanecem separados, sem conversões ou diagnóstico.
+- Hub único adaptativo: modos Simples/Equilibrado/Detalhado, prioridades explícitas de áreas, resumos expansíveis e ajuda opcional. Mesmos dados/permissões nos três modos; sem inferir capacidade ou modo pela idade.
+- Onboarding opcional retomável de sete passos; conclusão/progresso, tema sistema/claro/escuro, tamanho de texto, contraste, movimento e ajuda persistem no JSON da conta na mesma SQLite, com versão/CSRF. Tema anónimo mantém a chave local anterior.
+- Cinco áreas e Aprender com 23 fichas locais, pesquisa/categorias e explicações partilhadas, sem nova revisão clínica nesta versão.
+- Gráficos individuais ou painéis combinados com eixo temporal comum e escalas/unidades próprias; séries por método/amostra separadas. Períodos de 7/30/90 dias, 6 meses, 1/2/5 anos, histórico completo e personalizado UTC inclusivo. Desenho denso limitado; lista paginada conserva todos os pontos, origem/original e motivos de exclusão. Sem conversões, interpolação de valores ou diagnóstico.
+- Acontecimentos fictícios: oito tipos, datas/duração, descrição/instituição, referências a documentos do mesmo dono, estados autodeclarado/documentado sem validação clínica. Criar/rever/guardar, pesquisar/filtrar, editar/eliminar com versão, histórico de edições e marcadores agrupados no gráfico. Eliminar exame retira ligações ativas atomicamente; eliminar acontecimento preserva exames/medições. Sem causalidade inferida.
 - Tensão manual com revisão/persistência. Repetição de ID com conteúdo equivalente é idempotente; conteúdo diferente dá conflito. Editar/eliminar exige versão atual; conflito mantém os campos e requer decisão explícita.
 - Registar: oito categorias, pesquisa, tipos e atalhos. Só sangue suportado segue para extração/revisão de resultados; outros tipos guardam documentos sem interpretação ou medições automáticas.
 - Histórico pesquisável por categoria/tipo/especialidade/período, com metadados editáveis e várias especialidades no mesmo documento. Reclassificar não duplica original nem altera resultados/gráficos. Documentos antigos sem categoria continuam em Todos os registos.
@@ -34,10 +33,10 @@ Correção v0.6.1: o arranque deixou de forçar API num hostname diferente do na
 
 | Camada | Estado confirmado |
 |---|---|
-| Interface | Expo 57 / React Native 0.86.3 / React 19.2.3 / TypeScript e react-native-web; Windows web verificado. |
+| Interface | Expo 57 / React Native 0.86.3 / React 19.2.3 / TypeScript e react-native-web; Windows web verificado. Tokens/ThemeProvider comuns, sem biblioteca visual paralela. |
 | Arranque | `dev.cmd`; interface normalmente em `http://localhost:8081`, FastAPI em `127.0.0.1:8000`. Usar o mesmo hostname frontend/API para cookies. |
 | Persistência | Uma SQLite `.local/pulso.sqlite3`: snapshots por dono e tabelas de contas/sessões/tokens/limites. Sem base paralela ou PostgreSQL. |
-| Dados | ApiRepository único; transações, versão/If-Match e admissão ordenada de escrita. Catálogo organizacional partilhado frontend/backend. |
+| Dados | ApiRepository único; snapshots schemaVersion 1 com events opcional, transações/If-Match e admissão ordenada de escrita. Preferências no JSON da conta. Sem migração destrutiva ou segunda base. |
 | Identidade | FastAPI/Starlette + argon2-cffi/Argon2id; cookie HttpOnly/SameSite, sessão opaca revogável, CSRF/Origin e limites de tentativas. Tokens de acesso fora de localStorage; perfis demo separados. |
 | Documentos/imagens | PyMuPDF existente; originais preservados na SQLite. Fotografia de perfil validada/reduzida/reencodificada e privada, sem Ollama. |
 | Inferência | Backend → Ollama loopback, porta 11434, apenas `qwen3-vl:4b`; sem cloud, novo modelo ou aumento de concorrência GPU. |
@@ -50,7 +49,8 @@ Configuração não é uma sondagem contínua de disponibilidade. Não iniciar v
 - Lista de condições é local e não exaustiva; integração de classificação oficial completa permanece pendente. É possível adicionar nomes ausentes, sem códigos ou diagnóstico.
 - Calendário e medicação estruturada continuam em preparação; documentos de prescrição/consulta já podem ser guardados. Sem instituições reais, partilha, Arquivar, diagnóstico, alertas clínicos ou metas automáticas.
 - Sem formulário domiciliário dedicado de SpO₂ ou múltiplas leituras de tensão numa sessão; gráficos existentes mantidos.
-- Android/iOS físicos não verificados; seletor documental/fotografia nativos não implementados e tema nativo só de sessão. Biblioteca local não é instalação offline independente do servidor.
+- Android/iOS: exportações JavaScript concluídas; sem ensaio físico/emulador, APK/IPA, EAS ou publicação. Seletores/câmara nativos, sessões/transporte no dispositivo e persistência anónima por implementar/validar. Biblioteca não é instalação offline independente.
+- Sincronização central e papéis Clinical/Partner/Care são apenas especificação em ARCHITECTURE.md; sem concessão profissional, partilha clínica ou cloud implementadas.
 - Protocolo de usabilidade apenas preparado, sem participantes recrutados/ensaiados; leitores de ecrã reais e zoom nativo pendentes.
 
 ## Problemas e limitações por prioridade
@@ -68,19 +68,20 @@ Os dois problemas de integridade do ensaio v0.5 foram corrigidos com regressões
 
 ## Últimas verificações — 08/11/2026
 
-- **124 distintos aprovados nesta otimização v0.6.1:** 62 API, 28 TypeScript, 29 Chromium, 2 de estrutura e 3 do gerador. Typecheck e exportação web aprovados; 2 Chromium opcionais de inferência real omitidos. Quatro casos também passaram com o arranque real: perfil, sessão/recarga, cookie recusado e fluxo integrado de contas. Calendário, datas inválidas/ausentes, pesquisa/sinónimos, condições livres/duplicadas, persistência e avatar por teclado verificados. Capturas de perfil revistas a 320 px escuro e 1100 px claro; bases temporárias. Sem nova inferência ou carga. Pip check da entrega v0.6 não repetido.
-- Fluxo de duas contas fictícias verificado: registo/login, perfil/condições autodeclaradas, avatar/fotografia, PDF confirmado, tensão, histórico/gráfico, logout e recarga/novo login com dados recuperados; acesso da outra conta recusado. Menu por teclado/Escape/foco e cabeçalho permanente verificados.
-- Regressões de ID/versão, edição concorrente, originais, classificação e fila aprovadas. Parser sem Ollama testado; modelo/pipeline mantidos, sem nova inferência GPU real nesta v0.6.
+- **145 distintos aprovados na v0.7:** 74 API, 34 TypeScript, 32 Chromium, 2 de estrutura e 3 do gerador. Typecheck, pip check, exportação web e pacotes JavaScript Android/iOS aprovados. Dois Chromium opcionais de inferência real omitidos; sem nova inferência GPU/carga. Testes só em bases temporárias. Uma regressão de foco em Registar foi corrigida antes da suite final; sete casos também passaram novamente com o launcher real. Detalhes/comandos em VALIDATION.md.
+- Fluxo de duas contas fictícias novamente verificado: registo/login, perfil/condições autodeclaradas, avatar/fotografia, PDF confirmado, tensão, histórico/gráfico, logout e recarga/novo login com dados recuperados; acesso da outra conta recusado. Menu por teclado/Escape/foco e cabeçalho permanente verificados.
+- Regressões de ID/versão, edição concorrente, originais, classificação e fila aprovadas. Preferências isoladas por conta, onboarding, modos sem alteração de dados, períodos, séries e acontecimentos com documentos/conflitos verificados. Parser sem Ollama testado; motor/modelo preservados.
+- Contraste dos tokens texto/controlos nos dois temas, foco/teclado/modais e layout a 320/390/1100/1280 px verificados. Capturas novas revistas; zoom CSS 200% continua diferente de zoom real. Sem certificação WCAG, leitor real ou validação clínica.
 - Na entrega anterior, sem repetição nesta correção: escrita curta comparável a 50 clientes: p95 de aproximadamente 1674 ms para 272 ms; zero erros inesperados e integridade final preservada. Uma amostra curta, dois perfis demo, não capacidade de produção.
 - Prova real da fila: cinco trabalhos aceites até ao limite, dois excedentes recusados, um cancelado e quatro prontos, sem gravação automática. Não é benchmark de inferência. O ensaio histórico de dez minutos/25 clientes não foi repetido nesta v0.6.
 
-Evidência/comandos: [VALIDATION.md](VALIDATION.md) e [LOAD_TEST.md](LOAD_TEST.md). Artefactos/SQLite de ensaio ficam em `tmp`, fora do Git; não copiar dados ou códigos para esta ficha. NVDA não encontrado nos locais/PATH/processos habituais; não foi ensaiado nem instalado. Sem certificação WCAG ou teste físico.
+Evidência/comandos: [VALIDATION.md](VALIDATION.md) e [LOAD_TEST.md](LOAD_TEST.md). Artefactos/SQLite de ensaio ficam em `tmp`, fora do Git; não copiar dados ou códigos para esta ficha. Leitores de ecrã não ensaiados nesta v0.7; a pesquisa histórica de NVDA não o encontrou, sem nova instalação. Sem certificação WCAG ou teste físico.
 
 ## Próximos três objetivos propostos
 
 1. Rever independentemente autenticação/privacidade, procedimentos de recuperação e entrega/verificação de e-mail; definir os requisitos de transporte/encriptação antes de qualquer dado real.
-2. Avaliar recuperação da fila após reinício e medir cargas autenticadas/históricos maiores, preservando a fonte única e sem trocar a base ou aumentar concorrência GPU sem evidência.
-3. Concluir revisão profissional dos conteúdos/fontes e executar o [protocolo de usabilidade/acessibilidade](USABILITY_PROTOCOL.md), incluindo leitores de ecrã e zoom real, com dados fictícios.
+2. Ensaiar autenticação/armazenamento/ficheiros em dispositivos Android/iOS, definir builds EAS e validar a arquitetura de sincronização antes de qualquer cloud; exportação JS não comprova funcionamento nativo.
+3. Executar o [protocolo de usabilidade/acessibilidade](USABILITY_PROTOCOL.md) comparando modos, leitores reais e zoom; concluir revisão profissional dos conteúdos. Capacidade/recuperação da fila continuam pendentes, sem extrapolar ensaios históricos.
 
 ## Continuidade
 

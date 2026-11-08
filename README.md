@@ -6,7 +6,10 @@ Na raiz, executar .\dev.cmd ou npm.cmd run dev. Seguir o [Guia Windows](docs/GUI
 No dashboard, usar Adicionar exame ou Adicionar medição. Nas áreas, selecionar parâmetro/período e consultar pontos, origem e documento.
 
 ## Funcional
-- Contas individuais experimentais: registo/login/logout, sessão no servidor, perfil opcional, avatar/fotografia privada e separação dos perfis demo. Recuperação/verificação por código local de desenvolvimento; nenhum e-mail real é enviado.
+- Experiência Simples/Equilibrado/Detalhado, preferências de acessibilidade/tema por conta e onboarding opcional retomável; Hub único ordena áreas sem alterar permissões.
+- Gráficos individuais ou painéis combinados com tempo alinhado e escalas independentes; nove períodos incluindo personalizado e lista acessível paginada.
+- Acontecimentos fictícios com revisão, documentos associados, histórico de edição, versões e marcadores/duração nos gráficos; sem causalidade automática.
+- Contas individuais experimentais: registo/login/logout, sessão no servidor, nascimento obrigatório e restantes campos opcionais, avatar/fotografia privada e separação dos perfis demo. Recuperação/verificação por código local de desenvolvimento; nenhum e-mail real é enviado.
 - Registar com oito categorias e tipos; documentos não laboratoriais são guardados sem extração. Histórico com pesquisa, categoria/tipo/especialidade/período e classificação editável sem duplicar originais.
 - IDs de tensão idempotentes só com conteúdo equivalente; edições/eliminações com versão esperada e conflito explícito, mantendo os campos no formulário.
 - Importação com fila limitada em memória, estados reais, cancelamento em espera e uma extração de cada vez.
@@ -22,7 +25,7 @@ No dashboard, usar Adicionar exame ou Adicionar medição. Nas áreas, seleciona
 ## Limites
 Contas com autenticação experimental local não equivalem a segurança auditada de produção. SQLite não tem encriptação apropriada para dados reais; HTTP apenas em loopback, sem serviço de e-mail real. Não usar identidade, fotografia ou documentos reais. Endpoints de demonstração continuam separados e públicos no loopback, só para dados fictícios.
 Sem sincronização, IA clínica, alertas ou integrações reais. A leitura visual usa Qwen3-VL local e exige conferência humana; não há OCR independente para validar imagens. Documentos de prescrição/consulta já podem ser guardados; calendário e gestão estruturada de medicação continuam em preparação. As 23 fichas aguardam revisão clínica independente. Android/iOS e leitores de ecrã reais não verificados; seletor documental nativo não implementado. Fila perde pedidos pendentes ao reiniciar; não suporta coordenação entre vários processos.
-A preferência de tema persiste no navegador deste computador, sem dados clínicos; armazenamento bloqueado produz aviso. Na versão nativa, o tema continua temporário. Edição de medição/exame e eliminação já funcionam no Histórico. Múltiplas leituras na mesma sessão continuam futuras.
+As preferências da conta persistem no serviço local; apenas o tema anónimo persiste neste navegador, sem dados clínicos. Na versão nativa anónima o tema é temporário; integração da sessão nativa e seletores ainda por validar. Edição de medição/exame e eliminação já funcionam no Histórico. Múltiplas leituras na mesma sessão continuam futuras.
 Este incremento reutiliza PyMuPDF, httpx e Pydantic já instalados; não acrescenta dependências. Ollama e qwen3-vl:4b são serviços/modelos locais separados. Limites: 2 MB, 3 páginas, 12 MP por imagem, uma extração de cada vez. Sem Ollama, continuam disponíveis o parser conhecido, a introdução manual e os registos existentes.
 
 ## Documentação

@@ -20,7 +20,7 @@ function requireBirthDate(value:string|null){
  throw Error('A data de nascimento é obrigatória e deve ser válida.');
 }
 function BirthDate({draft,setDraft}:{draft:Draft;setDraft:(d:Draft)=>void}){
- return <View style={{gap:6}}><Field date dateMax={new Date().toISOString().slice(0,10)} label="Data de nascimento (obrigatória, AAAA-MM-DD)" value={draft.birthDate??''} placeholder="Ex.: 1970-05-23" onChange={birthDate=>setDraft({...draft,birthDate:birthDate||null})} error={draft.birthDate&&!validBirthDate(draft.birthDate)?'Introduza uma data válida entre 1900 e hoje.':undefined}/><T kind="small">Obrigatória para preparar a futura personalização do Hub. Ainda não altera as funcionalidades nem gera objetivos clínicos. Use uma data fictícia.</T></View>;
+ return <View style={{gap:6}}><Field required date dateMax={new Date().toISOString().slice(0,10)} label="Data de nascimento (obrigatória, AAAA-MM-DD)" value={draft.birthDate??''} placeholder="Ex.: 1970-05-23" onChange={birthDate=>setDraft({...draft,birthDate:birthDate||null})} error={draft.birthDate&&!validBirthDate(draft.birthDate)?'Introduza uma data válida entre 1900 e hoje.':undefined}/><T kind="small">Obrigatória para preparar a futura personalização do Hub. Ainda não altera as funcionalidades nem gera objetivos clínicos. Use uma data fictícia.</T></View>;
 }
 export function ConditionSelector({selected,onChange}:{selected:string[];onChange:(v:string[])=>void}){
  const [search,setSearch]=useState(''),matches=searchConditions(search),custom=customCondition(search,selected);
@@ -46,7 +46,7 @@ function OptionalFields({draft,setDraft}:{draft:Draft;setDraft:(d:Draft)=>void})
 }
 
 export function AccountPanel({view,onView,onHistory,onOnboarding}:{onOnboarding?:()=>void;view:ProfileView;onView:(v:ProfileView)=>void;onHistory:()=>void}){
- const auth=useAuth(),theme=useTheme();
+ const auth=useAuth();
  if(!auth.user)return <GuestAccount key={view} view={view} onView={onView}/>;
  if(view==='preferences')return <ExperiencePanel/>;
  if(view==='privacy')return <Card><T kind="heading">Privacidade e segurança</T><T>Conta experimental com sessão no servidor. A base local ainda não tem encriptação apropriada para dados reais.</T><T>Apenas identidade e documentos fictícios. Confirmação de resultados não é validação médica. Fotografias não são enviadas ao Ollama.</T><T kind="small">As sessões expiram ao fim de oito horas. Terminar sessão revoga a sessão atual; recuperar a palavra-passe revoga todas. Não existe serviço de e-mail: a confirmação por código é só de desenvolvimento e não comprova titularidade de uma caixa de correio real.</T><Button label="Voltar ao meu perfil" onPress={()=>onView('profile')}/></Card>;

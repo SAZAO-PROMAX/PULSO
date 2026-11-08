@@ -1,4 +1,32 @@
-# Validação atual — v0.6.1, 08/11/2026
+# Validação atual — v0.7, 08/11/2026
+
+**145 testes distintos aprovados:** 74 API, 34 TypeScript, 32 Chromium, 2 de estrutura e 3 do gerador de carga. Dois Chromium opcionais de inferência real omitidos. Typecheck, pip check, exportação web e exportações JavaScript Android/iOS concluídos. Sem novas dependências ou inferência GPU/carga real. Logs locais em `tmp/v07-api-release.log`, `tmp/v07-unit-release.log`, `tmp/v07-web-final.log`, `tmp/v07-web-export-final.log`, `tmp/v07-android-export.log` e `tmp/v07-ios-export.log`. Bases temporárias; base normal não foi reposta nem usada pelos testes.
+
+A/B: preferências isoladas/versionadas por conta, preservadas ao editar perfil, modos sem alterar dados/permissões, onboarding de sete passos/conclusão/recarga, áreas prioritárias e contraste. C: comparação por painéis alinhados, unidades e métodos separados, ativação de parâmetros, períodos, datas inclusivas/inválidas, calendário em fim de mês, duplicados legítimos e desenho limitado com fonte completa. D: CRUD de acontecimentos, datas/duração, estados sem validação profissional fabricada, conflitos, isolamento, associação/original e remoção atómica de referências documentais. Acontecimento eliminado não elimina exames/resultados. Fluxos antigos de contas, PDF/tensão, fila, versões e histórico mantidos.
+
+Uma regressão de teclado foi identificada na primeira suite: o novo atalho antecedia a pesquisa em Registar. Corrigida reutilizando a zona de ações do RegisterHub; suite final sem falhas. Testes do launcher real por bloco também aprovados (onboarding, perfil, gráficos e acontecimentos); na revisão final, sete casos de onboarding/gráficos/acontecimentos/PDF/tensão/foco/zoom CSS passaram novamente (`tmp/v07-launcher-final.log`). Não são testes distintos adicionais. Contraste dos tokens verificado para texto ≥4,5 e limites ≥3 nos dois temas; verificações de navegador para foco/erros/modais/listas e layout mantidas. Capturas novas revistas a 320/1100 px, com modos/texto ampliado; suites cobrem também 390/1280 e zoom CSS 200%. Sem zoom real, leitor de ecrã real, dispositivos físicos, ensaio humano, auditoria de segurança ou certificação WCAG.
+
+E: exportações JS Android/iOS verificam o grafo de módulos, não login/ficheiros/câmara/dispositivos. Nenhum APK/IPA/EAS/loja foi criado. Auditoria, lacunas e especificações de sincronização/papéis em ARCHITECTURE.md. F: protocolo atualizado sem participantes ou resultados inventados. Continuam avisos de depreciação Starlette/httpx/PyMuPDF e NO_COLOR; auditoria histórica de dependências não reavaliada.
+
+Comandos PowerShell na raiz; parar o servidor normal antes de Playwright, sem terminar processos desconhecidos:
+
+```powershell
+npm.cmd run typecheck --prefix apps/mobile
+npm.cmd test --prefix apps/mobile
+.\.venv\Scripts\python.exe -m pytest services/api/tests -q --basetemp=tmp/v07-repeat
+.\.venv\Scripts\python.exe -m pip check
+node --test tests/foundation.test.mjs
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p test_load_runner.py -v
+Push-Location apps/mobile
+npx.cmd expo export --platform web
+npm.cmd run test:web
+npx.cmd expo export --platform android --output-dir ../../tmp/v07-android-repeat
+npx.cmd expo export --platform ios --output-dir ../../tmp/v07-ios-repeat
+Pop-Location
+```
+
+## Registo histórico — v0.6.1
+
 
 ## Otimização do perfil — mesma v0.6.1
 

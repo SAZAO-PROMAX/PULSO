@@ -1,4 +1,4 @@
-# Arquitetura atual — PULSO v0.6
+# Arquitetura atual — PULSO v0.7
 Frontend Expo 57 / React Native 0.86.3 / React 19.2.3 / TypeScript estrito, com react-native-web. Backend Python/FastAPI/Pydantic e PyMuPDF. Stack mantida.
 
 ## Interface
@@ -45,3 +45,37 @@ Preferências v0.5: `preferences.web.ts` persiste apenas tema em localStorage; r
 
 ## Arranque independente
 package.json raiz encaminha npm run dev para scripts/dev.mjs. dev.cmd encontra Node instalado sem PATH do Codex; scripts/start.ps1 delega no mesmo launcher. Portas ocupadas são recusadas, sem reutilizar APIs antigas. Logs visíveis, --reload no backend e Metro normal. Ctrl+C termina apenas os processos filhos iniciados pelo launcher. Ver GUIA_WINDOWS.md para LAN e limites do QR.
+
+
+## v0.7 — experiência, gráficos e acontecimentos
+Preferências de experiência residem no JSON da própria conta (mesma tabela/SQLite), separadas de credenciais e autorização. `/auth/preferences` exige sessão, Origin, CSRF e If-Match; edição do perfil preserva as preferências. Defaults aditivos para contas anteriores, sem atribuição de modo pela idade. ThemeProvider partilhado aplica tokens, escala, contraste e movimento; modo/tema persistem por conta, tema anónimo usa a chave local anterior. Onboarding de sete passos persiste progresso/conclusão e reutiliza controlos de preferências/condições. Hub único, sem gestão de estado ou páginas paralelas.
+Gráficos combinados são painéis TimelineChart com domínio temporal comum, escalas e unidades independentes; buildSeries mantém métodos/amostras separados. Períodos relativos/calendário e personalizado UTC não alteram dados. Desenho denso preserva extremos por bloco, com todos os pontos na lista paginada de 50.
+`events.py` valida acontecimentos no snapshot do perfil, `events` opcional para snapshots antigos. CRUD utiliza scope, admissão de escrita, transação e versões existentes. Histórico de edição guardado; associação documental é por ID do mesmo dono. Eliminar documento atualiza referências e versões dos acontecimentos atomicamente, sem apagar o acontecimento; apagar acontecimento preserva documentos/resultados. Estados autodeclarado/documentado, nunca validação profissional por escolha do utilizador. Marcadores por dia UTC e faixas de duração têm detalhe e alternativa textual. DocumentView foi extraído e reutilizado, sem duplicar originais.
+
+## Auditoria multiplataforma v0.7 — alcance e pendências
+
+| Área | Web Windows | Android/iOS |
+|---|---|---|
+| React Native, navegação, gráficos e modais | Fluxos automatizados em Chromium | Pacotes JS exportáveis; sem ensaio de execução físico/emulador |
+| Documentos/fotografia | Seletores web funcionais | Fallback explícito; seletores nativos/câmara não implementados |
+| Sessões | Cookie, CSRF, mesmo hostname e login/recarga testados | Cookie jar, armazenamento seguro, origens e transporte por validar em build nativa |
+| Preferências | Conta na SQLite; tema anónimo local | Conta preparada via API; preferência anónima apenas sessão; tamanhos/sistema por testar fisicamente |
+| Rede/extração | API/Ollama em loopback do computador | `127.0.0.1` refere-se ao próprio telemóvel; não equivale ao computador, nem disponibiliza Ollama ao utente |
+| Builds/lojas | Exportação web local | Sem perfis EAS, identificadores de produção, assinatura ou publicação; exportação JS não é APK/IPA |
+
+Nenhuma API foi exposta à Internet, nenhuma cloud ou ferramenta móvel nova instalada. Instalar/publicar EAS e testar câmera/ficheiros/VoiceOver/TalkBack exigem fase própria. `userInterfaceStyle=automatic` prepara o tema nativo; não constitui ensaio nativo.
+
+## Arquitetura-alvo de sincronização — especificação, não implementação
+Uma conta deverá usar um backend central autenticado em HTTPS para Personal web/Android/iOS; base de produção e armazenamento de originais serão escolhidos após requisitos, medição e revisão de segurança. A SQLite local e o Ollama deste computador não são o serviço central definitivo. Importar no móvel deverá guardar documento e propostas no backend; só confirmação humana cria resultados. Web lê a mesma fonte, com autorização por recurso. Correções mantêm versões/proveniência, conflitos exigem reconciliação explícita; exclusões usam tombstones/cursor para retirar cópias autorizadas. Identidade, dono, IDs, unidades e confirmação permanecem consistentes. Não existe atualmente sincronização offline/cloud/cursor, nem cache clínica móvel; qualquer futura cache exige minimização, proteção em repouso, expiração e limpeza por conta. Não enviar dados reais ou publicar portas para demonstrar esta especificação.
+
+## Papéis futuros — especificação, não portais implementados
+
+| Papel | Âmbito a autorizar no backend |
+|---|---|
+| Utente / Personal | Recursos próprios, registos e revogação de delegações futuras |
+| Médico / Clinical | Pacientes explicitamente autorizados, finalidade/tempo definidos e credencial profissional verificada |
+| Enfermeiro/técnico / Partner | Operações específicas por competência, recurso e instituição verificados; mínimo necessário |
+| Cuidador / Care | Conta própria; recursos expressamente delegados, prazo e revogação |
+| Administrador | Operação autorizada; sem acesso indiscriminado ao conteúdo médico |
+
+Negar por defeito; não atribuir papel profissional por opção no perfil. Prever identidade/credenciais verificadas, concessão por recurso/finalidade, auditoria de acessos sem conteúdo clínico, revogação no servidor e invalidação de cópias quando aplicável. Modo Simples/Equilibrado/Detalhado nunca modifica concessões. Não há portais, delegação ou partilha clínica de produção nesta versão.
