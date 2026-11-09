@@ -1,1 +1,21 @@
-{"expo":{"name":"PULSO","slug":"pulso-demo","version":"0.7.2","web":{"bundler":"metro"},"userInterfaceStyle":"automatic"}}
+{
+  "expo": {
+    "name": "PULSO",
+    "slug": "pulso-demo",
+    "version": "0.7.3",
+    "web": {
+      "bundler": "metro"
+    },
+    "userInterfaceStyle": "automatic",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Permitir fotografar apenas documentos fictícios por sua iniciativa.",
+          "photosPermission": "Permitir selecionar uma imagem fictícia para importação.",
+          "microphonePermission": false
+        }
+      ]
+    ]
+  }
+}

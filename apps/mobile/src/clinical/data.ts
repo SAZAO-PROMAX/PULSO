@@ -9,6 +9,7 @@ export const labParameters=laboratory.parameters.map(p=>p.id as Parameter);
 export const labUnits=Object.fromEntries(laboratory.parameters.map(p=>[p.id,p.units])) as Partial<Record<Parameter,string[]>>;
 export type Confirmation = 'user_declared'|'extracted_pending'|'user_confirmed'|'professional_verified';
 export interface MedicalDocument {
+ capture?:import('./inputDocument').InputDocument['capture'];
  category?:string;examType?:string;specialties?:string[];examDate?:string|null;
  version?:number;
  id:string; ownerId:string; synthetic:boolean; title:string; laboratory:string|null;

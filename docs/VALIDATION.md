@@ -1,4 +1,77 @@
-# Validação atual — redesign v0.7.2, 08/11/2026
+# Validação atual — v0.7.3
+
+Atualização: 09/11/2026, Europe/Lisbon. Evidência apenas sintética; não é validação clínica ou certificação.
+
+## Aplicação e câmara
+
+**211 testes distintos aprovados:** 100 API, 58 TypeScript, 36 Chromium demonstrativos isolados, 9 Chromium na configuração normal, 2 de estrutura e 6 dos geradores/métricas. Typecheck e pip check aprovados; exportação web exercitada pelo Playwright. Dois testes Chromium opcionais de Ollama real não foram executados; inferência real foi medida separadamente abaixo. Logs tmp/v073-{api,unit-final,public-final,demo-final,harness,foundation}.log.
+
+Registar oferece Digitalizar exame / Importar ficheiro / Registar medição; categorias preservadas no passo seguinte. Nova captura web pede vídeo sem áudio por ação explícita, mostra pré-visualização, exige conferência de qualidade, permite repetir/cancelar, fecha as tracks e segue para classificação/DocumentImport. Ficheiro alternativo permanece disponível em contexto sem câmara ou permissão recusada. Documento não laboratorial (ECG sintético) é guardado com original/proveniência e zero resultados, sem chamar a extração. Casos de importação/revisão/correção/guardar/detalhe/gráfico, sessão/cookie/logout e isolamento passam pela regressão existente.
+
+Teste de câmara usa canvas/MediaStream sintéticos no Chromium, nunca a webcam pessoal. Verifica permissão recusada, API ausente, limites de layout 320/390/768/1100/1280, foco na revisão/classificação e retorno ao cancelar. Movimento reduzido e os três modos mantêm a cobertura existente. Capturas tmp/v073-camera-preview-{390,1280}.png. Teste físico, NVDA/VoiceOver e zoom real pendentes; sem certificação WCAG.
+
+Native: expo-image-picker ~57.0.21 e expo-crypto ~57.0.4 compatíveis com SDK 57. Câmara/galeria com preview/aceitar/repetir, hash local e JPEG sem metadados APP1/APP13/comentários, sem recomprimir os bytes dos píxeis depois do JPEG fornecido pelo SDK. Configuração bloqueia microfone; nenhuma permissão de localização/reconhecimento facial. Exportações JavaScript Android/iOS aprovadas (tmp/v073-android.log e tmp/v073-ios.log); configuração inspecionada com expo config --type introspect. Android declara RECORD_AUDIO com tools:node=remove; iOS sem NSMicrophoneUsageDescription. **Não houve dispositivo/emulador**, nem foi validada a integração nativa completa de sessão, Origin/cookies, transporte e API local. A disponibilização operacional comprovada é a web; exportação JS não prova câmara nativa.
+
+Limite intencional: uma página por fotografia, 2 MB e 12 MP; PDFs mantêm até 3 páginas. Sem botão de múltiplas fotografias, rotação, recorte, melhoria automática ou garantia de legibilidade. Fotografias nativas grandes podem ser recusadas sem redução automática. Uploads comuns preservam o original integral; sanitização de metadados de todos os ficheiros e retenção das caches do SDK ainda exigem revisão antes de dados reais. Captura nativa guarda hash do JPEG entregue pelo SDK antes da remoção de metadados; não é hash de um RAW de sensor nem prova independente de qualidade.
+
+## Contas e capacidade
+
+1.000 contas de fixture e seus snapshots foram verificados através da autorização normal; 10 logins HTTP, 3.000 acessos cruzados recusados, persistência após reinício e 1.000 revogações aprovados. Registo HTTP das 1.000 contas não executado; nenhuma autenticação foi desativada. Coorte, cenários, recursos, comandos e tabela de carga ficam unicamente em [LOAD_TEST.md](LOAD_TEST.md), sem os duplicar aqui.
+
+## Fidelidade documental
+
+Gerador reutiliza os casos/ground truth previamente definidos em benchmark_extraction.py e o mesmo módulo hybrid. Adiciona imagem de baixo contraste, reflexo, recorte, fonte itálica simulada, inglês e data ambígua. Itálico de computador não é manuscrito humano. Expected JSON é escrito antes de invocar o modelo. Nunca se usa a resposta do modelo como referência.
+
+Com Ollama desligado: **21 documentos, 98 resultados esperados na fonte, 10 recuperados pelo parser conhecido e 88 sem proposta automática**; o estado manual_required explica a necessidade de introdução/revisão manual. São limites do parser, não 88 erros de persistência. O caso misto recuperou os cinco analitos digitais conhecidos; os outros três ficaram sem proposta. Os casos degradados podem ocultar informação; fonte original e imagem degradada não são equivalentes.
+
+Amostra real sequencial: **7 documentos únicos**, 35 resultados esperados; 36 propostas, 34 associações completas (parâmetro/valor/unidade/data/página), nenhuma omissão ou divergência de valor/unidade/página/documento observada nos resultados associados, uma data não coincidente e uma proposta extra não mapeada. 14 propostas sem verificação textual independente. Há seis chamadas ao modelo e um documento resolvido pelo parser; dois processamentos adicionais repetiram o caso difícil e a fotografia, totalizando oito chamadas reais ao modelo em nove processamentos (sete documentos únicos). Modelo local existente qwen3-vl:4b, Ollama 0.40.15, concorrência 1, prazo do lote 300 s; lote principal 72,66 s. Nenhum modelo novo instalado e nenhum documento guardado na base.
+
+| Documento | Esperados | Propostas | Completos | Data divergente/ausente | Extras | Sem verificação textual | s |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| known_deterministic | 5 | 5 | 5 | 0 | 0 | 0 | 0.41 |
+| fifteen_rows | 15 | 16 | 14 | 1 | 1 | 2 | 38.59 |
+| injection | 3 | 3 | 3 | 0 | 0 | 0 | 6.21 |
+| photo | 3 | 3 | 3 | 0 | 0 | 3 | 6.95 |
+| tilted | 3 | 3 | 3 | 0 | 0 | 3 | 7.20 |
+| low_contrast | 3 | 3 | 3 | 0 | 0 | 3 | 6.79 |
+| cropped | 3 | 3 | 3 | 0 | 0 | 3 | 6.18 |
+
+| Parâmetro | Esperados na amostra | Completos | Data ausente/divergente | Sem verificação textual |
+|---|---:|---:|---:|---:|
+| glucose | 7 | 7 | 0 | 4 |
+| ldl | 7 | 7 | 0 | 4 |
+| creatinine | 7 | 7 | 0 | 4 |
+| hemoglobin | 2 | 2 | 0 | 0 |
+| hba1c | 2 | 2 | 0 | 0 |
+| cholesterol_total | 1 | 1 | 0 | 0 |
+| hdl | 1 | 0 | 1 | 1 |
+| triglycerides | 1 | 1 | 0 | 0 |
+| ferritin | 1 | 1 | 0 | 0 |
+| tsh | 1 | 1 | 0 | 0 |
+| ft4 | 1 | 1 | 0 | 0 |
+| vitamin_d | 1 | 1 | 0 | 0 |
+| urea | 1 | 1 | 0 | 0 |
+| sodium | 1 | 1 | 0 | 0 |
+| potassium | 1 | 1 | 0 | 0 |
+
+O documento fifteen_rows é a regressão difícil conservada no corpus. Na repetição detalhada (27,06 s), HDL manteve valor/unidade corretos mas data nula; a proposta extra estava não mapeada e sem valor numérico. Não se afirma que foi inventado um número. A ureia tinha aviso de amostra sem evidência. Esses campos exigem conferência/correção ou exclusão explícita; nenhuma proposta foi automaticamente confirmada. Não foi alterado o pipeline para melhorar o benchmark. Correções humanas efetivamente realizadas no benchmark: zero; os fluxos UI de correção/confirmação são ensaiados separadamente.
+
+As quatro fotografias/imagens frontal, inclinada, de baixo contraste e recortada acertaram os campos esperados nesta amostra, mas as 12 propostas visuais continuam sem conferência textual independente. O recorte retirou colunas laterais, não demonstra recuperação de números ocultos. Instruções maliciosas não produziram ações externas nem o valor extra pedido no documento. Reflexos, idioma inglês, data ambígua, fonte itálica e restantes casos foram exercitados apenas com o motor desligado nesta entrega; não há suporte real demonstrado a manuscritos, idiomas arbitrários ou todas as degradações.
+
+Catálogo de dados/gráficos: **19 parâmetros**, incluindo quatro vitais; o corpus laboratorial tem 15 analitos. CRUD/unidades/aliases/proveniência e UI dos 19 continuam cobertos pela matriz partilhada abaixo e testes executados. A amostra real não prova todos os aliases, unidades alternativas, métodos/amostras ou documentos para cada parâmetro. O teste de métricas distingue data ausente, extra, omissão e evidência visual. Relatórios detalhados por documento/parâmetro em tmp/v073-doc-{disabled,real,repeat,resource}/results.json; ficheiros de referência/casos ficam em tmp e os geradores no Git.
+
+Repetição (pasta nova; Ctrl+C ou prazo máximo interrompe, sem alterar a base):
+
+```powershell
+.\.venv\Scripts\python.exe scripts/document_reliability.py --mode disabled --max-seconds 120 --output tmp/doc-repeticao-off
+.\.venv\Scripts\python.exe scripts/document_reliability.py --mode real --only known_deterministic photo tilted injection fifteen_rows low_contrast cropped --max-seconds 300 --output tmp/doc-repeticao-real
+```
+
+Não executar inferência real e carga simultaneamente. O deadline limita subprocessos próprios; não termina o serviço Ollama partilhado. A repetição fotográfica com --sample-gpu durou 9,98 s e acertou os três resultados, ainda visualmente não verificados. Dez amostras de nvidia-smi (aproximadamente uma por segundo) observaram máximo de 5214 MiB de memória GPU total em uso e 95% de utilização, numa RTX 5050 Laptop de 8151 MiB. É amostragem desse caso, não pico absoluto nem garantia de margem sustentada. Tempos/contadores de tokens do modelo constam do JSON. Não confundir este ensaio local com validação clínica, auditoria de segurança, sincronização cloud ou capacidade de produção.
+
+Os comandos de regressão partilhados e a matriz histórica abaixo continuam aplicáveis; acrescentar os novos testes dos geradores via unittest discover. Todos os relatórios anteriores são históricos, não novos ensaios.
+
+## Histórico — redesign v0.7.2, 08/11/2026
 
 Correção pontual da seleção de documentos, ainda na v0.7.2: **68 testes aprovados** — 56 TypeScript, 5 Chromium na configuração normal (`public-entry`/`public-picker`) e 7 dos fluxos de PDF, imagem manual e documento sem extração (`flows`, `local-extraction`, `register`). Typecheck e exportação web aprovados. O novo teste percorre escolha, troca pelo seletor, arrasto, formato/tamanho inválidos preservando a seleção anterior, bloqueio durante leitura, falha sem perda do ficheiro e cancelamento. Verifica nome único dentro da área, indicação de não guardado, ausência de texto solto em View, movimento reduzido e 320/1100 px. Capturas fictícias locais em `tmp/picker-selected-{320,1100}.png`; animações finalizadas para a captura. Animação de entrada dura 160 ms, não representa progresso de upload. Sem pré-visualização automática do PDF nem mudanças à extração, autenticação ou persistência; testes com DB temporária e Ollama desligado, sem consultar/limpar a base normal. API/inferência real não repetidas nesta correção. Logs: `tmp/picker-unit.log`, `tmp/picker-public-final.log`, `tmp/picker-flows-final.log`; repetir na mesma configuração Playwright da secção abaixo, selecionando estes ficheiros. Em `DocumentImport`, uma condição textual vazia foi convertida para booleana para evitar aviso React Native. Ensaios físicos/leitor de ecrã continuam pendentes.
 

@@ -1,4 +1,4 @@
-# PULSO v0.7.2 — aplicação experimental
+# PULSO v0.7.3 — aplicação experimental
 React Native/Expo com pré-visualização web no Windows. Apenas dados inteiramente fictícios.
 
 ## Começar
@@ -6,6 +6,7 @@ Na raiz, executar .\dev.cmd ou npm.cmd run dev. Seguir o [Guia Windows](docs/GUI
 Sem sessão, a entrada é pública; iniciar sessão é obrigatório para o ambiente pessoal. No Hub, usar Adicionar exame ou Adicionar medição. Guardar abre o detalhe; a evolução tem acesso no próprio exame.
 
 ## Funcional
+- Registar: Digitalizar exame (uma página), Importar ficheiro e Registar medição. Na web, abrir câmara, fotografar, conferir, escolher categoria e seguir o mesmo fluxo de revisão/guarda. Câmara/galeria nativas preparadas e JS exportado; ensaio físico e sessão/transporte nativos pendentes.
 - Página pública, verificação neutra de sessão, ambiente pessoal protegido e contas novas vazias. Logout desmonta os dados privados.
 - Hub com ações principais, filtros compactos no Histórico e biblioteca Aprender editorial. Navegação superior no desktop e inferior no telemóvel. Perfil por grupos, largura limitada e data DD/MM/AAAA; nascimento obrigatório, guardado em ISO.
 - Experiência Simples/Equilibrado/Detalhado, preferências de acessibilidade/tema por conta e onboarding opcional retomável; as cinco áreas continuam no seletor de evolução, sem alterar permissões.

@@ -6,7 +6,7 @@ test('Registar: documento sem extração, classificação, filtros e original pr
  await page.setViewportSize({width:390,height:844});await page.goto('/');
  const initial=await (await request.get('http://127.0.0.1:8000/demo/profiles/demo-a/data',{headers:{'X-Pulso-Profile':'demo-a'}})).json();
  await page.getByRole('button',{name:'Registar',exact:true}).click();await expect(page.getByRole('heading',{name:'O que pretende registar?',exact:true})).toBeVisible();
- await page.getByLabel('Pesquisar categorias e tipos de exame',{exact:true}).fill('holter');await page.getByRole('button',{name:'Cardiologia',exact:true}).click();await page.getByRole('button',{name:'Holter',exact:true}).click();
+ await page.getByRole('button',{name:'Importar ficheiro',exact:true}).click();await page.getByLabel('Pesquisar categorias e tipos de exame',{exact:true}).fill('holter');await page.getByRole('button',{name:'Cardiologia',exact:true}).click();await page.getByRole('button',{name:'Holter',exact:true}).click();
  await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
  await page.getByLabel('Nome do documento',{exact:true}).fill('Holter inteiramente fictício');await page.getByLabel('Instituição de origem (opcional)',{exact:true}).fill('Instituição Demo');
  await page.getByLabel('Data do documento (AAAA-MM-DD, opcional)',{exact:true}).fill('2026-11-08');await page.getByRole('button',{name:'Especialidade: Medicina geral',exact:true}).click();

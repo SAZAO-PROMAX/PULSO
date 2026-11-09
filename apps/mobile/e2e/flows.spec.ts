@@ -77,7 +77,7 @@ test('falha de dados locais permite repetir, modo escuro e largura 320',async({p
  await page.getByRole('button',{name:'Registar',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Registar',exact:true})).toBeFocused();
  await page.keyboard.press('Tab');
- await expect(page.getByLabel('Pesquisar categorias e tipos de exame',{exact:true})).toBeFocused();
+ await expect(page.getByRole('button',{name:'Digitalizar exame',exact:true})).toBeFocused();
 });
 test('interface a 200% de ampliação CSS mantém formulário e navegação utilizáveis',async({page})=>{
  await page.setViewportSize({width:1280,height:900});await page.goto('/');

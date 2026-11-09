@@ -5,24 +5,26 @@ import {clinicalRepository,API} from './repository';
 import {parameterLabels,MedicalDocument,labParameters,SavedRecord} from './data';
 import {Extraction,Candidate,ReviewRow,confirmRows,rowLabel} from './importData';
 import {DocumentView} from './RecordViews';
+import {InputDocument} from './inputDocument';
+import {documentDigest} from './documentDigest';
 import {PdfPicker} from './PdfPicker';
 import {MedicalTerm} from '../learning/Learning';
 import {Classification,classificationFor,registrationCategories,validateClassification} from './classification';
 import {ClassificationFields} from './ClassificationFields';
 import {apiFetch,sessionHeaders} from '../api';
 const MAX_BYTES=2*1024*1024;
-const mimeFor=(file:File)=>file.name.toLowerCase().endsWith('.pdf')?'application/pdf':file.name.toLowerCase().endsWith('.png')?'image/png':/\.jpe?g$/i.test(file.name)?'image/jpeg':null;
-async function original(file:File){
+const mimeFor=(file:InputDocument)=>file.name.toLowerCase().endsWith('.pdf')?'application/pdf':file.name.toLowerCase().endsWith('.png')?'image/png':/\.jpe?g$/i.test(file.name)?'image/jpeg':null;
+async function original(file:InputDocument){
  if(!mimeFor(file)||file.size>MAX_BYTES)throw Error('Escolhe um PDF, PNG ou JPEG sintético até 2 MB.');
- const bytes=await file.arrayBuffer(),digest=await crypto.subtle.digest('SHA-256',bytes);
+ const bytes=await file.arrayBuffer(),digest=await documentDigest(bytes);
  const sha=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
- const url=await new Promise<string>((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result));r.onerror=()=>no(Error('Falha na leitura do ficheiro.'));r.readAsDataURL(new Blob([bytes],{type:mimeFor(file)!}));});
+ const url=file.dataUrl??await new Promise<string>((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result));r.onerror=()=>no(Error('Falha na leitura do ficheiro.'));r.readAsDataURL(new Blob([bytes],{type:mimeFor(file)!}));});
  return {bytes,sha,url};
 }
-export function DocumentImport({owner,onSaved,classification=classificationFor('laboratory','blood'),documentOnly=false}:{owner:string;onSaved:(analysis?:SavedRecord)=>void;classification?:Classification;documentOnly?:boolean}){
+export function DocumentImport({owner,onSaved,classification=classificationFor('laboratory','blood'),documentOnly=false,initialDocument=null}:{owner:string;onSaved:(analysis?:SavedRecord)=>void;classification?:Classification;documentOnly?:boolean;initialDocument?:InputDocument|null}){
  const [metadata,setMetadata]=useState(classification),[title,setTitle]=useState(documentOnly?(registrationCategories.find(c=>c.id===classification.category)?.types.find(t=>t.id===classification.examType)?.label??'Documento sintético'):'Documento laboratorial sintético'),[institution,setInstitution]=useState('');
  const [parsed,setParsed]=useState<Extraction|null>(null),[rows,setRows]=useState<ReviewRow[]>([]),[fileData,setFileData]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
- const [selected,setSelected]=useState<File|null>(null),[stage,setStage]=useState(''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
+ const [selected,setSelected]=useState<InputDocument|null>(initialDocument),[stage,setStage]=useState(initialDocument?'Ficheiro selecionado':''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
  const job=useRef<string|null>(null),reading=useRef<AbortController|null>(null),[waiting,setWaiting]=useState(false);
  useEffect(()=>()=>{reading.current?.abort();if(job.current)void apiFetch('/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}}).catch(()=>{});},[owner]);
@@ -31,7 +33,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
   setFileData(url);setParsed(data);setChoosing(null);
   setRows(data.candidates.map(c=>({parameter:c.parameter,value:c.value,unit:c.unit,method:c.method??'',context:c.context??'',date:(c.date===undefined?data.date:c.date)??'',laboratory:(c.laboratory===undefined?data.laboratory:c.laboratory)??'',include:true,reviewed:false})));
  }
- async function read(file:File){
+ async function read(file:InputDocument){
   if(reading.current)return;
   setError('');setBusy(true);setStage('A preparar documento');
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),360000);reading.current=controller;
@@ -67,7 +69,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  function change(i:number,patch:Partial<ReviewRow>){setRows(x=>x.map((r,j)=>j===i?{...r,...patch}:r));}
  async function saveOnly(){
   if(!selected||lock.current)return;lock.current=true;setBusy(true);setError('');
-  try{const source=await original(selected);const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:title.trim(),laboratory:institution.trim()||null,issuedAt:null,importedAt:new Date().toISOString(),...metadata,sha256:source.sha,original:{fileName:selected.name,mediaType:mimeFor(selected)!,text:'[Documento guardado sem extração automática. Consultar o original.]',dataUrl:source.url}};validateClassification(doc);await clinicalRepository.saveDocument(owner,doc);if(active.current)onSaved({kind:'document',id:doc.id});}
+  try{const source=await original(selected);const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:title.trim(),laboratory:institution.trim()||null,issuedAt:null,importedAt:new Date().toISOString(),...metadata,sha256:source.sha,capture:selected.capture,original:{fileName:selected.name,mediaType:mimeFor(selected)!,text:'[Documento guardado sem extração automática. Consultar o original.]',dataUrl:source.url}};validateClassification(doc);await clinicalRepository.saveDocument(owner,doc);if(active.current)onSaved({kind:'document',id:doc.id});}
   catch(e){if(active.current)setError((e as Error).message);}finally{lock.current=false;if(active.current)setBusy(false);}
  }
  function addRow(){
@@ -85,7 +87,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
    const doc:MedicalDocument={id:id.current,ownerId:owner,synthetic:true,title:title.trim(),laboratory:parsed.laboratory?.trim()||null,...metadata,
     issuedAt:report?report+'T12:00:00Z':null,importedAt:now,sha256:parsed.sha256,parserVersion:parsed.parserVersion,processedAt:parsed.processedAt,
     pageMethods:parsed.pages?.map(p=>({page:p.page,method:p.method,state:p.state})),
-    original:{fileName:selected?.name??'laboratorio-'+parsed.sha256.slice(0,12)+'.'+extension,mediaType:mime,text:parsed.text,dataUrl:fileData}};
+    capture:selected?.capture,original:{fileName:selected?.name??'laboratorio-'+parsed.sha256.slice(0,12)+'.'+extension,mediaType:mime,text:parsed.text,dataUrl:fileData}};
    validateClassification(doc);
    await clinicalRepository.confirmDocument(owner,doc,results);if(active.current)onSaved({kind:'document',id:doc.id});
   }catch(e){if(active.current){setError((e as Error).message);setStage('Não foi guardado. Os campos foram preservados.');}}

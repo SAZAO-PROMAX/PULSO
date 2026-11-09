@@ -1,6 +1,53 @@
-# Teste de carga PULSO — 08/11/2026
+# Carga e coorte sintética — v0.7.3
 
-Os resultados abaixo são históricos. Na simplificação v0.7.1, demos não são acesso público: o runner usa contexto explícito de teste e SQLite em tmp; resets exigem confirmação do dono. O ambiente pessoal exige sessão. Nenhum novo ensaio de carga foi executado neste sprint.
+Atualização: 09/11/2026, Europe/Lisbon. Ensaios locais em Windows; API e gerador partilham a máquina. Nenhuma alteração de arquitetura/persistência para favorecer resultados.
+
+## Coorte e autorização
+
+**1.000 contas** distintas, 13.700 documentos PDF fictícios e 45.504 resultados; 200 pessoas fictícias por faixa 18–34/35–54/55–64/65–74/75+. Seed 730, referência etária fixa em 2026, IDs/fixtures reproduzíveis com o mesmo código/dependências. Históricos de 0 a 60 documentos, resultados nulos/ND, datas ausentes/duplicadas, unidades/métodos/amostras distintos, metadados documentais de sexo declarado/desconhecido e acontecimentos associados. Nenhum campo demográfico é regra clínica ou modo de interface.
+
+Contas e sessões opacas foram inseridas como fixtures internas numa SQLite exclusiva em tmp; **não foram feitos 1.000 registos nem 1.000 logins por HTTP**. Foram feitos 10 logins reais pela API com palavra-passe e logout. Os limites de login/registo permaneceram ativos; registo via HTTP é coberto separadamente pela suite API/Chromium. Cada pedido funcional às 1.000 contas passou pela sessão e autorização normais, sem bypass demo. Este âmbito não é autenticação de produção.
+
+Todos os 1.000 percursos concluíram: snapshot igual à referência, sessão ligada ao dono, criar/repetir tensão idempotente, conteúdo divergente com o mesmo ID recusado, edição versionada, versão antiga recusada, eliminação dos próprios registos e retorno exato ao snapshot de referência. **3.000 acessos cruzados GET/PATCH/DELETE recusados**, sem erros inesperados. 1.000 snapshots reconferidos pela API depois de parar/reiniciar realmente o servidor (PIDs distintos no registo), 1.000 sessões de fixture revogadas com acesso posterior recusado. PRAGMA integrity_check=ok; base normal inalterada; servidor próprio terminado e porta 8878 sem listener no fim.
+
+A coorte valida fidelidade do snapshot/API e as escritas domiciliárias. Não equivale a abrir 1.000 navegadores, testar cada combinação de filtros na UI ou repetir todos os CRUD laboratoriais em cada conta. Filtros/gráficos e os 19 parâmetros são verificados nos testes partilhados em VALIDATION.md. Versões são exercitadas durante o percurso, antes de eliminar os registos de ensaio.
+
+## Carga progressiva curta
+
+Objetivos provisórios anunciados antes do ensaio: p95 ≤1500 ms, p99 ≤5000 ms, erros inesperados ≤1% e nenhuma divergência de integridade. Progressão exige zero erros no patamar e RAM amostrada <2 GiB; interrupção antecipada após ≥10 erros e >5%, ou no primeiro patamar fora dos objetivos. Rampa 2 s, 6 s a carga plena, pausa 0,2 s entre ações e drenagem final; ritmo de stress, não tempo humano de preencher/rever um exame. Prazo global 900 s. Sem ensaio sustentado de dez minutos nesta versão.
+
+Cada cliente usa uma conta diferente e uma sessão de fixture já autenticada. Leitura do snapshot alimenta Hub/Histórico/gráficos; parte dos clientes cria/edita/elimina tensão. Uma sonda de importação por patamar ≥10 usa o PDF conhecido, a fila normal e Ollama desligado, com polling sem confirmação automática. Não é saturação documental nem 1.000 inferências. Pesquisa/desenho dos gráficos são locais no frontend e não foram medidos neste gerador HTTP. Login foi ensaiado separadamente, não em rajada durante a carga.
+
+| Clientes | HTTP atendidos* | Recusas | Erros | RPS* | p50 ms | p95 ms | p99 ms | Duração s | Integridade | Objetivo |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 1 | 90 | 0 | 0 | 10.75 | 9.6 | 18.5 | 20.3 | 8.38 | Sim | Cumprido |
+| 10 | 292 | 0 | 0 | 34.95 | 30.3 | 98.6 | 113.1 | 8.35 | Sim | Cumprido |
+| 25 | 515 | 0 | 0 | 59.47 | 104.4 | 202.9 | 238.5 | 8.66 | Sim | Cumprido |
+| 50 | 768 | 0 | 0 | 81.88 | 129.9 | 530.0 | 577.7 | 9.38 | Sim | Cumprido |
+| 100 | 842 | 0 | 0 | 75.95 | 656.6 | 1496.5 | 1758.6 | 11.09 | Sim | Cumprido |
+| 250 | 1016 | 0 | 0 | 67.72 | 2168.2 | 3838.6 | 4531.8 | 15.00 | Sim | Não cumprido |
+
+*HTTP atendidos inclui respostas 200 e uma admissão 202 por patamar ≥10; 202 não significa resultado confirmado/guardado. Não houve 429/409 na carga, pelo que percentis de recusa não têm amostras; não foram misturados com as latências atendidas. Conflitos 409 deliberados pertencem à validação funcional anterior. Fila e extração não têm tempos separados neste runner: a API não expõe os seus timestamps; não se inventou uma estimativa. Tempos de extração isolada estão em VALIDATION.md.
+
+**Maior patamar curto dentro dos objetivos: 100**, com 11,09 s incluindo rampa/drenagem. p95=1496,5 ms é marginal perante o objetivo de 1500 ms e não demonstra margem sustentada. A 250, p95=3838,6 ms ultrapassou o objetivo, sem erros ou divergência. **500/1.000 simultâneos não executados**. Não extrapolar contas guardadas para utilizadores simultâneos/diários ou produção.
+
+RSS da API amostrada no fim dos patamares: 88,3–117,3 MiB; RAM disponível amostrada mínima ≈12,4 GiB; SQLite de ensaio ≈52,2 MB. CPU em segundos acumulados/deltas e contadores HTTP constam do JSON. Não é amostragem contínua, pico de memória nem profiling causal. Não houve timeout/erro SQLite observado. Snapshots e validação integral de documentos nas escritas são candidatos a medição posterior, sem causa atribuída nem otimização profunda nesta tarefa.
+
+## Repetir e parar
+
+PowerShell na raiz; usar pasta de saída nova dentro de tmp (o runner recusa pastas existentes e portas normais):
+
+```powershell
+.\.venv\Scripts\python.exe scripts/profile_reliability.py --profiles 1000 --seed 730 --output tmp/v073-repeticao --users 1 10 25 50 100 250 500 1000 --duration 6 --ramp 2 --pause 0.2 --max-seconds 900
+```
+
+Ctrl+C interrompe; finally termina apenas o processo próprio e conserva o relatório parcial. Para um ensaio menor: --profiles 10 --users 1 --duration 2. Artefactos locais: tmp/v073-cohort-main/results.json, cohort.sqlite3 e server.log; não publicados. Depois de confirmar server_stopped=true e não precisar da evidência, pode eliminar apenas essa pasta de ensaio pelo Explorador. Nunca eliminar/repor .local/pulso.sqlite3. Ensaios de fumo ficaram em pastas separadas; nenhum processo desconhecido foi terminado. A verificação de readiness passou a confirmar também o PID dono da porta antes dos pedidos; guard validado em ensaio adicional de 10 contas (tmp/v073-owned-listener-smoke). Início do runner foi corrigido para usar o nome real de validate_events, antes do ensaio principal.
+
+Os resultados históricos seguintes têm outras condições/perfis e não são comparação controlada com esta coorte.
+
+## Histórico — teste de carga anterior, 08/11/2026
+
+Os resultados abaixo são históricos. Na simplificação v0.7.1, demos não são acesso público: o runner usa contexto explícito de teste e SQLite em tmp; resets exigem confirmação do dono. O ambiente pessoal exige sessão. À data da simplificação v0.7.1 não foi executado novo ensaio de carga; a v0.7.3 está documentada acima.
 
 ## Comparação curta v0.6 — escrita
 
