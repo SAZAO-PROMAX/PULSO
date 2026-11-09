@@ -1,3 +1,4 @@
+import {editResult,reviewKnown} from './reviewHelpers';
 import {test,expect,Page} from '@playwright/test';
 import path from 'node:path';
 
@@ -41,15 +42,15 @@ test('voltar à categoria e reabrir conserva o rascunho documental',async({page}
  await expect(page.getByLabel('Nome do documento',{exact:true})).toHaveValue('Rascunho sintético por conservar');
 });
 
-test('revisão atual: campos permanentes, Enter num valor não confirma e guarda sem revisão é recusada',async({page})=>{
+test('revisão compacta: Enter num valor não confirma e guarda sem revisão é recusada',async({page})=>{
  await activate(page,'Adicionar exame');await page.getByLabel('Selecionar documento sintético').setInputFiles(pdf);await activate(page,'Importar PDF');
- await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
- await expect(page.getByRole('textbox',{name:/^Valor /})).toHaveCount(5);
- await expect(page.getByRole('textbox',{name:/^(Valor|Unidade|Data|Página|Origem|Método|Amostra) (Glicose|Colesterol LDL|Creatinina|Hemoglobina)/})).toHaveCount(35);
+ await expect(page.getByText('Rever resultados do exame',{exact:true})).toBeVisible();
+ await expect(page.getByRole('textbox',{name:/^Valor /})).toHaveCount(0);
+ await expect(page.getByRole('textbox',{name:/^(Valor|Unidade|Data|Página|Origem|Método|Amostra) (Glicose|Colesterol LDL|Creatinina|Hemoglobina)/})).toHaveCount(0);
  let writes=0;page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/confirm'))writes++;});
- await page.getByLabel('Valor Glicose',{exact:true}).focus();await page.keyboard.press('Enter');expect(writes).toBe(0);
+ await editResult(page,'Glicose');await page.getByLabel('Valor Glicose',{exact:true}).focus();await page.keyboard.press('Enter');expect(writes).toBe(0);
  await page.screenshot({path:'../../tmp/v074-review-before-390.png',fullPage:true});
- await activate(page,'Confirmar e guardar resultados');await expect(page.getByRole('alert')).toContainText('Revê cada linha');expect(writes).toBe(0);
+ await page.keyboard.press('Escape');await activate(page,'Confirmar e guardar resultados');await expect(page.getByRole('alert')).toContainText('Revê cada linha');expect(writes).toBe(0);
 });
 
 test('Voltar do navegador deve regressar à categoria, não saltar para o Hub',async({page})=>{
@@ -71,15 +72,15 @@ test('rascunho revisto mantém correções sem repetir extração; troca exige d
  let extractions=0,confirms=0;
  page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/demo/extractions'))extractions++;if(r.method()==='POST'&&r.url().endsWith('/confirm'))confirms++;});
  await activate(page,'Adicionar exame');await page.getByLabel('Selecionar documento sintético').setInputFiles(pdf);await activate(page,'Importar PDF');
- await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
- await page.getByLabel('Valor Glicose',{exact:true}).fill('99,2');await activate(page,'Marcar revisto: Glicose');
+ await expect(page.getByText('Rever resultados do exame',{exact:true})).toBeVisible();
+ await editResult(page,'Glicose');await page.getByLabel('Valor Glicose',{exact:true}).fill('99,2');await activate(page,'Marcar revisto: Glicose');
  await activate(page,'Voltar às categorias de registo');await activate(page,'Retomar registo por guardar');
- await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');await expect(page.getByRole('button',{name:'Revisto: Glicose',exact:true})).toBeVisible();expect(extractions).toBe(1);expect(confirms).toBe(0);
+ await editResult(page,'Glicose');await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');await expect(page.getByRole('button',{name:'Revisto: Glicose',exact:true})).toBeVisible();expect(extractions).toBe(1);expect(confirms).toBe(0);
  await activate(page,'Voltar às categorias de registo');await activate(page,'Cardiologia');await activate(page,'Eletrocardiograma');
  await expect(page.getByRole('dialog')).toBeVisible();await expect(page.getByRole('button',{name:'Continuar a editar',exact:true})).toBeFocused();
  for(const width of [320,390,768,1100,1280]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width===390||width===1280)await page.screenshot({path:'../../tmp/v074-draft-dialog-'+width+'.png'});}
  await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.getByRole('button',{name:'Eletrocardiograma',exact:true})).toBeFocused();
- await page.keyboard.press('Enter');await activate(page,'Continuar a editar');await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');
+ await page.keyboard.press('Enter');await activate(page,'Continuar a editar');await editResult(page,'Glicose');await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');
  await activate(page,'Voltar às categorias de registo');await activate(page,'Cardiologia');await activate(page,'Eletrocardiograma');await activate(page,'Descartar rascunho e continuar');
  await expect(page.getByRole('heading',{name:'Guardar documento sintético',exact:true})).toBeFocused();
  await expect(page.getByRole('button',{name:'Selecionar documento',exact:true})).toBeVisible();expect(confirms).toBe(0);
@@ -94,13 +95,13 @@ test('formulário vazio muda de tipo sem diálogo e tensão permanece ao voltar'
 test('PDF por teclado: seleção, correção, revisão deliberada, guarda única e recarga',async({page})=>{
  await activate(page,'Registar');await activate(page,'Importar ficheiro');await activate(page,'Análises clínicas');await activate(page,'Análises ao sangue');
  const chooser=page.waitForEvent('filechooser');await activate(page,'Selecionar documento');await (await chooser).setFiles(pdf);await activate(page,'Importar PDF');
- await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
- const value=page.getByLabel('Valor Glicose',{exact:true});
+ await expect(page.getByText('Rever resultados do exame',{exact:true})).toBeVisible();
+ await editResult(page,'Glicose');const value=page.getByLabel('Valor Glicose',{exact:true});
  for(let n=0;n<160;n++){if(await value.evaluate(el=>el===document.activeElement))break;await page.keyboard.press('Tab');}
  await expect(value).toBeFocused();await page.keyboard.press('Control+a');await page.keyboard.insertText('99,2');await page.keyboard.press('Shift+Tab');await page.keyboard.press('Tab');await expect(value).toBeFocused();
- await page.keyboard.press('Enter');await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
- for(const name of ['Glicose','Colesterol LDL','Creatinina','Hemoglobina','Hemoglobina glicada'])await activate(page,'Marcar revisto: '+name,'Space');
+ await page.keyboard.press('Enter');await expect(page.getByText('Rever resultados do exame',{exact:true})).toBeVisible();
+ for(const name of ['Glicose','Colesterol LDL','Creatinina','Hemoglobina','Hemoglobina glicada']){await editResult(page,name);await activate(page,'Marcar revisto: '+name,'Space');}
  let saves=0;page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/confirm'))saves++;});
- await activate(page,'Confirmar e guardar resultados');await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeFocused();expect(saves).toBe(1);
+ await page.keyboard.press('Escape');await activate(page,'Confirmar e guardar resultados');await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeFocused();expect(saves).toBe(1);
  await activate(page,'Ver evolução de Glicose');await expect(page.getByTestId('point-detail')).toContainText('99,2 mg/dL');await page.reload();await expect(page.getByText('Glicose: 99,2 mg/dL',{exact:true})).toBeVisible();
 });

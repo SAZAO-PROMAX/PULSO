@@ -2,6 +2,7 @@ import {defineConfig} from '@playwright/test';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 execFileSync(path.resolve(__dirname,'../../.venv/Scripts/python.exe'),[path.resolve(__dirname,'../../scripts/benchmark_extraction.py'),'--fixtures-only'],{cwd:path.resolve(__dirname,'../..')});
+if(process.env.PULSO_G_PARAMETERS==='25')execFileSync(path.resolve(__dirname,'../../.venv/Scripts/python.exe'),['-c',"from scripts.benchmark_extraction import pdf,table; from pathlib import Path; second=[s.replace('hexoquinase | plasma','HPLC | serum') if s.startswith('Glicose') else s for s in table(list(range(10)),date='2026-10-05')]; Path('tmp/g-25.pdf').write_bytes(pdf([table(list(range(15))),second],small=True))"],{cwd:path.resolve(__dirname,'../..')});
 const launcher=process.env.PULSO_TEST_LAUNCHER==='true',publicMode=process.env.PULSO_TEST_PUBLIC==='true';
 const apiPort=Number(process.env.PULSO_TEST_API_PORT??8000),webPort=Number(process.env.PULSO_TEST_WEB_PORT??8765);
 if(![apiPort,webPort].every(p=>Number.isInteger(p)&&p>=1024&&p<=65535)||apiPort===webPort)throw Error('Portas de teste inválidas.');

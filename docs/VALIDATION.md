@@ -1,3 +1,83 @@
+# v0.7.4 — G: validação integrada e encerramento web, 09/11/2026
+
+Base `6285136`; versão Expo/frontend/API passa a **0.7.4 experimental** após resolver as regressões abaixo. Commit correspondente: `git log -1 -- docs/VALIDATION.md`. Sem nova dependência, migração, cloud, inferência real ou ensaio de carga. Base normal intacta: bases SQLite de ensaio em `tmp`, serviços em loopback 8014/8784; arranque habitual isolado em 8000/8081.
+
+## Resultados realmente executados
+
+| Verificação | Resultado final observado |
+|---|---|
+| API completa | 110 aprovados; 2 avisos de depreciação PyMuPDF/Starlette |
+| TypeScript | 62 aprovados |
+| Estrutura | 2 aprovados |
+| Chromium demonstrativo isolado | 36 testes distintos aprovados após correções/repetições direcionadas; 2 opcionais de inferência real omitidos |
+| Chromium entrada pública/autenticada | 28 testes distintos aprovados após repetição do percurso compacto; cada ficheiro em base própria, respeitando limites de registo |
+| Revisão com 25 resultados | 1 configuração adicional aprovada; 25 persistidos, repetidos legítimos em segunda data/página e método/amostra distintos |
+| Arranque habitual + PDF autenticado | 1 configuração adicional aprovada por `scripts/dev.mjs`, API 8000/Expo 8081, base temporária e Ollama desligado |
+| Typecheck final / pip check | aprovados / nenhuma dependência quebrada |
+| Exportação web | aprovada pelos arranques Playwright com `expo export --platform web --clear` |
+
+Não somar repetições como novos testes distintos. A primeira execução geral demonstrativa teve 25 aprovações, 11 falhas e 2 omissões. Após adaptações e correções, repetiram-se apenas os ficheiros afetados: 9/14, depois 8/9; a falha restante manual foi resolvida e passou isoladamente. O público passou por ficheiro: 27 aprovações iniciais e uma falha na expectativa do teste após logout; caso compacto corrigido passou novamente com 15 e com 25. Navegação com texto ampliado passou novamente após o ajuste final 3+2.
+
+Logs locais ignorados pelo Git: `tmp/v074-g-{api,unit,foundation,pip,typecheck-final,demo,demo-corrections,demo-final,local-pass,15-final,25-final,nav-final,launcher}.log`, `tmp/g-public-*.log`. Capturas `tmp/g-nav-*.png` e capturas visuais F; artefactos temporários não são entregues no commit.
+
+## Problemas encontrados e corrigidos
+
+- Perfil: a lista de vistas admitidas pela shell excluía vistas de acesso do percurso demonstrativo; reposta a união existente sem modificar SessionGate/autorização. Duas mudanças de contexto no mesmo evento usavam o valor anterior: referência corrente evita ignorar a segunda. Abertura de Preferências e percursos existentes voltaram a passar.
+- Histórico: ação explícita de abrir a raiz podia restaurar o detalhe anterior; limpa apenas identificadores de seleção nessa nova entrada do histórico. Preserva o percurso anterior para Voltar e a proteção de alterações pendentes. Percursos B3, registos, documentos e gráficos aprovados.
+- Navegação: Perfil podia ficar sozinho na segunda linha por distribuição variável. Cinco destinos recebem largura previsível; 320/390, três modos e texto normal/muito grande verificados. Texto normal numa linha, muito grande em 3+2 intencional, alvos >=44 px e sem overflow horizontal. Captura final Simples/muito grande/320 inspecionada: rótulos legíveis, sem fragmentar palavras.
+- Resumo: substituído “0 exigem atenção” por contagens independentes de propostas, por rever, revistos, avisos e excluídos. Ausência de aviso não representa revisão.
+- Testes históricos: portas fixas 8000 ignoravam configuração isolada; agora respeitam PULSO_TEST_API_PORT. Campos de data HTML recebem ISO. Testes abrem o editor compacto em vez de exigir todos os campos permanentes. Guarda não revista continua bloqueada: teste manual verifica botão desativado, sem forçar clique. Sem remoção de testes úteis nem relaxamento das guardas do servidor.
+
+## Percurso documental / PDF difícil
+
+PDF conhecido: extração determinística real, correção, revisão deliberada, confirmação, original, detalhe, histórico, gráfico, recarga e proveniência. Imagem com motor desligado: introdução manual, revisão e persistência aprovadas. Segurança exercitada na API e browser: sessão/expiração, Origin/CSRF, contas diferentes, If-Match/conflitos, limites/recusas da fila, documento inválido e dados não confirmados. Sem alegar autenticação por perfil demo.
+
+Revisão densa: fixture controlada de 15 resultados + extra incompleta, e configuração de 25 + extra. Seleção por teclado, edição de valor/unidade/data, exclusão da extra, data HDL ausente, evidência rejeitada preservada, avisos e confirmação explícita; falha sintética 503 conserva revisão, repetição guarda sem duplicar; histórico/gráfico, logout/login e persistência aprovados. Os 25 incluem 10 medições adicionais em outra data/página, método/amostra de glicose distintos; não se fundem séries incompatíveis. O transporte das propostas é controlado, a confirmação/persistência usa a API real isolada. Isto não mede a precisão de Ollama em PDFs densos.
+
+Regressões de fidelidade de D estão incluídas nos 110 testes API. Não atribuir retrospetivamente uma causa exata ao HDL histórico: formato bruto proposto não conservado; extra histórica sem origem demonstrável. Não copiar datas por proximidade nem inventar valores. Benchmark histórico e ground truth não foram alterados. Sem novo ensaio GPU; 14 propostas historicamente sem conferência textual continuam uma limitação, não aprovações clínicas.
+
+## Repetir em PowerShell (raiz do projeto)
+
+```powershell
+.venv/Scripts/python.exe -m pytest services/api/tests -q --basetemp=tmp/pytest-v074-g
+npm.cmd test --prefix apps/mobile
+node --test tests/foundation.test.mjs
+npm.cmd run typecheck --prefix apps/mobile
+.venv/Scripts/python.exe -m pip check
+$env:PULSO_TEST_LOCAL_LLM='false'
+$env:PULSO_TEST_LAUNCHER='false'
+$env:PULSO_TEST_API_PORT='8014'
+$env:PULSO_TEST_WEB_PORT='8784'
+$env:PULSO_TEST_PUBLIC='false'
+Push-Location apps/mobile
+npx.cmd playwright test --reporter=line
+$env:PULSO_TEST_PUBLIC='true'
+# Cada ficheiro inicia uma instância isolada; não contornar limites de registo.
+Get-ChildItem e2e/public-*.spec.ts | ForEach-Object { npx.cmd playwright test $_.Name --reporter=line; if ($LASTEXITCODE -ne 0) { throw 'Teste público falhou' } }
+$env:PULSO_G_PARAMETERS='25'
+npx.cmd playwright test public-compact-review.spec.ts --reporter=line
+Remove-Item Env:PULSO_G_PARAMETERS
+Pop-Location
+node scripts/dev.mjs --check
+# Só com 8000/8081 livres; o config fornece DB temporária ao launcher.
+$env:PULSO_TEST_LAUNCHER='true'
+$env:PULSO_TEST_API_PORT='8000'
+$env:PULSO_TEST_WEB_PORT='8081'
+$env:EXPO_PUBLIC_API_URL='http://localhost:8000'
+Push-Location apps/mobile
+npx.cmd playwright test public-entry.spec.ts --grep 'conta autenticada importa PDF' --reporter=line
+Pop-Location
+Remove-Item Env:PULSO_TEST_LAUNCHER
+```
+
+Os comandos da suite demonstrativa omitem os dois testes reais quando PULSO_TEST_LOCAL_LLM não está ativado; manter Ollama desligado nesta reprodução. Ctrl+C interrompe o comando e respetivos servidores de teste; nunca terminar processos desconhecidos. Não definir DB normal para testes. PATH deve incluir Node.js instalado, conforme GUIA_WINDOWS.md. Os logs listados documentam os comandos realmente executados, incluindo repetições, não uma execução única perfeita.
+
+## Limites / encerramento
+
+Web Chromium local aprovada no âmbito ensaiado; larguras 320,390,768,1100,1280, temas e três modos incluídos. Texto ampliado pela preferência e ampliação CSS histórica não equivalem a zoom real. Sem leitor de ecrã, teste humano, certificação WCAG, dispositivo/emulador Android/iOS, inferência GPU, carga ou validação clínica. A fila continua volátil, e-mail de desenvolvimento, dados exclusivamente fictícios. Versão encerrada para desenvolvimento experimental web; não preparada para dados médicos reais ou distribuição clínica. Próximas prioridades em PROJECT_STATUS.md. Relatórios A–F abaixo conservados como histórico; os estados “em curso” nesses blocos referem-se às respetivas datas/checkpoints.
+
+---
+
 # v0.7.4 — F: refinamento visual, 09/11/2026
 
 Base 99f2b26. **13 TypeScript e 13 Chromium distintos aprovados**, typecheck/exportação web aprovados. TypeScript: reviewState/persistence/experience (incluindo contraste ink/muted em soft, além dos pares anteriores). Chromium: oito combinações do percurso visual, um ensaio de texto muito grande/foco, três de câmara e um de revisão compacta. Antes: mesmos oito percursos em base temporária, não somados como aprovações adicionais. Logs tmp/v074-f-{before,after-final,extra,regression-final,unit-final}.log. Sem suite completa, carga, GPU, inferência real, alteração à base normal ou nova dependência.

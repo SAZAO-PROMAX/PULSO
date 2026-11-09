@@ -1,7 +1,7 @@
 import {test,expect,openArea} from './fixtures';
 
 test('onboarding, modos e preferências persistem sem alterar registos ou permissões',async({page,baseURL})=>{
- const api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':8000',origin=new URL(baseURL!).origin,email='experience-'+Date.now()+'@example.test',password='fictitious-preferences-password';
+ const api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':'+(process.env.PULSO_TEST_API_PORT??8000),origin=new URL(baseURL!).origin,email='experience-'+Date.now()+'@example.test',password='fictitious-preferences-password';
  await page.request.post(api+'/auth/register',{headers:{Origin:origin},data:{email,password,displayName:'Pessoa fictícia',birthDate:'1970-05-23'}});
  async function menu(label:string){await page.getByRole('button',{name:'Abrir menu de perfil',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:label,exact:true}).click();}
  await page.goto('/');await menu('Iniciar sessão');await page.getByLabel('E-mail',{exact:true}).fill(email);await page.getByLabel('Palavra-passe',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sessão',exact:true}).click();await page.getByRole('button',{name:'Configurar a minha experiência',exact:true}).click();

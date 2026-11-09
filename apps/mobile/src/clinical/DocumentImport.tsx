@@ -115,7 +115,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  {parsed&&<><T kind="heading">Rever resultados do exame</T>
  <T style={{fontWeight:'600'}}>{title}</T>
  <T kind="small">{parsed.date||'Data não identificada'} · {parsed.laboratory||'Instituição não identificada'}</T>
- <T accessibilityLiveRegion="polite">{rows.length} propostas · {rows.filter((r,i)=>reviewState(r,parsed.candidates[i],parsed).attention&&r.include).length} exigem atenção</T>
+ <T accessibilityLiveRegion="polite">{rows.length} propostas · {rows.filter(r=>r.include&&!r.reviewed).length} por rever · {rows.filter(r=>r.include&&r.reviewed).length} revistos · {rows.filter((r,i)=>reviewState(r,parsed.candidates[i],parsed).attention&&r.include).length} com avisos · {rows.filter(r=>!r.include).length} excluídos</T>
  <Button label={editDocument?'Fechar dados do exame':'Editar dados do exame'} variant="tertiary" onPress={()=>setEditDocument(!editDocument)}/>
  {editDocument&&<>
 

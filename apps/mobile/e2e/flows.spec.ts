@@ -1,3 +1,4 @@
+import {editResult,reviewKnown} from './reviewHelpers';
 import {test,expect,reveal,openArea} from './fixtures';
 import path from 'node:path';
 test('registo de tensão persiste e aparece no mesmo histórico e gráfico',async({page})=>{
@@ -26,15 +27,15 @@ test('PDF: extrair, corrigir, confirmar, persistir, gráfico e original',async({
  await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
  await expect(page.getByText('Ficheiro selecionado',{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Importar PDF',exact:true}).click();
- await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
- await page.getByLabel('Valor Glicose',{exact:true}).fill('99,2');
- for(const parameter of ['Glicose','Colesterol LDL','Creatinina','Hemoglobina','Hemoglobina glicada']) await page.getByRole('button',{name:'Marcar revisto: '+parameter,exact:true}).click();
+ await expect(page.getByText('Rever resultados do exame',{exact:true})).toBeVisible();
+ await editResult(page,'Glicose');await page.getByLabel('Valor Glicose',{exact:true}).fill('99,2');
+ await reviewKnown(page);
  await page.route('**/demo/profiles/demo-a/confirm',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({detail:'Falha de gravação de teste'})}));
- await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
+ await page.keyboard.press('Escape');await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
  await expect(page.getByRole('alert')).toContainText('Falha de gravação');
- await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toHaveCount(0);
+ await editResult(page,'Glicose');await expect(page.getByLabel('Valor Glicose',{exact:true})).toHaveValue('99,2');await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toHaveCount(0);
  await page.unroute('**/demo/profiles/demo-a/confirm');
- await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
+ await page.keyboard.press('Escape');await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
  const detail=page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true});await expect(detail).toBeFocused();await page.getByRole('button',{name:'Ver evolução de Glicose',exact:true}).click();const destination=page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true});
  await expect(destination).toBeVisible();await expect(destination).toBeFocused();
  const position=await destination.boundingBox();expect(position!.y).toBeLessThan(250);
@@ -91,9 +92,9 @@ test('interface a 200% de ampliação CSS mantém formulário e navegação util
 
 
 test('PDF com apenas LDL e método ausente abre o parâmetro confirmado sem inventar ponto',async({page})=>{
- await page.goto('/');await page.getByRole('button',{name:'Adicionar exame',exact:true}).click();await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));await page.getByRole('button',{name:'Importar PDF',exact:true}).click();await expect(page.getByText('Rever resultados extraídos',{exact:true})).toBeVisible();
- for(const parameter of ['Glicose','Creatinina','Hemoglobina','Hemoglobina glicada'])await page.getByRole('button',{name:'Excluir '+parameter,exact:true}).click();
- await page.getByLabel('Método Colesterol LDL',{exact:true}).fill('');await page.getByRole('button',{name:'Marcar revisto: Colesterol LDL',exact:true}).click();await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
+ await page.goto('/');await page.getByRole('button',{name:'Adicionar exame',exact:true}).click();await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));await page.getByRole('button',{name:'Importar PDF',exact:true}).click();await expect(page.getByText('Rever resultados do exame',{exact:true})).toBeVisible();
+ for(const parameter of ['Glicose','Creatinina','Hemoglobina','Hemoglobina glicada']){await editResult(page,parameter);await page.getByRole('button',{name:'Excluir '+parameter,exact:true}).click();}
+ await editResult(page,'Colesterol LDL');await page.getByLabel('Método Colesterol LDL',{exact:true}).fill('');await page.getByRole('button',{name:'Marcar revisto: Colesterol LDL',exact:true}).click();await page.keyboard.press('Escape');await page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeFocused();await page.getByRole('button',{name:'Ver evolução de Colesterol LDL',exact:true}).click();await expect(page.getByRole('heading',{name:'Evolução dos resultados desta análise',exact:true})).toBeFocused();await expect(page.getByRole('button',{name:'Colesterol LDL',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByText('1 registo: Método ou amostra em falta: não é possível garantir comparabilidade.',{exact:true})).toBeVisible();await expect(page.getByTestId('point-detail')).toHaveCount(0);
  await reveal(page,'Combinado');await page.getByRole('button',{name:'Combinado',exact:true}).click();await expect(page.getByRole('button',{name:'Glicose',exact:true})).toHaveAttribute('aria-pressed','false');await expect(page.getByRole('button',{name:'Colesterol LDL',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('list',{name:'Medições de Glicose',exact:true})).toHaveCount(0);
  await page.getByRole('button',{name:'Histórico',exact:true}).click();await expect(page.getByRole('button',{name:'Gerir exame Documento laboratorial sintético',exact:true})).toBeVisible();

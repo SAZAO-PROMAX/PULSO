@@ -18,11 +18,11 @@ test('Ollama real: PDF digital, correção, confirmação, gráfico e região',a
  await page.getByRole('button',{name:'Ponto 08/11/2026 99,9 mg/dL',exact:true}).click();
  await expect(page.getByText(/Método de leitura: ollama_text · qwen3-vl:4b · Ollama [0-9.]+/)).toBeVisible();
  await expect(page.getByText(/Extraído originalmente: 98,5 mg\/dL/)).toBeVisible();
- const state=await request.get('http://127.0.0.1:8000/demo/profiles/demo-a/data',{headers:{'X-Pulso-Profile':'demo-a'}});
+ const state=await request.get(('http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000)+'/demo/profiles/demo-a/data'),{headers:{'X-Pulso-Profile':'demo-a'}});
  const data=await state.json();
  const glucose=data.results.find((r:any)=>r.parameter==='glucose'&&r.value===99.9);expect(glucose.evidence.extractedValue).toBe('98,5');
  expect(data.results.filter((r:any)=>r.documentId===glucose.documentId)).toHaveLength(3);
- const preview=await request.get('http://127.0.0.1:8000/demo/profiles/demo-a/preview/'+glucose.id,{headers:{'X-Pulso-Profile':'demo-a'}});
+ const preview=await request.get(('http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000)+'/demo/profiles/demo-a/preview/')+glucose.id,{headers:{'X-Pulso-Profile':'demo-a'}});
  expect(preview.ok(),await preview.text()).toBeTruthy();
  await page.screenshot({path:'../../tmp/v04-review-graph.png',fullPage:true});
 });
@@ -43,7 +43,7 @@ test('Ollama real: fotografia, sinalização visual, confirmação e gráfico',a
  await expect(page.getByRole('button',{name:'Ver região destacada no documento',exact:true})).toHaveCount(0);
  await page.getByRole('button',{name:'Ver documento original fictício',exact:true}).click();
  await expect(page.getByRole('button',{name:'Abrir imagem original',exact:true})).toBeVisible();
- const data=await (await request.get('http://127.0.0.1:8000/demo/profiles/demo-a/data',{headers:{'X-Pulso-Profile':'demo-a'}})).json();
+ const data=await (await request.get(('http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000)+'/demo/profiles/demo-a/data'),{headers:{'X-Pulso-Profile':'demo-a'}})).json();
  const doc=data.documents.find((d:any)=>d.original.mediaType==='image/png');
  expect(data.results.filter((r:any)=>r.documentId===doc.id&&r.evidence.verification==='visual_unverified')).toHaveLength(3);
 });

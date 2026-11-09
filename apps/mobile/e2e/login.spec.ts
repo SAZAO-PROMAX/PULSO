@@ -1,7 +1,7 @@
 import {test,expect} from './fixtures';
 
 async function prepare(page:import('@playwright/test').Page,baseURL:string){
- const base=new URL(baseURL),api=base.protocol+'//'+base.hostname+':8000';
+ const base=new URL(baseURL),api=base.protocol+'//'+base.hostname+':'+(process.env.PULSO_TEST_API_PORT??8000);
  const email='login-'+Date.now()+'-'+Math.random().toString(16).slice(2)+'@example.test',password='fictitious-login-password-2026';
  const response=await page.request.post(api+'/auth/register',{headers:{Origin:base.origin},data:{email,password,displayName:'Pessoa inteiramente fictícia',birthDate:'1970-05-23'}});expect(response.ok()).toBeTruthy();
  await page.goto('/');await page.getByRole('button',{name:'Abrir menu de perfil',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'Iniciar sessão',exact:true}).click();

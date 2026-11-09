@@ -4,7 +4,7 @@ test('Registar: documento sem extração, classificação, filtros e original pr
  await page.clock.setFixedTime(new Date('2026-11-08T12:00:00Z'));let extractions=0;
  page.on('request',r=>{if(r.method()==='POST'&&/\/demo\/extract/.test(r.url()))extractions++;});
  await page.setViewportSize({width:390,height:844});await page.goto('/');
- const initial=await (await request.get('http://127.0.0.1:8000/demo/profiles/demo-a/data',{headers:{'X-Pulso-Profile':'demo-a'}})).json();
+ const initial=await (await request.get(('http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000)+'/demo/profiles/demo-a/data'),{headers:{'X-Pulso-Profile':'demo-a'}})).json();
  await page.getByRole('button',{name:'Registar',exact:true}).click();await expect(page.getByRole('heading',{name:'O que pretende registar?',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Importar ficheiro',exact:true}).click();await page.getByLabel('Pesquisar categorias e tipos de exame',{exact:true}).fill('holter');await page.getByRole('button',{name:'Cardiologia',exact:true}).click();await page.getByRole('button',{name:'Holter',exact:true}).click();
  await page.getByLabel('Selecionar documento sintético').setInputFiles(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
@@ -15,7 +15,7 @@ test('Registar: documento sem extração, classificação, filtros e original pr
  await page.getByRole('button',{name:'Categoria do documento: Imagiologia',exact:true}).click();await page.getByRole('button',{name:'Tipo do documento: Ressonância magnética',exact:true}).click();await page.getByRole('button',{name:'Guardar exame',exact:true}).click();
  await page.reload();await page.getByRole('button',{name:'Histórico',exact:true}).click();await page.getByLabel('Categoria',{exact:true}).selectOption({label:'Cardiologia'});await expect(page.getByRole('button',{name:'Gerir exame Holter inteiramente fictício',exact:true})).toHaveCount(0);
  await page.getByLabel('Categoria',{exact:true}).selectOption({label:'Imagiologia'});await page.getByLabel('Pesquisar no Histórico',{exact:true}).fill('instituicao demo');await page.getByLabel('Período',{exact:true}).selectOption('90');await expect(page.getByRole('button',{name:'Gerir exame Holter inteiramente fictício',exact:true})).toBeVisible();
- const data=await (await request.get('http://127.0.0.1:8000/demo/profiles/demo-a/data',{headers:{'X-Pulso-Profile':'demo-a'}})).json();
+ const data=await (await request.get(('http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000)+'/demo/profiles/demo-a/data'),{headers:{'X-Pulso-Profile':'demo-a'}})).json();
  const doc=data.documents.find((d:any)=>d.title==='Holter inteiramente fictício');expect(doc.category).toBe('imaging');expect(doc.examType).toBe('mri');expect(doc.specialties).toEqual(['cardiology','general']);expect(doc.original.fileName).toBe('laboratorio-demo.pdf');expect(doc.original.dataUrl).toContain('data:application/pdf;base64,');
  expect(data.documents.length).toBe(initial.documents.length+1);expect(data.results).toEqual(initial.results);expect(extractions).toBe(0);
  await page.getByRole('button',{name:'Registar',exact:true}).click();await page.setViewportSize({width:320,height:844});await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);await page.screenshot({path:'../../tmp/v06-register-320.png',fullPage:true});

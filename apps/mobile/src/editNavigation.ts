@@ -30,6 +30,7 @@ let scheduled=false,pending:Record<string,string|null>={};
 function contextValue(key:string,initial:string|null){const context=window.history.state?.pulsoContext;return context&&Object.prototype.hasOwnProperty.call(context,key)?typeof context[key]==='string'?context[key]:null:initial;}
 export function useContextStep(key:string,initial:string|null){
  const [value,setValue]=useState<string|null>(()=>Platform.OS==='web'?contextValue(key,initial):initial);
+ const current=useRef(value);current.current=value;
  useEffect(()=>{if(Platform.OS!=='web')return;window.history.replaceState({...window.history.state,pulsoContext:{...window.history.state?.pulsoContext,[key]:value}},'');const pop=()=>setValue(contextValue(key,initial));window.addEventListener('popstate',pop);return()=>window.removeEventListener('popstate',pop);},[key]);
- return [value,(next:string|null)=>{if(next===value)return;if(!confirmLeave())return;setValue(next);if(Platform.OS!=='web')return;pending[key]=next;if(!scheduled){scheduled=true;queueMicrotask(()=>{window.history.pushState({...window.history.state,pulsoContext:{...window.history.state?.pulsoContext,...pending}},'');pending={};scheduled=false;});}}] as const;
+ return [value,(next:string|null)=>{if(next===current.current)return;if(!confirmLeave())return;current.current=next;setValue(next);if(Platform.OS!=='web')return;pending[key]=next;if(!scheduled){scheduled=true;queueMicrotask(()=>{window.history.pushState({...window.history.state,pulsoContext:{...window.history.state?.pulsoContext,...pending}},'');pending={};scheduled=false;});}}] as const;
 }

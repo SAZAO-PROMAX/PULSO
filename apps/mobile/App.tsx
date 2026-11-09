@@ -32,13 +32,13 @@ function Shell({requested}:{requested:string|null}){
  const scroll=useRef<ScrollView>(null),registration=useRef<RegistrationActions>(null);
  const [registrationOpened,setRegistrationOpened]=useState(false);
  const [analysis,setAnalysis]=useState<(SavedAnalysis&{owner:string})|null>(null);
- const {colors:c,dark,toggle,preferenceWarning,settings,save,busy}=useTheme();
+ const {colors:c,dark,toggle,preferenceWarning,settings,save,busy,scale}=useTheme();
  const [onboarding,setOnboarding]=useState(false);
  const {width}=useWindowDimensions(),desktop=width>=900;
  const [state,dispatch]=useReducer(reducer,initialState),[revision,setRevision]=useState(0),[load,setLoad]=useState<{owner:string;revision?:number;data?:ClinicalData;error?:string}>({owner:''}),[message,setMessage]=useState(''),[form,setForm]=useState<'pressure'|'pdf'|'event'|null>(null),[resetConfirm,setResetConfirm]=useState(false);
  const [learnTopic,setLearnTopic]=useContextStep('learnTopic',null),[selectedParameter,setSelectedParameter]=useState<Parameter|null>(null);
  const [profileContext,setProfileContext]=useContextStep('profileView','profile');
- const profileView:ProfileView=['profile','preferences','privacy'].includes(profileContext??'')?profileContext as ProfileView:'profile';
+ const profileView:ProfileView=['login','register','recovery','profile','preferences','privacy'].includes(profileContext??'')?profileContext as ProfileView:'profile';
  const setProfileView=(view:ProfileView)=>setProfileContext(view);
  const owner=auth.user?.id??state.profileId,profile=auth.user??profiles.find(p=>p.id===state.profileId)!;
  useEffect(()=>{if(Platform.OS==='web')document.getElementById(learnTopic&&(state.tab==='Aprender'||state.area==='Saúde geral e prevenção')?'learning-topic-title':'page-title')?.focus();},[owner,state.tab,state.area,learnTopic]);
@@ -49,7 +49,7 @@ function Shell({requested}:{requested:string|null}){
  const data=load.owner===owner?load.data:undefined;
  useEffect(()=>{scroll.current?.scrollTo({y:0,animated:false});},[owner,state.tab,state.area]);
  useEffect(()=>{if(analysis?.owner!==owner||!data||Platform.OS!=='web')return;const target=document.getElementById('analysis-evolution-title');target?.focus({preventScroll:true});target?.scrollIntoView({block:'start'});},[analysis,owner,data]);
- const navigate=(tab:typeof tabs[number])=>{if(!confirmLeave())return;if(tab==='Registar')setRegistrationOpened(true);if(tab==='Perfil')setProfileView('profile');if(tab==='Histórico')setHistoryVisit(n=>n+1);setDestination(null);if(!isolatedDemo)goRoute(tab==='Histórico'?'/history':tab==='Registar'?'/record':tab==='Aprender'?'/learn':tab==='Perfil'?'/profile':'/app');setAnalysis(null);setMessage('');setLearnTopic(null);if(tab==='Registar')setForm(null);dispatch({type:'tab',tab});};
+ const navigate=(tab:typeof tabs[number])=>{if(!confirmLeave())return;if(tab==='Registar')setRegistrationOpened(true);if(tab==='Perfil')setProfileView('profile');if(tab==='Histórico'){if(Platform.OS==='web')window.history.pushState({...window.history.state,pulsoContext:{...window.history.state?.pulsoContext,'history-result':null,'history-document':null,'history-event':null}},'');setHistoryVisit(n=>n+1);}setDestination(null);if(!isolatedDemo)goRoute(tab==='Histórico'?'/history':tab==='Registar'?'/record':tab==='Aprender'?'/learn':tab==='Perfil'?'/profile':'/app');setAnalysis(null);setMessage('');setLearnTopic(null);if(tab==='Registar')setForm(null);dispatch({type:'tab',tab});};
  const goArea=(area:Area)=>{if(!confirmLeave())return;setDestination(null);setAnalysis(null);setMessage('');setSelectedParameter(null);setLearnTopic(null);dispatch({type:'area',area});};
  const goParameter=(parameter:Parameter)=>{if(!confirmLeave())return;setDestination(null);setAnalysis(null);setMessage('');setLearnTopic(null);setSelectedParameter(parameter);dispatch({type:'area',area:labParameters.includes(parameter)?'Análises ao sangue':parameter==='spo2'?'Saúde respiratória':'Tensão arterial'});};
  const goTopic=(id:string)=>{if(!confirmLeave())return;setDestination(null);setAnalysis(null);setMessage('');setLearnTopic(id);dispatch({type:'tab',tab:'Aprender'});};
@@ -83,6 +83,6 @@ function Shell({requested}:{requested:string|null}){
  {auth.user&&!settings.onboardingCompleted&&!onboarding&&state.tab==='Início'&&<Card><T kind="heading">O PULSO ao seu ritmo</T><T>Escolha a apresentação e as áreas que quer ver primeiro. Pode alterar tudo mais tarde.</T><Button label="Configurar a minha experiência" onPress={()=>setOnboarding(true)}/><Button label="Saltar primeiros passos" onPress={()=>void save({...settings,onboardingCompleted:true}).catch(()=>{})}/></Card>}
  <T kind="small">PULSO experimental · apenas dados fictícios · sem avaliação clínica</T>
  </ScrollView>
- {!desktop&&<ScrollView accessibilityLabel="Navegação principal" keyboardShouldPersistTaps="handled" style={{flexGrow:0,flexShrink:0,maxHeight:'30%',borderTopWidth:1,borderColor:c.line,backgroundColor:c.card}} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:2,padding:6,paddingBottom:Platform.OS==='web'?'max(6px, env(safe-area-inset-bottom))' as any:6}}>{tabs.map(tab=><Button key={tab} label={tab} variant="nav" selected={state.tab===tab&&!state.area} onPress={()=>navigate(tab)}/>)}</ScrollView>}
+ {!desktop&&<ScrollView accessibilityLabel="Navegação principal" keyboardShouldPersistTaps="handled" style={{flexGrow:0,flexShrink:0,maxHeight:'30%',borderTopWidth:1,borderColor:c.line,backgroundColor:c.card}} contentContainerStyle={{width:'100%',flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:0,padding:6,paddingBottom:Platform.OS==='web'?'max(6px, env(safe-area-inset-bottom))' as any:6}}>{tabs.map(tab=><View key={tab} style={{width:scale>1.2?'33.333%':'20%',minWidth:0}}><Button compact label={tab} variant="nav" selected={state.tab===tab&&!state.area} onPress={()=>navigate(tab)}/></View>)}</ScrollView>}
  </SafeAreaView></LearningProvider>;
 }

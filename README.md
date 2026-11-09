@@ -1,4 +1,4 @@
-# PULSO v0.7.3 — aplicação experimental
+# PULSO v0.7.4 — aplicação experimental
 React Native/Expo com pré-visualização web no Windows. Apenas dados inteiramente fictícios.
 
 ## Começar
