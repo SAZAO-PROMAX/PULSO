@@ -30,7 +30,13 @@ Correções demonstradas: datas com múltiplas possibilidades só aceites com ev
 
 Validação D: **46 API, 12 TypeScript e 1 Chromium direcionados aprovados**, typecheck aprovado. Todos determinísticos/transportes controlados, sem GPU/Ollama real, sem benchmark ou carga. SQLite temporária/loopback, base normal preservada. Persistência do campo proposto rejeitado, exclusão da extra, original e gráfico verificados no percurso compacto. Evidência visual sem OCR continua a exigir revisão; não é prova de erro ou validação clínica. Detalhes em VALIDATION.md.
 
-**Ponto de continuação: E. Não iniciado.** Não avançar para E/F/G sem novo pedido; manter limitações de precisão, validação clínica e testes nativos.
+**E concluído na web — 09/11/2026**, base `f62515c`. Commit correspondente por `git log -1 -- docs/PROJECT_STATUS.md`. Conferência de qualidade e aceitação da fotografia reunidas numa ação explícita, sem aceitar automaticamente. Marcar uma linha válida como revista ou excluí-la regressa à lista com foco; linha inválida mantém edição/erro. Confirmação final continua única e explícita na lista, bloqueada durante edição/gravação. Resumo mostra incluídos, revistos, por rever, excluídos e avisos. Falhas de guarda mantêm revisão e permitem repetir sem duplicar. Cancelar importação/seleção processada reutiliza proteção de descarte, regressando às categorias após aceitação.
+
+Validação E: **12 TypeScript e 6 Chromium direcionados aprovados**, mais repetição específica do cancelamento incluída nesses seis percursos, typecheck/exportação web aprovados. Permissão recusada/indisponível, qualidade, PDF conhecido, propostas controladas, falha 503/repetição, teclado, histórico/proveniência, logout, zero avisos em formulário vazio. SQLite temporária/loopback; base normal e pipeline D preservados. Sem carga, GPU ou inferência. Auditoria A/B/C/D das interações em VALIDATION.md.
+
+Limites: Android/iOS sem ensaio; consulta de permissão concedida preparada em código nativo, sem teste físico. A entrada na câmara e a ação Abrir câmara continuam explícitas; não há arranque automático. Sem leitor de ecrã/zoom real. Versão executável permanece 0.7.3.
+
+**Ponto de continuação: F. Não iniciado.** Terminar em E; refinamento geral e regressão final apenas por novo pedido.
 
 ## Versão e Git
 
@@ -94,7 +100,7 @@ Capturas/geradores/DB de ensaio em tmp, ignorados pelo Git; comparação web e f
 
 ## Próximos três objetivos
 
-1. E: rever apenas confirmações redundantes, preservando permissões e revisão humana, mediante novo pedido.
+1. F: refinamento visual mais amplo, mediante novo pedido, preservando os percursos concluídos.
 2. E/F: simplificar apenas confirmações redundantes e refinar os percursos, após autorização específica.
 3. G: adaptar restantes testes históricos que pressupõem campos sempre abertos, executar regressão geral e validação nativa/acessível apropriada antes de concluir a v0.7.4.
 

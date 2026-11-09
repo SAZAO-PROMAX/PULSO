@@ -1,3 +1,36 @@
+# v0.7.4 — E: confirmações e continuidade, 09/11/2026
+
+Base f62515c. **12 TypeScript e 6 Chromium direcionados aprovados**, typecheck/exportação web aprovados. Logs tmp/v074-e-unit.log, tmp/v074-e-final.log e repetição específica tmp/v074-e-cancel-final.log (mesmo percurso, não um sétimo teste distinto). SQLite temporária, API 8014/web 8784, só contas/PDF/fotografias sintéticos. Sem suite completa, API completa, inferência Ollama, carga ou GPU. Backend/pipeline D, autenticação, Origin/CSRF/If-Match e base normal inalterados.
+
+## Auditoria direcionada
+
+| Interação | Classe | Decisão |
+|---|---|---|
+| Permissão de câmara/diálogo de ficheiro do sistema | A — sistema | Manter. Câmara só por ação explícita. Nativo consulta estado antes de pedir, sem repetir pedido se concedido; não ensaiado fisicamente. |
+| Conferir qualidade e aceitar fotografia | C — revisão | Manter numa ação explícita: Conferi a qualidade — usar fotografia. Enquadramento, texto completo, orientação/reflexos/legibilidade continuam instruídos; não há validação automática. |
+| Marcação de qualidade seguida de outro clique para aceitar a mesma foto | D — repetição | Reunir as duas ações na declaração/aceitação acima, conservando a conferência. |
+| Marcar resultado revisto + fechar manualmente o editor | C + D | Revisão individual mantida; fecho adicional removido após validação da linha. Erro mantém o editor, sem marcar revisto. Excluir também regressa à lista. |
+| Confirmar e guardar o conjunto revisto | C — revisão | Manter uma ação final explícita, resumo dos incluídos/revistos/excluídos/por rever/com avisos. Sem confirmação automática. |
+| Perda real de rascunho, cancelamento, recarga | B — dados | Manter/reutilizar descarte. Corrigido Cancelar seleção quando já há revisão, que antes podia apagá-la diretamente. Sem aviso em formulário vazio. |
+| Eliminação de exame/medição/acontecimento | B — irreversível | Manter os controlos existentes; não foram alterados nem revalidados neste bloco. |
+| Conflito de versão, sessão/autorização e informação incompleta | B/C — integridade | Manter regras e avisos; nenhuma flexibilização. |
+
+O fluxo fica: abrir câmara explicitamente → fotografar → conferir e usar (ou repetir) → classificar → processar → rever/corrigir cada linha → confirmação final → detalhe após sucesso real da API. Ficheiro existente segue classificação/importação sem diálogo adicional de aceitação. O editor fecha após revisão válida, com foco restituído à linha; a guarda só é feita a partir da lista. Cancelar a importação com revisão pede descarte e volta às categorias; Escape conserva rascunho. Mensagens de qualidade mais curtas e alternativa web Importar ficheiro.
+
+## Ensaios executados
+
+- reviewState.test.ts + persistence.test.ts: 12 aprovados; validação, evidência, exclusão, duplicações/métodos e falhas/versões mantidos.
+- public-camera: três percursos — foto/repetição/qualidade/ECG sem extração; permissão recusada e API ausente com alternativa. A fotografia não é aceite antes da ação explícita, streams encerradas e contexto/foco mantidos.
+- public-compact-review: proposta controlada com 15 parâmetros + extra. Unidade inválida recusa marcação/fecho; correção, revisão e exclusão explícitas, teclado completo, Voltar/Avançar, modos/temas, original/proveniência, logout. Falha 503 de gravação preserva marcas/valores; repetição grava exatamente um exame e 15 resultados. Cancelar seleção processada e Cancelar importação apresentam proteção; Escape conserva 16 propostas.
+- public-entry: apenas PDF conhecido autenticado, parser determinístico real, revisão/guarda/detalhe/gráfico; outro perfil recusado.
+- public-navigation-review: apenas formulário vazio muda de tipo sem diálogo e tensão conserva rascunho ao voltar.
+
+Comandos: Node no PATH; `npx.cmd --prefix apps/mobile tsx --test apps/mobile/tests/reviewState.test.ts apps/mobile/tests/persistence.test.ts` e `npm.cmd run typecheck --prefix apps/mobile`. Em apps/mobile, com variáveis de teste isoladas documentadas abaixo: `npx.cmd playwright test public-camera.spec.ts public-compact-review.spec.ts public-entry.spec.ts public-navigation-review.spec.ts --grep "câmara |quinze resultados|conta autenticada importa PDF|formulário vazio" --reporter=line`.
+
+Limites: não houve ensaio físico/emulador Android/iOS, leitor de ecrã ou zoom real. Eliminações/conflictos não foram alterados; não declarar regressão completa de segurança. Permissões do navegador permanecem a cargo do navegador. Versão executável 0.7.3; F/G não iniciados.
+
+---
+
 # v0.7.4 — D: fidelidade documental, 09/11/2026
 
 Base 9740621. **46 API + 12 TypeScript + 1 Chromium aprovados**, typecheck/exportação web aprovados. Sem inferência real, GPU, carga ou suite completa. Logs tmp/v074-d-api-final.log, tmp/v074-d-unit-final.log e tmp/v074-d-browser-final.log. Primeira execução API restrita não produziu resultado e foi interrompida; execução autorizada concluiu em base temporária. Avisos PyMuPDF/Starlette já conhecidos.
