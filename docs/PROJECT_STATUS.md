@@ -6,7 +6,9 @@ Branch `main`; entrega G publicada: `c093695a23d5378ddd5c2f6e7039080a6126ceec`. 
 
 Checkpoint pós-entrega — recuperação web/Android, 09/11/2026: [MOBILE_VALIDATION.md](MOBILE_VALIDATION.md) contém os resultados atuais, ferramentas e proposta de sessão nativa. Serviços estavam parados; launcher e web verificados sem reinstalar dependências da aplicação. JDK/Android Studio/SDK36/ADB/Emulator instalados, AVD Android16 e Expo Go57.0.9 executados; página pública PULSO abriu. API temporária em loopback alcançada via ADB reverse; login nativo recusado por Origin na UI. Não contornar esta proteção. **Sessão nativa e percursos privados Android continuam bloqueados; PDF/visualizador nativos não implementados.** Versão permanece 0.7.4. Obter o commit deste checkpoint com `git log -1 -- docs/PROJECT_STATUS.md`; a preparação documental anterior está incluída, sem inventar hash futuro.
 
-Verificações deste checkpoint: 1 percurso Playwright autenticado isolado aprovado, 2 testes API de segurança aprovados, página pública normal sem pageerror, diagnóstico de arranque/UI/transporte Android no emulador. Sem suite completa, carga, inferência ou dispositivo físico. API/Metro de teste e emulador encerrados; web normal mantida para utilização interativa. Próxima ordem: contrato nativo seguro/testado → seleção/consulta PDF → percursos privados/acessibilidade/cache. Não foi demonstrada segurança de uma nova autenticação nativa; aplicar o limite do Bloco 3 e retomar desse ponto.
+Verificações deste checkpoint: 1 percurso Playwright autenticado isolado aprovado, 2 testes API de segurança aprovados, página pública normal sem pageerror, diagnóstico de arranque/UI/transporte Android no emulador. Sem suite completa, carga, inferência ou dispositivo físico. API/Metro de teste e emulador encerrados; web normal mantida para utilização interativa. Ordem prevista naquele checkpoint: contrato nativo seguro/testado → seleção/consulta PDF → percursos privados/acessibilidade/cache. Não foi demonstrada segurança de uma nova autenticação nativa; aplicar o limite do Bloco 3 e retomar desse ponto.
+
+**Prioridade atual após novo feedback:** revisão documental descobrível, guardar→gráficos e estabilidade do servidor, seguidos do redesign coeso. Prompt recebido do Work em [NEXT_SPRINT_PROMPT.md](NEXT_SPRINT_PROMPT.md); fundamentação em [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md). São propostas por executar, sem nova versão ou melhoria funcional alegada.
 
 ## Implementado e verificado
 
@@ -45,8 +47,10 @@ Câmara nativa preparada em código, sem ensaio físico/emulador de sessão, per
 
 ## Próximos três objetivos
 
-1. Validar acessibilidade com leitor de ecrã/zoom real e percursos em dispositivos Android/iOS, antes de alegar suporte nativo.
-2. Aprofundar avaliação documental independente com novos casos sintéticos/ground truth, mantendo evidência, confirmação humana e limitações históricas explícitas.
-3. Preparar auditoria de identidade, recuperação, privacidade e segurança antes de qualquer utilização com dados reais; nenhuma implementação futura autorizada implicitamente.
+Novo feedback de 09/11/2026 tem prioridade sobre a ordem anterior. [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md) contém análise amostrada do vídeo, comparação primária de concorrentes e [prompt de execução](NEXT_SPRINT_PROMPT.md); é planeamento, sem alterações funcionais neste checkpoint. Contexto/feedback entregues ao ChatGPT Work e relatório de investigação recebido; direção convergente de revisão explícita→guarda→evolução. Work não inspecionou diretamente os ficheiros/vídeo, recebeu o resumo anonimizado; proposta não equivale a código implementado.
 
-Continuação: **G encerrado no âmbito web experimental.** Consultar [VALIDATION.md](VALIDATION.md) para comandos/resultados e [GUIA_WINDOWS.md](GUIA_WINDOWS.md) para utilização. Atualizar esta ficha após o próximo sprint, sem duplicar relatórios nem guardar dados pessoais/segredos.
+1. Corrigir/retestar revisão e passagem guardar→gráficos do exame; o pedido atual substitui guardar→detalhe para análises com resultados. Manter original/detalhe e confirmação humana. O vídeo mostra 5 por rever / 0 revistos, não prova falha API.
+2. Reproduzir e resolver paragens do servidor com logs/lifecycle e arranque supervisionado independente, sem testar ou repor a base normal. Causa intermitente não demonstrada.
+3. Redesenhar Hub/evolução/menus e página pública de forma coesa, com interações úteis/reduced-motion e critérios de tarefa; depois retomar contrato Android e investigação imagiológica especializada.
+
+Continuação: **G encerrado no âmbito web experimental; novo briefing de reorientação por executar.** Consultar [VALIDATION.md](VALIDATION.md) para comandos/resultados e [GUIA_WINDOWS.md](GUIA_WINDOWS.md) para utilização. Atualizar esta ficha após o próximo sprint, sem duplicar relatórios nem guardar dados pessoais/segredos.
