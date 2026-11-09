@@ -20,7 +20,11 @@ Validação exclusiva desta execução: typecheck aprovado e **um percurso Chrom
 
 Limites: contexto conservado pelo histórico da página, sem ligações individuais partilháveis; nenhuma persistência de rascunhos em disco. Confirmações web usam o diálogo do navegador. Nativo possui aviso e cancelamento local preparado, mas a saída global com edição pendente exige guardar/cancelar primeiro; sem teste físico/emulador ou garantia de gestos. Sem certificação de acessibilidade.
 
-**Ponto de continuação: C — revisão documental compacta. Não iniciado nesta execução.** Depois, D–G para fidelidade/estados/confirmações/refinamento e validação final. Terminar esta execução em B3.
+**C concluído na web — 09/11/2026**, base `7c11026`. Commit correspondente: `git log -1 -- docs/PROJECT_STATUS.md`. Revisão compacta com resumo, valores/unidades/estados, uma edição contextual de cada vez, Escape/Voltar e restituição do foco. Dados documentais recolhidos em Editar dados do exame; original no visualizador existente (coluna lateral desktop/acesso no telemóvel). Excluir não elimina o original. Só linhas incluídas e explicitamente revistas seguem para a confirmação existente; avisos e ausências continuam visíveis após revisão.
+
+Validação de C: **11 TypeScript e 2 percursos Chromium direcionados aprovados**, typecheck/exportação web aprovados. Uma fixture controlada de propostas testa 15 parâmetros mais uma proposta incompleta; guarda real na API isolada de 15 resultados após correções/exclusão, proveniência, histórico/gráfico, recarga, teclado, navegação e logout com novo rascunho. Outro percurso usa o parser determinístico real do PDF conhecido. Três modos/temas e cinco larguras exercitados. Só dados sintéticos e SQLite temporária; sem carga, inferência, migração ou alteração à base normal. Detalhes/limites em VALIDATION.md.
+
+**Ponto de continuação: D — fidelidade documental. Não iniciado.** Versão executável continua 0.7.3; E–G e validação geral permanecem para pedidos futuros. Não tratar a fixture de propostas de UI como nova medição da precisão do Ollama. Sem ensaio Android/iOS, leitor de ecrã ou zoom real.
 
 ## Versão e Git
 
@@ -84,9 +88,9 @@ Capturas/geradores/DB de ensaio em tmp, ignorados pelo Git; comparação web e f
 
 ## Próximos três objetivos
 
-1. C: implementar a revisão compacta na próxima execução autorizada, mantendo a confirmação humana e a evidência.
-2. C: substituir a revisão extensa por resumo/lista compacta e edição contextual, preservando evidência, correções, exclusões e confirmação humana.
-3. D–G: regressões independentes de HDL/data/proposta extra e estados documentais, simplificação das confirmações redundantes e refinamento visual com regressão final. Só então concluir/publicar a versão 0.7.4.
+1. D: investigar/regredir HDL sem data, proposta extra incompleta e associações/evidência, com ground truth independente; não alterar o benchmark para ocultar casos difíceis.
+2. E/F: simplificar apenas confirmações redundantes e refinar os percursos, após autorização específica.
+3. G: adaptar restantes testes históricos que pressupõem campos sempre abertos, executar regressão geral e validação nativa/acessível apropriada antes de concluir a v0.7.4.
 
 ## Continuidade
 

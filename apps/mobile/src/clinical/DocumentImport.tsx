@@ -1,6 +1,8 @@
+import {useContextStep} from '../editNavigation';
+import {reviewState} from './reviewState';
 import React,{useEffect,useRef,useState} from 'react';
-import {View,Linking} from 'react-native';
-import {Button,Card,Field,T,layout} from '../ui';
+import {View,Linking,Platform,useWindowDimensions} from 'react-native';
+import {Button,Card,Field,T,layout,useTheme} from '../ui';
 import {clinicalRepository,API} from './repository';
 import {parameterLabels,MedicalDocument,labParameters,SavedRecord} from './data';
 import {Extraction,Candidate,ReviewRow,confirmRows,rowLabel} from './importData';
@@ -25,6 +27,10 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  const [metadata,setMetadata]=useState(classification),[title,setTitle]=useState(documentOnly?(registrationCategories.find(c=>c.id===classification.category)?.types.find(t=>t.id===classification.examType)?.label??'Documento sintético'):'Documento laboratorial sintético'),[institution,setInstitution]=useState('');
  const [parsed,setParsed]=useState<Extraction|null>(null),[rows,setRows]=useState<ReviewRow[]>([]),[fileData,setFileData]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [selected,setSelected]=useState<InputDocument|null>(initialDocument),[stage,setStage]=useState(initialDocument?'Ficheiro selecionado':''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
+ const [editing,setEditing]=useContextStep('review-editor',null),[editDocument,setEditDocument]=useState(false);
+ const {width}=useWindowDimensions(),{colors:c}=useTheme(),previousEditor=useRef<string|null>(null);
+ function closeEditor(){setEditing(null);setChoosing(null);}
+ useEffect(()=>{if(Platform.OS!=='web')return;const previous=previousEditor.current;previousEditor.current=editing;const target=editing!==null?'review-editor-title':previous!==null?'review-row-'+previous:null;if(target){const node=document.getElementById(target);(node?.querySelector('button')??node)?.focus();}const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'&&editing!==null){event.preventDefault();closeEditor();}};window.addEventListener('keydown',escape);return()=>window.removeEventListener('keydown',escape);},[editing]);
  const baseline=useRef({title,metadata,institution});
  useEffect(()=>{onDraftState?.({dirty:!!selected||!!parsed||title!==baseline.current.title||institution!==baseline.current.institution||JSON.stringify(metadata)!==JSON.stringify(baseline.current.metadata),busy});},[selected,parsed,title,institution,metadata,busy,onDraftState]);
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
@@ -32,7 +38,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  useEffect(()=>()=>{reading.current?.abort();if(job.current)void apiFetch('/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}}).catch(()=>{});},[owner]);
  useEffect(()=>{active.current=true;if(!documentOnly)apiFetch('/demo/extraction/status',{signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(s=>{if(active.current)setEngine(s.available?'Motor local disponível · leitura no teu computador':'Motor local indisponível · leitura de texto e introdução manual disponíveis');}).catch(()=>{if(active.current)setEngine('Não foi possível verificar o motor local.');});return()=>{active.current=false;};},[]);
  function setExtraction(data:Extraction,url:string){
-  setFileData(url);setParsed(data);setChoosing(null);
+  setFileData(url);setParsed(data);setChoosing(null);setEditing(null);
   setRows(data.candidates.map(c=>({parameter:c.parameter,value:c.value,unit:c.unit,method:c.method??'',context:c.context??'',date:(c.date===undefined?data.date:c.date)??'',laboratory:(c.laboratory===undefined?data.laboratory:c.laboratory)??'',include:true,reviewed:false})));
  }
  async function read(file:InputDocument){
@@ -77,7 +83,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  function addRow(){
   if(!parsed)return;
   const candidate:Candidate={parameter:'glucose',originalParameter:null,value:'',unit:'',referenceText:null,method:null,context:null,page:null,excerpt:'',issues:['Introdução manual: conferir parâmetro, valor, unidade, página e data no original.'],extractionMethod:'manual',verification:'manual_source_unverified'};
-  setParsed({...parsed,candidates:[...parsed.candidates,candidate]});setRows([...rows,{parameter:'glucose',value:'',unit:'mg/dL',date:parsed.date??'',laboratory:parsed.laboratory??'',method:'',context:'',include:true,reviewed:false}]);
+  setEditing(String(rows.length));setParsed({...parsed,candidates:[...parsed.candidates,candidate]});setRows([...rows,{parameter:'glucose',value:'',unit:'mg/dL',date:parsed.date??'',laboratory:parsed.laboratory??'',method:'',context:'',include:true,reviewed:false}]);
  }
  async function confirm(){
   if(!parsed||lock.current)return;lock.current=true;setBusy(true);setError('');setStage('A guardar na base local');
@@ -96,26 +102,37 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
   finally{lock.current=false;if(active.current)setBusy(false);}
  }
  const preview=parsed?{id:id.current,ownerId:owner,synthetic:true,title:'Revisão',laboratory:parsed.laboratory,issuedAt:null,importedAt:new Date().toISOString(),original:{fileName:selected?.name??'documento',mediaType:parsed.mediaType??'application/pdf',text:parsed.text,dataUrl:fileData}}:null;
- return <Card><T kind="heading" nativeID="registration-form-title" tabIndex={-1}>{documentOnly?'Guardar documento sintético':'Importar exame sintético'}</T>{!documentOnly&&<T kind="small">{engine}</T>}<T>{documentOnly?'O ficheiro será guardado sem extrair medições nem interpretar o exame.':'A leitura é local e exige sempre revisão humana.'} PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas.</T>
+ return <Card>{!parsed&&<><T kind="heading" nativeID="registration-form-title" tabIndex={-1}>{documentOnly?'Guardar documento sintético':'Importar exame sintético'}</T>{!documentOnly&&<T kind="small">{engine}</T>}<T>{documentOnly?'O ficheiro será guardado sem extrair medições nem interpretar o exame.':'A leitura é local e exige sempre revisão humana.'} PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas.</T>
  <Button label="Descarregar PDF de exemplo" onPress={()=>void Linking.openURL('/laboratorio-demo.pdf')}/>
- <PdfPicker selected={selected} stage={stage} onClear={()=>{setSelected(null);setParsed(null);setRows([]);setFileData('');setStage('');setError('');}} onFile={file=>{if(!mimeFor(file)||file.size>MAX_BYTES){setError('Escolha um PDF, PNG ou JPEG sintético até 2 MB.');return;}setSelected(file);setParsed(null);setRows([]);setFileData('');setError('');setStage('Ficheiro selecionado');}} disabled={busy}/>
- {selected&&<><Field label="Nome do documento" value={title} onChange={setTitle}/><ClassificationFields value={metadata} onChange={setMetadata}/>{documentOnly&&<Field label="Instituição de origem (opcional)" value={institution} onChange={setInstitution}/>}</>}
+ </>}{(!parsed||editDocument)&&<PdfPicker selected={selected} stage={stage} onClear={()=>{setSelected(null);setParsed(null);setRows([]);setFileData('');setStage('');setError('');}} onFile={file=>{if(!mimeFor(file)||file.size>MAX_BYTES){setError('Escolha um PDF, PNG ou JPEG sintético até 2 MB.');return;}setSelected(file);setParsed(null);setRows([]);setFileData('');setError('');setStage('Ficheiro selecionado');}} disabled={busy}/>}
+ {selected&&(!parsed||editDocument)&&<><Field label="Nome do documento" value={title} onChange={setTitle}/><ClassificationFields value={metadata} onChange={setMetadata}/>{documentOnly&&<Field label="Instituição de origem (opcional)" value={institution} onChange={setInstitution}/>}</>}
  {selected&&!parsed&&<>{documentOnly?<Button label="Guardar documento" primary disabled={busy} onPress={()=>void saveOnly()}/>:<><Button label="Importar PDF" primary disabled={busy} onPress={()=>void read(selected)}/><Button label="Introduzir resultados manualmente" disabled={busy} onPress={()=>void manual()}/></>}</>}
  {!selected&&!!stage&&<T accessibilityLiveRegion="polite">{stage}</T>}{!!error&&<T accessibilityRole="alert">{error}</T>}
  {waiting&&<Button label="Cancelar pedido em espera" onPress={()=>void cancelWaiting()}/>}
  {selected&&!parsed&&!!error&&<Button label="Tentar novamente" disabled={busy} onPress={()=>void(documentOnly?saveOnly():read(selected))}/>}
- {parsed&&<><T kind="heading">Rever resultados extraídos</T>
- {parsed.warnings?.map((warning,i)=><T kind="small" key={i}>{warning}</T>)}
+ {parsed&&<><T kind="heading">Rever resultados do exame</T>
+ <T>{title} · {parsed.date||'Data não identificada'} · {parsed.laboratory||'Instituição não identificada'}</T>
+ <T accessibilityLiveRegion="polite">{rows.length} propostas · {rows.filter((r,i)=>reviewState(r,parsed.candidates[i],parsed).attention&&r.include).length} exigem atenção</T>
+ <Button label={editDocument?'Fechar dados do exame':'Editar dados do exame'} variant="tertiary" onPress={()=>setEditDocument(!editDocument)}/>
+ {editDocument&&<>
+
  <Field label="Laboratório de origem" value={parsed.laboratory??''} onChange={laboratory=>{setParsed({...parsed,laboratory});setRows(rows.map(r=>({...r,laboratory:r.laboratory===parsed.laboratory||!r.laboratory?laboratory:r.laboratory,reviewed:false})));}}/>
  <Field label="Data do exame (AAAA-MM-DD)" value={parsed.date??''} onChange={date=>{setParsed({...parsed,date});setRows(rows.map(r=>({...r,date:!r.date||r.date===parsed.date?date:r.date,reviewed:false})));}}/>
  <Field label="Data do relatório (opcional)" value={parsed.reportDate??''} onChange={reportDate=>setParsed({...parsed,reportDate})}/>
- {preview&&<DocumentView doc={preview}/>}
- <T kind="small">Campos desconhecidos podem ficar vazios. Datas/métodos em falta impedem comparações seguras nos gráficos. A confirmação não equivale a validação médica.</T>
- {rows.map((r,i)=>{const raw=parsed.candidates[i],p=rowLabel(r,raw),label=p?parameterLabels[p]:'Parâmetro por identificar';return <Card key={i}>
+ </>}
+ <View style={{flexDirection:width>=1000?'row':'column',gap:20,alignItems:'stretch'}}>
+ {preview&&<View style={{flex:width>=1000?1:undefined,minWidth:0}}><DocumentView doc={preview}/></View>}
+ <View style={{flex:width>=1000?1.4:undefined,minWidth:0,gap:8}}>
+ {parsed.warnings?.map((warning,i)=><T kind="small" key={i}>{warning}</T>)}
+ <T kind="small">Confira os resultados no original. Datas ou métodos ausentes podem impedir gráficos. A revisão pessoal não é validação clínica.</T>
+ {rows.map((r,i)=>{const raw=parsed.candidates[i],p=rowLabel(r,raw),label=p?parameterLabels[p]:'Parâmetro por identificar';const state=reviewState(r,raw,parsed);return <View key={i} testID={'review-result-'+i} style={{borderBottomWidth:1,borderColor:c.line,paddingVertical:10,gap:6}}>
+ <View style={layout.row}><View style={{flex:1,minWidth:120}}><T style={{fontWeight:'600'}}>{label}</T><T>{r.missingValue?'Sem valor numérico':r.value||'Valor ausente'} {r.unit||'Unidade ausente'}</T><T kind="small">{state.label}</T>{state.reasons.map(reason=><T kind="small" key={reason}>{reason}</T>)}</View><View nativeID={'review-row-'+i}><Button label="Editar" accessibilityLabel={'Editar resultado '+(i+1)+': '+label} onPress={()=>setEditing(String(i))}/></View></View>
+
+ {editing===String(i)&&<Card><T kind="heading" nativeID="review-editor-title" tabIndex={-1}>Rever {label}</T><Button label="← Voltar aos resultados" accessibilityLabel="Voltar aos resultados" variant="tertiary" onPress={closeEditor}/>
  {p?<MedicalTerm parameter={p} label={label}/>:<T kind="heading">{label}</T>}<T kind="small">Nome no original: {raw.originalParameter??'Introdução manual'} · Página {raw.page??'não indicada'}</T>
  <T kind="small">Leitura: {raw.extractionMethod==='deterministic'?'leitura automática de texto':raw.extractionMethod==='manual'?'manual':'modelo local'}{raw.model?' · '+raw.model:''}</T>
  <T>Referência: {raw.referenceText??'Não fornecida'}</T><T kind="small">{raw.excerpt}</T>{raw.issues.map((issue,j)=><T key={j} kind="small">{issue}</T>)}
- <Button label={(r.include?'Excluir ':'Incluir ')+label} selected={r.include} onPress={()=>change(i,{include:!r.include})}/>
+ <Button label={(r.include?'Excluir ':'Incluir ')+label} variant="tertiary" onPress={()=>change(i,{include:!r.include})}/>
  {r.include&&<><Button label={'Parâmetro: '+label} onPress={()=>setChoosing(choosing===i?null:i)}/>
  {choosing===i&&<View style={layout.row}>{labParameters.map(parameter=><Button key={parameter} label={parameterLabels[parameter]} selected={p===parameter} onPress={()=>{change(i,{parameter,reviewed:false});setChoosing(null);}}/>)}</View>}
  <Field label={'Valor '+label} value={r.value} onChange={value=>change(i,{value,missingValue:false,reviewed:false})}/>
@@ -127,8 +144,12 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  <Field label={'Origem '+label+' (opcional)'} value={r.laboratory??''} onChange={laboratory=>change(i,{laboratory,reviewed:false})}/>
  <Field label={'Método '+label} value={r.method} onChange={method=>change(i,{method,reviewed:false})}/>
  <Field label={'Amostra '+label} value={r.context} onChange={context=>change(i,{context,reviewed:false})}/>
- <Button label={(r.reviewed?'Revisto: ':'Marcar revisto: ')+label} selected={r.reviewed} onPress={()=>change(i,{reviewed:!r.reviewed})}/></>}
- </Card>;})}
+ <Button label={(r.reviewed?'Revisto: ':'Marcar revisto: ')+label} primary={!r.reviewed} selected={r.reviewed} onPress={()=>change(i,{reviewed:!r.reviewed})}/></>}
+ {preview&&<DocumentView doc={preview}/>}
+ </Card>}
+ </View>;})}
+ </View></View>
+ <T>Será guardado: {rows.filter(r=>r.include).length} resultados selecionados, dos quais {rows.filter(r=>r.include&&r.reviewed).length} revistos. {rows.filter(r=>!r.include).length} excluídos. Só as linhas incluídas e revistas podem ser confirmadas.</T>
  <Button label="Adicionar resultado manual" disabled={busy} onPress={addRow}/>
  {rows.length===0&&selected&&<Button label="Repetir leitura automática" disabled={busy} onPress={()=>void read(selected)}/>}
  <Button label="Confirmar e guardar resultados" primary disabled={busy} onPress={confirm}/>

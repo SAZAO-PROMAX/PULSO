@@ -1,0 +1,42 @@
+import {test,expect,Page} from '@playwright/test';
+import path from 'node:path';
+import fs from 'node:fs';
+import {createHash} from 'node:crypto';
+import catalog from '../../../packages/shared/laboratory.json';
+const values=['98,5','5,4','182','52','106','114','0,92','13,7','44','2,1','1,2','31','4,9','140','4,2'];
+const methods=['hexoquinase','HPLC','enzimatico','direto','direto','enzimatico','enzimatico','fotometria','imunoensaio','imunoensaio','imunoensaio','imunoensaio','enzimatico','potenciometria','potenciometria'];
+async function keyboard(page:Page,name:string,key='Enter'){
+ const button=page.getByRole('button',{name,exact:true});for(let i=0;i<180;i++){if(await button.evaluate(el=>el===document.activeElement))break;await page.keyboard.press('Tab');}await expect(button).toBeFocused();await page.keyboard.press(key);
+}
+async function typeField(page:Page,label:string,value:string){const input=page.getByLabel(label,{exact:true});for(let i=0;i<180;i++){if(await input.evaluate(el=>el===document.activeElement))break;await page.keyboard.press('Tab');}await expect(input).toBeFocused();await page.keyboard.press('Control+a');await page.keyboard.insertText(value);}
+ test('C: quinze resultados, correções, exclusão, teclado, rascunho, confirmação e persistência',async({page,baseURL})=>{
+ test.setTimeout(120000);
+ const origin=new URL(baseURL!).origin,api='http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000),email='compact-'+Date.now()+'@example.test',password='synthetic-compact-password';
+ await page.request.post(api+'/auth/register',{headers:{Origin:origin},data:{email,password,displayName:'Pessoa sintética C',birthDate:'1970-05-23'}});await page.request.post(api+'/auth/login',{headers:{Origin:origin},data:{email,password}});
+ const file=path.resolve(__dirname,'../../../tmp/v04-benchmark/fifteen_rows.pdf'),bytes=fs.readFileSync(file);
+ const candidates:any[]=catalog.parameters.map((p,i)=>({parameter:p.id,originalParameter:p.label,value:values[i],unit:p.units[0],date:i===3?null:'2026-11-08',laboratory:'Laboratorio Demo Alfa',method:methods[i],context:'plasma',referenceText:null,page:1,excerpt:p.label+' | '+values[i]+' | '+p.units[0],issues:i===3?['Data por preencher na revisão.']:[],verification:'source_unverified',extractionMethod:'ollama_text'}));
+ candidates.push({parameter:null,originalParameter:null,value:'',unit:'',date:null,method:null,context:null,referenceText:null,page:1,excerpt:'Proposta adicional sintética não resolvida',issues:['Associar ou excluir.'],verification:'source_unverified',extractionMethod:'ollama_text'});
+ let calls=0;await page.route('**/demo/extractions',route=>{calls++;return route.fulfill({status:202,contentType:'application/json',body:JSON.stringify({id:'fixture',state:'ready',result:{parserVersion:'synthetic-ui-fixture',sha256:createHash('sha256').update(bytes).digest('hex'),mediaType:'application/pdf',date:null,laboratory:'Laboratorio Demo Alfa',text:'PULSO - DOCUMENTO INTEIRAMENTE SINTETICO\n'+candidates.map(c=>c.excerpt).join('\n'),candidates}})});});
+ await page.goto('/#/app');await keyboard(page,'Adicionar exame');const chooser=page.waitForEvent('filechooser');await keyboard(page,'Selecionar documento');await (await chooser).setFiles(file);await keyboard(page,'Importar PDF');await expect(page.getByRole('heading',{name:'Rever resultados do exame'})).toBeVisible();await expect(page.getByTestId(/^review-result-/)).toHaveCount(16);await expect(page.getByRole('textbox',{name:/^Valor /})).toHaveCount(0);
+ for(let i=0;i<15;i++){await expect(page.getByTestId('review-result-'+i)).toContainText(values[i]+' '+catalog.parameters[i].units[0]);}
+ await expect(page.getByTestId('review-result-3')).toContainText('Data por verificar');await expect(page.getByTestId('review-result-15')).toContainText('Precisa de correção');
+ await keyboard(page,'Ver documento original fictício');await expect(page.getByRole('button',{name:'Abrir PDF original'})).toBeVisible();await keyboard(page,'Fechar documento original');
+ for(const width of [320,390,768,1100,1280]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width===390||width===1280){await page.getByRole('heading',{name:'Rever resultados do exame'}).scrollIntoViewIfNeeded();await page.screenshot({path:'../../tmp/v074-c-review-'+width+'.png'});}}
+ for(const mode of ['Simples','Equilibrado','Detalhado']){
+  await keyboard(page,'Abrir menu de perfil');await keyboard(page,'Preferências');await keyboard(page,mode);await expect(page.getByRole('button',{name:mode,exact:true})).toHaveAttribute('aria-pressed','true');await keyboard(page,'Registar');await keyboard(page,'Retomar registo por guardar');
+  for(const dark of [true,false]){await keyboard(page,dark?'Modo escuro':'Modo claro');for(const width of [390,1280]){await page.setViewportSize({width,height:900});await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.getByRole('heading',{name:'Rever resultados do exame'}).scrollIntoViewIfNeeded();await page.screenshot({path:'../../tmp/v074-c-'+mode+'-'+(dark?'dark':'light')+'-'+width+'.png'});}}
+ }
+ await keyboard(page,'Confirmar e guardar resultados');await expect(page.getByRole('alert')).toContainText('Revê cada linha');
+ for(let i=0;i<16;i++){
+  const label=i===15?'Parâmetro por identificar':catalog.parameters[i].label;await keyboard(page,'Editar resultado '+(i+1)+': '+label);await expect(page.getByRole('heading',{name:'Rever '+label,exact:true})).toBeFocused();
+  if(i===15)await keyboard(page,'Excluir '+label,'Space');
+  else {if(i===0){await typeField(page,'Valor '+label,'5,6');await typeField(page,'Unidade '+label,'mmol/L');}if(i===3)await typeField(page,'Data '+label+' (opcional)','2026-11-08');await keyboard(page,'Marcar revisto: '+label,'Space');}
+  await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'Editar resultado '+(i+1)+': '+label,exact:true})).toBeFocused();if(i===0){await page.goBack();await expect(page.getByLabel('Valor '+label,{exact:true})).toHaveValue('5,6');await page.goForward();await expect(page.getByRole('button',{name:'Editar resultado 1: '+label,exact:true})).toBeFocused();}
+ }
+ await expect(page.getByTestId('review-result-0')).toContainText('5,6 mmol/L');await expect(page.getByTestId('review-result-15')).toContainText('Excluído');
+ await keyboard(page,'Voltar às categorias de registo');await keyboard(page,'Retomar registo por guardar');expect(calls).toBe(1);await expect(page.getByTestId('review-result-0')).toContainText('5,6 mmol/L');
+ await keyboard(page,'Confirmar e guardar resultados');await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeVisible();
+ const session=await (await page.request.get(api+'/auth/session')).json(),data=await (await page.request.get(api+'/demo/profiles/'+session.user.id+'/data')).json();expect(data.documents).toHaveLength(1);expect(data.results).toHaveLength(15);const hdl=data.results.find((r:any)=>r.parameter==='hdl');expect(hdl.evidence.extractedDate).toBeNull();expect(hdl.measuredAt).toContain('2026-11-08');expect(data.documents[0].sha256).toBe(createHash('sha256').update(bytes).digest('hex'));
+ await keyboard(page,'Ver evolução de Glicose');await expect(page.getByTestId('point-detail').first()).toContainText('5,6 mmol/L');await page.reload();await expect(page.getByText('Glicose: 5,6 mmol/L',{exact:true})).toBeVisible();
+ await keyboard(page,'Registar');await expect(page.getByRole('button',{name:'Retomar registo por guardar',exact:true})).toHaveCount(0);await keyboard(page,'Importar ficheiro');await keyboard(page,'Análises clínicas');await keyboard(page,'Análises ao sangue');await page.getByLabel('Selecionar documento sintético').setInputFiles(file);await keyboard(page,'Importar PDF');await expect(page.getByTestId(/^review-result-/)).toHaveCount(16);await keyboard(page,'Abrir menu de perfil');await keyboard(page,'Terminar sessão');await page.goBack();await expect(page.getByTestId(/^review-result-/)).toHaveCount(0);
+});

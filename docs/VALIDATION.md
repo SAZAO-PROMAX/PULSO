@@ -1,3 +1,29 @@
+# v0.7.4 — C: revisão compacta, 09/11/2026
+
+Base 7c11026. **11 testes TypeScript direcionados e 2 percursos Chromium aprovados**, typecheck/exportação web aprovados. Logs tmp/v074-c-unit-final.log, tmp/v074-c-final.log e repetição específica com Voltar/Avançar em tmp/v074-c-navigation-final.log. Nenhuma suite completa, carga, 1.000 contas, inferência Ollama, benchmark GPU ou teste API completo executado. A API real de teste usa SQLite nova em tmp e loopback 8014/web 8784; base normal preservada.
+
+- `reviewState.test.ts` e `persistence.test.ts`: estados visuais não contornam confirmRows, ausências/evidência continuam explícitas, confirmação/correção/original/versões/falhas mantidos.
+- `public-compact-review.spec.ts`: PDF sintético de 15 analitos do gerador existente; propostas controladas no transporte de extração, com HDL sem data e uma extra não mapeada/sem valor. Não é inferência nem avaliação da extração. Quinze resultados/valores/unidades apresentados e zero campos individuais abertos inicialmente. Edição contextual por teclado corrige valor/unidade e data; Escape devolve foco; Voltar/Avançar e categorias conservam correções sem reextração. Guardar sem revisão é recusado; após revisão individual e exclusão da extra, a API persiste 15 resultados e um original com SHA correto. Data original nula do HDL fica na evidência, data corrigida no resultado. Histórico/gráfico/recarga aprovados; guardar limpa rascunho e logout remove novo rascunho privado.
+- Regressão autenticada do PDF conhecido em `public-entry.spec.ts` adaptada ao editor contextual e executada isoladamente: parser determinístico real, revisão explícita, guarda/detalhe/gráfico. Nenhum motor LLM chamado.
+- Layout em 320/390/768/1100/1280; Simples/Equilibrado/Detalhado, claro/escuro em 390/1280. Aguarda estabilização da viewport antes de medir; uma leitura imediata captou o layout anterior da navegação. No modo Detalhado existem vários painéis de gráfico: a asserção passou a selecionar o primeiro, correspondente à glicose, sem alterar gráficos.
+
+Comparação visual feita com captura histórica A (cinco resultados, 35 campos permanentes) e capturas C (15 parâmetros + extra, lista sem campos abertos), sem repetir A nem alegar ensaio humano ou corpus visual idêntico. Revistas capturas 390 claro, Simples escuro 390 e Detalhado claro 1280; artefactos tmp/v074-c-*.png não publicados. Original reutiliza DocumentView e abertura privada existente; não há novo motor PDF/iframe. Metadados/evidência e regras de confirmação/persistência não foram removidos.
+
+Limites: Android/iOS, leitor de ecrã e zoom real não ensaiados. Testes históricos que pressupõem o formulário extenso (por exemplo a reprodução dos 35 campos) não foram todos adaptados/executados; ficam para a regressão geral G. Não declarar a suite completa aprovada. D não iniciado e pipeline de extração não alterado. Versão executável permanece 0.7.3.
+
+Repetir na raiz (Node no PATH):
+
+```powershell
+npx.cmd --prefix apps/mobile tsx --test apps/mobile/tests/reviewState.test.ts apps/mobile/tests/persistence.test.ts
+npm.cmd run typecheck --prefix apps/mobile
+```
+
+Em apps/mobile, num terminal de testes com PULSO_TEST_PUBLIC=true, PULSO_TEST_API_PORT=8014, PULSO_TEST_WEB_PORT=8784 e EXPO_PUBLIC_API_URL=http://127.0.0.1:8014:
+`npx.cmd playwright test public-compact-review.spec.ts public-entry.spec.ts --grep "quinze resultados|conta autenticada importa PDF" --reporter=line`.
+Fechar esse terminal antes do arranque normal, para não herdar variáveis de teste.
+
+---
+
 # v0.7.4 — B3, 09/11/2026
 
 Base e0bc5c2. Typecheck aprovado. Apenas `public-b3.spec.ts` executado: **1 percurso integrado Chromium aprovado**, log tmp/v074-b3-final.log. Conta inteiramente sintética, SQLite nova em tmp, API 8014/web 8784. Sem repetição de A/B1/B2, suite completa, carga, API completa ou inferência Ollama. Exportação web necessária ao Playwright passou. Base normal não foi utilizada pelos testes.
