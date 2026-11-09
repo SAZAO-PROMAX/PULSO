@@ -1,3 +1,33 @@
+# v0.7.4 em curso — bloco A, 09/11/2026
+
+Base: `1c6e0cc`. Inspeção da documentação, DocumentImport/RegisterHub, rotas/Shell, controlos, modal educativo e hybrid concluída. Sem gravação do utilizador disponível/analisada; reprodução baseada no pedido escrito.
+
+Ensaio Chromium autenticado, contas sintéticas, SQLite nova em tmp, web 8784/API 8014, Ollama desligado. Instância normal 8081/8000 mantida. A configuração Playwright aceita PULSO_TEST_WEB_PORT/PULSO_TEST_API_PORT; exportação com cache renovada para não reutilizar a URL da API de outra execução. A primeira tentativa restrita não concluiu; a primeira exportação isolada conservou URL antiga e falhou na sessão, antes dos percursos. Corrigida a configuração do ensaio e adicionada interdição de pedidos do navegador a outras portas loopback.
+
+`public-navigation-review.spec.ts`: quatro cenários executados; **um aprovado e três falhas esperadas que reproduzem defeitos**, não quatro funcionalidades corrigidas. Log tmp/v074-block-a-isolated.log. Checkpoint A não altera produto:
+
+- Enter e Espaço ativam os botões de Registar/categorias ensaiados. Ao escolher categoria o controlo desaparece e o foco não acompanha o título de tipos: defeito reproduzido.
+- Documento selecionado/nome alterado → Voltar às categorias → mesmo tipo: rascunho perdido sem aviso, reproduzido.
+- Voltar do navegador após selecionar tipo salta para o Hub; passos internos não constam do histórico, reproduzido.
+- PDF conhecido devolve cinco propostas com 35 campos de linha permanentes. Enter no valor não envia confirmação. Guardar sem linhas revistas é recusado sem POST de confirmação. Captura sintética tmp/v074-review-before-390.png.
+
+Os testes marcados test.fail explicitam pendências; remover a marcação apenas quando o comportamento esperado passar. Não foram repetidos carga, 1.000 contas nem inferência real. Caso difícil HDL/data/proposta extra continua como regressão histórica, sem alegar diagnóstico novo da causa. Android/iOS não ensaiados.
+
+Repetir em PowerShell, apps/mobile:
+
+```powershell
+$env:Path='C:\Program Files\nodejs;'+$env:Path
+$env:PULSO_TEST_PUBLIC='true'
+$env:PULSO_TEST_API_PORT='8014'
+$env:PULSO_TEST_WEB_PORT='8784'
+$env:EXPO_PUBLIC_API_URL='http://127.0.0.1:8014'
+npx.cmd playwright test public-navigation-review.spec.ts --reporter=line
+```
+
+Esta configuração de portas é usada pelo novo ficheiro; suites históricas com URLs literais precisam das portas originais ou de adaptação explícita. Não reutilizar serviços existentes.
+
+---
+
 # Validação atual — v0.7.3
 
 Atualização: 09/11/2026, Europe/Lisbon. Evidência apenas sintética; não é validação clínica ou certificação.

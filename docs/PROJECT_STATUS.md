@@ -2,6 +2,14 @@
 
 Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VALIDATION.md); comandos em [GUIA_WINDOWS.md](GUIA_WINDOWS.md).
 
+## Sprint ativo — v0.7.4 em curso, 09/11/2026
+
+Versão executável continua **0.7.3**; não declarar a v0.7.4 concluída. Base `1c6e0cc`; commit de atualização consultável por `git log -1 -- docs/PROJECT_STATUS.md`.
+
+Bloco A: reprodução em contas sintéticas/DB temporária e portas 8784/8014, sem alterar a base normal. Três defeitos confirmados: perda de foco ao escolher categoria, rascunho descartado ao voltar, histórico do navegador sem passos internos. Enter/Espaço funcionam nos botões ensaiados. Revisão mostra 35 campos para cinco resultados; confirmação humana não pode ser ignorada. Um cenário aprovado/três falhas esperadas de reprodução; detalhes e comando em VALIDATION.md. Sem nova inferência, carga ou testes nativos.
+
+Próximos três objetivos desta execução sequencial: (1) bloco B — navegação contextual, preservação de rascunhos e foco/teclado, incluindo Voltar/Avançar; (2) bloco C — revisão compacta com edição contextual, sem reduzir validações; (3) blocos D–G — regressões de fidelidade/estados, confirmações/contexto visual e testes finais. Concluir/testar cada bloco antes do seguinte; preservar os defeitos como testes até resolver. Estado anterior abaixo mantém funcionalidades e limites existentes.
+
 ## Versão e Git
 
 - **Atualização:** 09/11/2026, Europe/Lisbon. **Versão:** v0.7.3 experimental, frontend/Expo/API `0.7.3`.
