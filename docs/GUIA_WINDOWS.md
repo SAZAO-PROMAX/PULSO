@@ -1,5 +1,12 @@
 # PULSO no Windows — arranque e estabilização
 
+## Reabrir a v0.7.4 sem Codex
+
+O PULSO não é um serviço permanente. Abra PowerShell na pasta do projeto e execute `.\dev.cmd`; mantenha essa janela aberta e aguarde o arranque do Metro. Abra http://localhost:8081/. **Ctrl+C nessa janela** termina os servidores iniciados pelo launcher. Para voltar a abrir, execute novamente o mesmo comando. Não precisa de manter uma conversa Codex aberta.
+
+Se o endereço recusar a ligação, confirme primeiro se a janela do launcher continua aberta. `node scripts/dev.mjs --check` verifica dependências/portas; portas ocupadas podem significar que a aplicação já está aberta. Não inicie duplicados nem termine processos desconhecidos. Os servidores usados por Playwright são temporários e encerram no fim dos testes. A recuperação de 09/11/2026 foi verificada por HTTP e Chromium; não exigiu reinstalação nem reposição de contas/base.
+
+
 ## Entrada atual — simplificação v0.7.1
 
 Na raiz, execute `.\dev.cmd` e abra `http://localhost:8081`. Atualize com Ctrl+F5. Sem sessão, verá a página pública; com sessão válida, entra na sua conta. **Terminar sessão** permite ver a nova entrada pública. Não existem botões de demonstração no ambiente normal.

@@ -1,3 +1,9 @@
+# Pós-entrega v0.7.4 — recuperação web e diagnóstico Android, 09/11/2026
+
+Sem mudança de versão ou autenticação. **1 percurso Playwright de PDF autenticado aprovado** com launcher/base temporária; página pública normal carregada em Chromium com zero pageerror. **2 API direcionados aprovados**, 13 não selecionados (isolamento/CSRF/revogação e diagnóstico sem Origin), em tmp. Emulador Android16/API36 com ExpoGo57.0.9: página pública PULSO abriu, canal local respondeu200, tentativa de login mostrou403/Origin e não abriu Hub privado. Não é aprovação da autenticação nativa, nem build própria, teste físico, câmara/PDF privado ou suite completa. Ollama/carga não executados. Ferramentas, comandos, proposta de contrato e ponto de continuação em [MOBILE_VALIDATION.md](MOBILE_VALIDATION.md). Artefactos locais em tmp; base normal sem testes/reposições.
+
+---
+
 # v0.7.4 — G: validação integrada e encerramento web, 09/11/2026
 
 Base `6285136`; versão Expo/frontend/API passa a **0.7.4 experimental** após resolver as regressões abaixo. Commit correspondente: `git log -1 -- docs/VALIDATION.md`. Sem nova dependência, migração, cloud, inferência real ou ensaio de carga. Base normal intacta: bases SQLite de ensaio em `tmp`, serviços em loopback 8014/8784; arranque habitual isolado em 8000/8081.

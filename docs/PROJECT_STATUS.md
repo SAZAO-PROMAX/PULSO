@@ -2,7 +2,11 @@
 
 Atualização: **09/11/2026, Europe/Lisbon**. Versão executável: **0.7.4 experimental** (Expo/frontend/API). Blocos A–G concluídos para o âmbito web ensaiado; não iniciar uma nova versão automaticamente.
 
-Branch `main`; base desta entrega `6285136356b312b3e381766a9ecad78074eafee6`. Esta ficha integra o checkpoint G; obter o identificador correspondente com `git log -1 -- docs/PROJECT_STATUS.md`. Antes do commit, as alterações G ainda estão locais; confirmar publicação com `git rev-parse HEAD` e `git ls-remote origin refs/heads/main`, sem presumir que um ficheiro prova o push. Repositório oficial: https://github.com/SAZAO-PROMAX/PULSO.
+Branch `main`; entrega G publicada: `c093695a23d5378ddd5c2f6e7039080a6126ceec`. Na verificação anterior de 09/11/2026, HEAD, origin/main e GitHub coincidiam nesse commit, assim como os últimos commits dos documentos. Antes deste novo checkpoint, fetch confirmou ausência de divergência remota; as duas alterações documentais locais da preparação foram preservadas e incluídas. Repositório oficial: https://github.com/SAZAO-PROMAX/PULSO.
+
+Checkpoint pós-entrega — recuperação web/Android, 09/11/2026: [MOBILE_VALIDATION.md](MOBILE_VALIDATION.md) contém os resultados atuais, ferramentas e proposta de sessão nativa. Serviços estavam parados; launcher e web verificados sem reinstalar dependências da aplicação. JDK/Android Studio/SDK36/ADB/Emulator instalados, AVD Android16 e Expo Go57.0.9 executados; página pública PULSO abriu. API temporária em loopback alcançada via ADB reverse; login nativo recusado por Origin na UI. Não contornar esta proteção. **Sessão nativa e percursos privados Android continuam bloqueados; PDF/visualizador nativos não implementados.** Versão permanece 0.7.4. Obter o commit deste checkpoint com `git log -1 -- docs/PROJECT_STATUS.md`; a preparação documental anterior está incluída, sem inventar hash futuro.
+
+Verificações deste checkpoint: 1 percurso Playwright autenticado isolado aprovado, 2 testes API de segurança aprovados, página pública normal sem pageerror, diagnóstico de arranque/UI/transporte Android no emulador. Sem suite completa, carga, inferência ou dispositivo físico. API/Metro de teste e emulador encerrados; web normal mantida para utilização interativa. Próxima ordem: contrato nativo seguro/testado → seleção/consulta PDF → percursos privados/acessibilidade/cache. Não foi demonstrada segurança de uma nova autenticação nativa; aplicar o limite do Bloco 3 e retomar desse ponto.
 
 ## Implementado e verificado
 

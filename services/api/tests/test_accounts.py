@@ -151,3 +151,17 @@ def test_experience_preferences_isolation_versions_and_profile_preservation(clie
     client.post('/auth/logout',headers=headers);restored,headers=login(client);assert restored['experience']==value
     for patch in [{'mode':'admin'},{'theme':'invalid'},{'textSize':'tiny'},{'highContrast':1},{'primaryAreas':['unknown']},{'onboardingStep':True},{'onboardingStep':7},{'role':'doctor'}]:
         assert client.patch('/auth/preferences',json={**value,**patch},headers={**headers,'If-Match':'3'}).status_code==422
+
+
+def test_native_transport_without_origin_does_not_bypass_web_contract(client):
+    """Diagnostic baseline, not native authentication support."""
+    register(client)
+    denied = client.post('/auth/login', json={'email': 'one@example.test', 'password': PASSWORD})
+    assert denied.status_code == 403
+    assert not client.cookies.get(accounts.COOKIE)
+    user, headers = login(client)
+    token_only = {'X-Pulso-CSRF': headers['X-Pulso-CSRF']}
+    assert client.post('/auth/logout', headers=token_only).status_code == 403
+    assert client.get('/auth/session').json()['user']['id'] == user['id']
+    assert client.post('/auth/logout', headers=headers).status_code == 200
+    assert client.get('/auth/session').json()['user'] is None
