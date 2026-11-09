@@ -54,7 +54,7 @@ function SourceList({topic,compact=false}:{topic:Topic;compact?:boolean}){
 export function LearnScreen({selectedId,onSelect,initialCategory='Todas'}:{selectedId:string|null;onSelect:(id:string|null)=>void;initialCategory?:Category|'Todas'}){
  const [query,setQuery]=useState(''),[category,setCategory]=useState<Category|'Todas'>(initialCategory),education=useContext(Education);
  const topic=selectedId?topicById(selectedId):undefined,featured=todayTopic();const results=searchTopics(query,category);
- if(topic)return <View style={layout.stack}><Button label="Voltar aos tópicos" onPress={()=>onSelect(null)}/><Card><T kind="small">APRENDER · {topic.category.toLocaleUpperCase('pt-PT')}</T><T kind="heading" nativeID="learning-topic-title" tabIndex={-1}>{topic.title}</T><T>{topic.summary}</T><SafetyNote/><TopicSections topic={topic}/><SourceList topic={topic}/>
+ if(topic)return <View style={layout.stack}><Button label="← Voltar aos tópicos" accessibilityLabel="Voltar aos tópicos" onPress={()=>onSelect(null)}/><Card><T kind="small">APRENDER · {topic.category.toLocaleUpperCase('pt-PT')}</T><T kind="heading" nativeID="learning-topic-title" tabIndex={-1}>{topic.title}</T><T>{topic.summary}</T><SafetyNote/><TopicSections topic={topic}/><SourceList topic={topic}/>
   {topic.parameter&&<Button label="Ver histórico deste parâmetro" primary onPress={()=>education.history(topic.parameter!)}/>}
   <T kind="heading">Continuar a aprender</T><View style={layout.row}>{topic.related.map(id=>{const related=topicById(id);return related?<Button key={id} label={'Ler: '+related.title} onPress={()=>onSelect(id)}/>:null;})}</View>
  </Card></View>;

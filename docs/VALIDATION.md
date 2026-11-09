@@ -1,3 +1,15 @@
+# v0.7.4 — B3, 09/11/2026
+
+Base e0bc5c2. Typecheck aprovado. Apenas `public-b3.spec.ts` executado: **1 percurso integrado Chromium aprovado**, log tmp/v074-b3-final.log. Conta inteiramente sintética, SQLite nova em tmp, API 8014/web 8784. Sem repetição de A/B1/B2, suite completa, carga, API completa ou inferência Ollama. Exportação web necessária ao Playwright passou. Base normal não foi utilizada pelos testes.
+
+Verificações: cancelar saída do Perfil conserva nome; aceitar descarte permite sair. Acontecimento novo/edição conserva campos ao recusar cancelamento/navegação e só guarda após confirmação existente. Artigo volta à biblioteca pelo navegador. Medição editada conserva valor ao recusar Voltar (interno e navegador); cancelar com descarte permite voltar à lista. Edição de título do exame permanece ao recusar saída e pode ser descartada. Detalhes de medição/exame regressam à lista com Voltar do navegador. O primeiro ensaio encontrou um contexto nulo confundido com contexto ausente; corrigido e repetido. O regresso do resultado ao exame de origem está implementado; esse ramo específico não foi exercitado por este PDF guardado sem resultados.
+
+Infraestrutura partilhada editNavigation: baseline em memória por editor, diálogo nativo do navegador, aviso beforeunload, proteção de hash/popstate e contexto composto só de identificadores. Nenhum campo médico/password/rascunho é gravado no histórico do navegador. Sem alterações à API, autenticação, autorização, CSRF, If-Match ou pipeline documental. C e seguintes não foram alterados.
+
+Limites: não houve dispositivo/emulador, leitor de ecrã, zoom real nem auditoria de todos os controlos. Nativo pede guardar/cancelar antes da saída global; cancelamento local preparado com Alert, sem teste físico. Sem URLs individuais partilháveis. Relatório não declara validação clínica. Repetir em apps/mobile com as portas/variáveis isoladas documentadas abaixo: `npx.cmd playwright test public-b3.spec.ts --reporter=line`.
+
+---
+
 # v0.7.4 em curso — B2: navegação de Registar, 09/11/2026
 
 Base `3ef956c`. **59 TypeScript e 16 Chromium aprovados, zero falhas esperadas neste lote.** Typecheck/exportação web aprovados. Logs tmp/v074-b2-unit.log e tmp/v074-block-b2-public.log; repetição final direcionada em tmp/v074-block-b2-final.log. O primeiro ensaio do cancelamento de recarga esperava uma navegação que tinha sido cancelada; o rascunho permanecia no snapshot. O teste passou a limitar essa espera a três segundos e verificar explicitamente o campo preservado.

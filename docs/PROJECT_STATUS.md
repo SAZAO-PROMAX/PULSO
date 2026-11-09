@@ -14,7 +14,13 @@ Câmara web conserva a pré-visualização ao navegar, mas encerra vídeo/pedido
 
 Validação atual: **59 TypeScript e 16 Chromium aprovados**, sem falhas esperadas restantes no ficheiro de reprodução. Typecheck/exportação web aprovados. Testes em SQLite temporária/portas 8784 e 8014, apenas contas/documentos sintéticos; base normal intacta. API completa, inferência real e carga não repetidas; resultados/limites em VALIDATION.md.
 
-**Ponto de continuação: B3, antes de C.** Estender navegação/contexto/proteção de alterações aos detalhes de Histórico, acontecimentos, artigos e edição de perfil/registos; estes fluxos ainda não têm cobertura global equivalente a Registar. A revisão compacta, estados documentais e regressão HDL/proposta extra continuam por implementar. Não declarar a v0.7.4 concluída nem repetir carga/1.000 contas sem necessidade. Próximos objetivos no final desta ficha.
+**B3 concluído na web — 09/11/2026**, base `e0bc5c2`. Checkpoint correspondente: `git log -1 -- docs/PROJECT_STATUS.md`. Histórico/resultados, acontecimentos, artigos e vistas do Perfil conservam contexto no histórico do navegador. Edições de medições, exames, acontecimentos e Perfil pedem descarte explícito antes de sair/cancelar; recarga tem aviso enquanto há alterações. Valores e rascunhos não entram em history.state: apenas identificadores de contexto. Guarda continua dependente do sucesso da API/If-Match; conflitos mantêm campos. Voltar do resultado aberto num exame regressa ao exame de origem.
+
+Validação exclusiva desta execução: typecheck aprovado e **um percurso Chromium B3 integrado aprovado**, com múltiplas verificações de cancelamento/descarte, Perfil, acontecimentos, artigos, medições, exames e Voltar do navegador. Log tmp/v074-b3-final.log; detalhes em VALIDATION.md. A/B1/B2, suite completa, API completa, carga e inferência não foram repetidos. Base normal preservada; conta sintética e SQLite temporária nas portas 8784/8014. A versão continua em desenvolvimento, sem declarar a v0.7.4 final.
+
+Limites: contexto conservado pelo histórico da página, sem ligações individuais partilháveis; nenhuma persistência de rascunhos em disco. Confirmações web usam o diálogo do navegador. Nativo possui aviso e cancelamento local preparado, mas a saída global com edição pendente exige guardar/cancelar primeiro; sem teste físico/emulador ou garantia de gestos. Sem certificação de acessibilidade.
+
+**Ponto de continuação: C — revisão documental compacta. Não iniciado nesta execução.** Depois, D–G para fidelidade/estados/confirmações/refinamento e validação final. Terminar esta execução em B3.
 
 ## Versão e Git
 
@@ -78,7 +84,7 @@ Capturas/geradores/DB de ensaio em tmp, ignorados pelo Git; comparação web e f
 
 ## Próximos três objetivos
 
-1. B3: concluir a navegação contextual e proteção de alterações fora de Registar, com testes web; conservar as limitações nativas explícitas.
+1. C: implementar a revisão compacta na próxima execução autorizada, mantendo a confirmação humana e a evidência.
 2. C: substituir a revisão extensa por resumo/lista compacta e edição contextual, preservando evidência, correções, exclusões e confirmação humana.
 3. D–G: regressões independentes de HDL/data/proposta extra e estados documentais, simplificação das confirmações redundantes e refinamento visual com regressão final. Só então concluir/publicar a versão 0.7.4.
 
