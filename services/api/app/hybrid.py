@@ -15,7 +15,7 @@ MAX_UPLOAD=2*1024*1024
 MAX_PAGES=3
 MAX_TEXT=30000
 MIMES={"application/pdf":"pdf","image/png":"png","image/jpeg":"jpeg"}
-VERSION="pulso-hybrid-0.4"
+VERSION="pulso-hybrid-0.4-d1"
 
 def row_supported(raw,excerpt):
     if not raw.original_parameter or not raw.original_value or not raw.unit:return False
@@ -25,11 +25,16 @@ def row_supported(raw,excerpt):
     unit=re.escape(raw.unit.strip())
     return bool(re.match(r"^\s*"+name+r"(?:\s*\|\s*|\s+)"+value+r"(?:\s*\|\s*|\s+)"+unit+r"(?:\s|\||$)",excerpt,re.I))
 
-def date_supported(raw,text):
+def date_supported(raw,text,excerpt=''):
     result=iso_date(raw)
     if not result:return None
-    y,m,d=result.split("-")
-    return result if result in text or f"{d}/{m}/{y}" in text else None
+    def tokens(source):
+        return {iso_date(match.group()) for match in re.finditer(r"(?<![0-9])(?:[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}/[0-9]{2}/[0-9]{4})(?![0-9])",source)}-{None}
+    dates=tokens(text)
+    if result not in dates:return None
+    # A row-local date or one unambiguous date in the source; never borrow another row's date.
+    if dates=={result} or (excerpt and excerpt in text and text.count(excerpt)==1 and result in tokens(excerpt)):return result
+    return None
 
 def validated_candidate(raw,page,text,method,metrics):
     issues=[];parameter=parameter_id(raw.original_parameter)
@@ -38,7 +43,7 @@ def validated_candidate(raw,page,text,method,metrics):
     if not unit:issues.append("Unidade ausente ou não reconhecida: rever sem conversão automática.")
     excerpt=raw.excerpt or ""
     exact=bool(text and excerpt and len(excerpt)<=1500 and excerpt in text)
-    backed=exact and len(excerpt)<=350 and excerpt.count("\n")<=2 and row_supported(raw,excerpt)
+    backed=exact and len(excerpt)<=350 and excerpt.count("\n")<=2 and row_supported(raw,excerpt) and text.count(excerpt)==1
     verification="text_verified" if backed else "visual_unverified" if method=="ollama_vision" else "source_unverified"
     if not backed:issues.append("Valor/associação não verificável por texto independente. Conferir no original.")
     value=numeric(raw.original_value)
@@ -49,10 +54,10 @@ def validated_candidate(raw,page,text,method,metrics):
     def source_field(value,label,source=None):
         if value is None:return None
         if method=="ollama_vision":return value
-        if value.casefold() in (text if source is None else source).casefold():return value
+        if re.search(r"(?<!\w)"+re.escape(value)+r"(?!\w)",text if source is None else source,re.I):return value
         issues.append(label+" sem evidência textual.");return None
-    collection=iso_date(raw.collection_date) if method=="ollama_vision" else date_supported(raw.collection_date,text)
-    report=iso_date(raw.report_date) if method=="ollama_vision" else date_supported(raw.report_date,text)
+    collection=iso_date(raw.collection_date) if method=="ollama_vision" else date_supported(raw.collection_date,text,excerpt)
+    report=iso_date(raw.report_date) if method=="ollama_vision" else date_supported(raw.report_date,text,excerpt)
     if (raw.collection_date and not collection) or (raw.report_date and not report):issues.append("Data ausente, inválida ou sem evidência.")
     date=collection or report
     if not date:issues.append("Data por preencher na revisão.")
@@ -64,6 +69,7 @@ def validated_candidate(raw,page,text,method,metrics):
     return {"parameter":parameter,"originalParameter":raw.original_parameter,"value":raw.original_value or "",
         "numericValue":value if backed else None,"unit":raw.unit or "","normalizedUnit":unit,
         "referenceText":reference,"method":source_field(raw.method,"Método",excerpt if exact else ''),"context":source_field(raw.specimen,"Amostra",excerpt if exact else ''),
+        "sourceFields":{"collectionDate":raw.collection_date,"reportDate":raw.report_date,"method":raw.method,"context":raw.specimen},
         "date":date,"collectionDate":collection,"reportDate":report,"dateKind":"collection" if collection else "report" if report else None,
         "laboratory":source_field(raw.laboratory,"Laboratório"),"page":page.number+1 if page is not None else 1,"excerpt":excerpt,
         "region":region,"verification":verification,"extractionMethod":method,"model":metrics.get("model"),

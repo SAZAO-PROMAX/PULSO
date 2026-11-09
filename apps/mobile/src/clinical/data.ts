@@ -20,7 +20,7 @@ export interface Result {
  id:string; ownerId:string; synthetic:boolean; parameter:Parameter; value:number|null;
  unit:string; measuredAt:string|null; documentId:string|null; method:string|null; context:string|null;
  source?:'manual'; sessionId?:string; createdAt?:string; laboratory?:string|null;
- evidence?:{page:number|null;excerpt:string;extractedValue:string;extractedUnit:string;originalParameter?:string|null;extractedDate?:string|null;extractedLaboratory?:string|null;extractedMethod?:string|null;extractedContext?:string|null;verification?:string;extractionMethod?:string;model?:string|null;modelDigest?:string|null;ollamaVersion?:string|null;processedAt?:string;collectionDate?:string|null;reportDate?:string|null;region?:{x0:number;y0:number;x1:number;y1:number;units:string}|null};
+ evidence?:{sourceFields?:{collectionDate:string|null;reportDate:string|null;method:string|null;context:string|null};page:number|null;excerpt:string;extractedValue:string;extractedUnit:string;originalParameter?:string|null;extractedDate?:string|null;extractedLaboratory?:string|null;extractedMethod?:string|null;extractedContext?:string|null;verification?:string;extractionMethod?:string;model?:string|null;modelDigest?:string|null;ollamaVersion?:string|null;processedAt?:string;collectionDate?:string|null;reportDate?:string|null;region?:{x0:number;y0:number;x1:number;y1:number;units:string}|null};
  datePrecision?:'day';
  referenceText:string|null; status:Confirmation;
 }
@@ -62,7 +62,7 @@ export function validateData(data:ClinicalData):void {
 export interface ClinicalRepository {load(ownerId:string):Promise<ClinicalData>}
 export type Point = Result & {value:number;measuredAt:string};
 export interface Series {key:string;parameter:Parameter;unit:string;method:string;context:string;points:Point[]}
-const canonicalText=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toLowerCase();
+export const canonicalText=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toLowerCase();
 const units={...labUnits,systolic:['mmHg'],diastolic:['mmHg'],heart_rate:['bpm'],spo2:['%']};
 export function canonicalUnit(parameter:Parameter,unit:string){return units[parameter]?.find(u=>u.toLowerCase()===unit.trim().replace(/[µμ]/g,'u').toLowerCase());}
 export function exclusionReason(data:ClinicalData,r:Result):string|null {

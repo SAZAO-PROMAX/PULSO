@@ -24,7 +24,13 @@ Limites: contexto conservado pelo histórico da página, sem ligações individu
 
 Validação de C: **11 TypeScript e 2 percursos Chromium direcionados aprovados**, typecheck/exportação web aprovados. Uma fixture controlada de propostas testa 15 parâmetros mais uma proposta incompleta; guarda real na API isolada de 15 resultados após correções/exclusão, proveniência, histórico/gráfico, recarga, teclado, navegação e logout com novo rascunho. Outro percurso usa o parser determinístico real do PDF conhecido. Três modos/temas e cinco larguras exercitados. Só dados sintéticos e SQLite temporária; sem carga, inferência, migração ou alteração à base normal. Detalhes/limites em VALIDATION.md.
 
-**Ponto de continuação: D — fidelidade documental. Não iniciado.** Versão executável continua 0.7.3; E–G e validação geral permanecem para pedidos futuros. Não tratar a fixture de propostas de UI como nova medição da precisão do Ollama. Sem ensaio Android/iOS, leitor de ecrã ou zoom real.
+**D concluído — 09/11/2026**, base `9740621`. Commit correspondente por `git log -1 -- docs/PROJECT_STATUS.md`. Artefacto histórico confirma data 2026-11-08 no texto/PDF e HDL 52 mg/dL. O aviso histórico localiza a rejeição na normalização/validação da data proposta; o JSON bruto não existe, pelo que formato inválido e ausência de suporte exato não podem ser distinguidos retrospetivamente. Não é erro demonstrado do frontend e não se copiou a data de outro analito. A extra histórica não tinha parâmetro reconhecido nem valor; origem (cabeçalho/linha/outro) não determinada pelos artefactos conservados.
+
+Correções demonstradas: datas com múltiplas possibilidades só aceites com evidência local única; excertos repetidos não recebem conferência textual inequívoca; método por substring (direto/indireto) recusado. Campos propostos antes da validação ficam em sourceFields na evidência, incluindo datas rejeitadas, método/amostra; não equivalem a texto documental comprovado. Duplicações exatas continuam recusadas, métodos/amostras distintos podem coexistir sem colapso. UI distingue evidência textual conferida, visual a conferir e insuficiente; data ausente aparece Data por confirmar. Parser revisto identificado como pulso-hybrid-0.4-d1; versão executável permanece 0.7.3.
+
+Validação D: **46 API, 12 TypeScript e 1 Chromium direcionados aprovados**, typecheck aprovado. Todos determinísticos/transportes controlados, sem GPU/Ollama real, sem benchmark ou carga. SQLite temporária/loopback, base normal preservada. Persistência do campo proposto rejeitado, exclusão da extra, original e gráfico verificados no percurso compacto. Evidência visual sem OCR continua a exigir revisão; não é prova de erro ou validação clínica. Detalhes em VALIDATION.md.
+
+**Ponto de continuação: E. Não iniciado.** Não avançar para E/F/G sem novo pedido; manter limitações de precisão, validação clínica e testes nativos.
 
 ## Versão e Git
 
@@ -88,7 +94,7 @@ Capturas/geradores/DB de ensaio em tmp, ignorados pelo Git; comparação web e f
 
 ## Próximos três objetivos
 
-1. D: investigar/regredir HDL sem data, proposta extra incompleta e associações/evidência, com ground truth independente; não alterar o benchmark para ocultar casos difíceis.
+1. E: rever apenas confirmações redundantes, preservando permissões e revisão humana, mediante novo pedido.
 2. E/F: simplificar apenas confirmações redundantes e refinar os percursos, após autorização específica.
 3. G: adaptar restantes testes históricos que pressupõem campos sempre abertos, executar regressão geral e validação nativa/acessível apropriada antes de concluir a v0.7.4.
 

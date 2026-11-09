@@ -1,9 +1,10 @@
-import {Parameter,Result,labUnits,canonicalUnit} from './data';
+import {Parameter,Result,labUnits,canonicalUnit,canonicalText} from './data';
 export const supportedUnits=labUnits;
 export interface Candidate {
  parameter:Parameter|null;originalParameter?:string|null;value:string;numericValue?:number|null;unit:string;normalizedUnit?:string|null;
  referenceText:string|null;method:string|null;context:string|null;page:number|null;excerpt:string;issues:string[];
  date?:string|null;collectionDate?:string|null;reportDate?:string|null;dateKind?:string|null;laboratory?:string|null;
+ sourceFields?:{collectionDate:string|null;reportDate:string|null;method:string|null;context:string|null};
  verification?:string;extractionMethod?:string;model?:string|null;modelDigest?:string|null;ollamaVersion?:string|null;
  region?:{x0:number;y0:number;x1:number;y1:number;units:string}|null;reviewState?:string;
 }
@@ -20,7 +21,7 @@ export function confirmRows(owner:string,docId:string,parsed:Extraction,rows:Rev
  const chosen=rows.flatMap((row,i)=>row.include?[{row,raw:parsed.candidates[i],i}]:[]);
  if(!chosen.length)throw Error('Escolhe pelo menos um resultado.');
  // Different dates, pages or source rows are legitimate; never collapse by analyte alone.
- const keys=chosen.map(({row,raw})=>JSON.stringify([rowLabel(row,raw),row.date??(raw.date===undefined?parsed.date:raw.date),row.page??raw.page,raw.excerpt,raw.region??null]));
+ const keys=chosen.map(({row,raw})=>JSON.stringify([rowLabel(row,raw),row.date??(raw.date===undefined?parsed.date:raw.date),row.page??raw.page,raw.excerpt,raw.region??null,canonicalText(row.method),canonicalText(row.context)]));
  if(new Set(keys).size!==keys.length)throw Error('Possível linha duplicada: revê e exclui a repetição exata.');
  return chosen.map(({row,raw,i})=>{
   const parameter=rowLabel(row,raw),date=dateValue(row.date??(raw.date===undefined?parsed.date:raw.date));
@@ -31,7 +32,7 @@ export function confirmRows(owner:string,docId:string,parsed:Extraction,rows:Rev
    measuredAt:date?date+'T12:00:00+00:00':null,documentId:docId,method:row.method.trim()||null,context:row.context.trim()||null,
    laboratory:row.laboratory===undefined?(raw.laboratory??parsed.laboratory??null):(row.laboratory.trim()||null),referenceText:raw.referenceText,status:'user_confirmed',datePrecision:'day',
    evidence:{page,excerpt:raw.excerpt,extractedValue:raw.value,extractedUnit:raw.unit,originalParameter:raw.originalParameter,
-    extractedDate:raw.date,extractedLaboratory:raw.laboratory,extractedMethod:raw.method,extractedContext:raw.context,
+    sourceFields:raw.sourceFields,extractedDate:raw.date,extractedLaboratory:raw.laboratory,extractedMethod:raw.method,extractedContext:raw.context,
     verification:raw.verification??'legacy',extractionMethod:raw.extractionMethod??'deterministic',model:raw.model,modelDigest:raw.modelDigest,
     ollamaVersion:raw.ollamaVersion,processedAt:parsed.processedAt,collectionDate:raw.collectionDate,reportDate:raw.reportDate,region:page===raw.page?raw.region:null}};
  });

@@ -1,3 +1,7 @@
+## Revisão de validação D — 09/11/2026
+
+Parser pulso-hybrid-0.4-d1: datas ambíguas exigem evidência local única; excertos repetidos não recebem text_verified e metadados deixam de corresponder por substring de palavras. sourceFields conserva campos propostos ao validador (incluindo fallback de página anterior), sem substituir campos confirmados ou representar prova clínica. Investigação HDL/extra, regressões determinísticas e limites em VALIDATION.md, secção D. Não houve nova inferência real; versões de modelo/fila mantidas.
+
 # Extração local PULSO v0.4 — 08/11/2026
 
 ## Incremento v0.6 — fila limitada

@@ -1,3 +1,33 @@
+# v0.7.4 — D: fidelidade documental, 09/11/2026
+
+Base 9740621. **46 API + 12 TypeScript + 1 Chromium aprovados**, typecheck/exportação web aprovados. Sem inferência real, GPU, carga ou suite completa. Logs tmp/v074-d-api-final.log, tmp/v074-d-unit-final.log e tmp/v074-d-browser-final.log. Primeira execução API restrita não produziu resultado e foi interrompida; execução autorizada concluiu em base temporária. Avisos PyMuPDF/Starlette já conhecidos.
+
+## Investigação histórica, sem confundir com nova extração
+
+Inspecionados tmp/v073-doc-repeat/fifteen_rows.pdf e results.json. PDF/texto independente contêm Data do relatorio: 2026-11-08 e Colesterol HDL | 52 | mg/dL | referencia ficticia | direto | plasma. A observação histórica HDL tem data nula e aviso Data ausente, inválida ou sem evidência, emitido pelo validador quando recebe uma data proposta não suportada. Isto localiza a rejeição na normalização/validação, antes do frontend. O JSON bruto anterior ao validador não foi guardado: não é possível recuperar o literal, nem decidir entre formato inválido e data sem correspondência textual. A regressão reproduz essa classe com 2026-11-080; **não se afirma que foi esse literal histórico**. A data não foi preenchida automaticamente.
+
+A extra histórica tem parâmetro normalizado nulo, valor vazio, unidade não reconhecida e revisão necessária. O artefacto não contém nome/excerto bruto suficiente para decidir entre cabeçalho, desconhecido ou linha incompleta. Não foi inventado número nem analito. Conserva-se proposta na revisão para correção/exclusão e original intacto. Nos 14 casos históricos sem conferência textual, 12 eram visuais e dois eram HDL/extra; ausência de verificação não demonstra erro de valor. Os totais v0.7.3 permanecem históricos.
+
+## Correções e regressões desta execução
+
+- Testes date_supported demonstram aceitação indevida anterior de prefixo de data e data existente noutra linha de página com duas datas. Agora exige token e uma única data na página, ou data no excerto exato e único da própria linha. Sem datas inventadas/associação por proximidade. Política conservadora pode exigir mais revisão em relatórios com várias datas legítimas.
+- Excertos textuais repetidos não são prova de ocorrência única; mantêm valor/unidade originais e ficam source_unverified. Visão continua visual_unverified, sem OCR independente. Verificação textual refere-se à associação nome/valor/unidade; não certifica todos os metadados.
+- Método direto encontrado apenas dentro de indireto era aceite por substring; agora exige fronteiras textuais. Método/amostra propostos continuam em sourceFields mesmo se normalização os rejeitar. sourceFields contém os campos apresentados ao validador, incluindo o fallback de página já existente; não é cópia integral do JSON bruto nem prova de origem documental.
+- confirmRows distingue métodos/amostras ao verificar duplicações. Repetição exata continua bloqueada; dois métodos explicitamente revistos geram duas séries, sem conversões. Unknown/ND/unidade incompatível/cabeçalho/extra vazio permanecem propostas pendentes, não medições automáticas.
+- Integração C: três rótulos de evidência e Data por confirmar; campos propostos detalhados no painel. Teste controlado persiste sourceFields.reportDate rejeitada, mantém extractedDate nula e data corrigida separada, guarda 15 linhas revistas excluindo extra e mantém SHA do original/histórico/gráfico. Propostas controladas não são nova inferência.
+
+Comandos na raiz, Node no PATH:
+
+```powershell
+.venv/Scripts/python.exe -m pytest services/api/tests/test_document_fidelity.py services/api/tests/test_local_extraction.py services/api/tests/test_store.py -q --basetemp=tmp/pytest-v074-d-repeticao
+npx.cmd --prefix apps/mobile tsx --test apps/mobile/tests/reviewState.test.ts apps/mobile/tests/persistence.test.ts
+npm.cmd run typecheck --prefix apps/mobile
+```
+
+Chromium: apenas public-compact-review.spec.ts, com configuração loopback 8784/8014 e SQLite em tmp documentada em C abaixo. Não alterados ground truth, limites de GPU/fila, modelos, autenticação, CSRF/Origin ou versões If-Match. Sem migração nem alteração à base normal. Parser de validação identificado por pulso-hybrid-0.4-d1; aplicação/API continuam 0.7.3. Sem Android/iOS, validação clínica, OCR independente ou promessa de precisão universal. E/F/G não iniciados.
+
+---
+
 # v0.7.4 — C: revisão compacta, 09/11/2026
 
 Base 7c11026. **11 testes TypeScript direcionados e 2 percursos Chromium aprovados**, typecheck/exportação web aprovados. Logs tmp/v074-c-unit-final.log, tmp/v074-c-final.log e repetição específica com Voltar/Avançar em tmp/v074-c-navigation-final.log. Nenhuma suite completa, carga, 1.000 contas, inferência Ollama, benchmark GPU ou teste API completo executado. A API real de teste usa SQLite nova em tmp e loopback 8014/web 8784; base normal preservada.

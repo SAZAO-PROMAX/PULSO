@@ -131,6 +131,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  {editing===String(i)&&<Card><T kind="heading" nativeID="review-editor-title" tabIndex={-1}>Rever {label}</T><Button label="← Voltar aos resultados" accessibilityLabel="Voltar aos resultados" variant="tertiary" onPress={closeEditor}/>
  {p?<MedicalTerm parameter={p} label={label}/>:<T kind="heading">{label}</T>}<T kind="small">Nome no original: {raw.originalParameter??'Introdução manual'} · Página {raw.page??'não indicada'}</T>
  <T kind="small">Leitura: {raw.extractionMethod==='deterministic'?'leitura automática de texto':raw.extractionMethod==='manual'?'manual':'modelo local'}{raw.model?' · '+raw.model:''}</T>
+ <T kind="small">Campos propostos pelo motor, antes da validação: data de colheita {raw.sourceFields?.collectionDate??'não fornecida'}, data do relatório {raw.sourceFields?.reportDate??'não fornecida'}, método {raw.sourceFields?.method??raw.method??'não fornecido'}, amostra {raw.sourceFields?.context??raw.context??'não fornecida'}. Conferir no original.</T>
  <T>Referência: {raw.referenceText??'Não fornecida'}</T><T kind="small">{raw.excerpt}</T>{raw.issues.map((issue,j)=><T key={j} kind="small">{issue}</T>)}
  <Button label={(r.include?'Excluir ':'Incluir ')+label} variant="tertiary" onPress={()=>change(i,{include:!r.include})}/>
  {r.include&&<><Button label={'Parâmetro: '+label} onPress={()=>setChoosing(choosing===i?null:i)}/>
