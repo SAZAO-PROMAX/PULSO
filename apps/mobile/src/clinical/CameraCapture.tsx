@@ -4,9 +4,10 @@ import * as ImagePicker from 'expo-image-picker';
 import {Button,Card,T,layout} from '../ui';
 import {checkPhoto,InputDocument,stripJpegMetadata} from './inputDocument';
 import {documentDigest} from './documentDigest';
-export function CameraCapture({onConfirm,onCancel,galleryOnly=false}:{onConfirm:(file:InputDocument)=>void;onCancel:()=>void;galleryOnly?:boolean}){
+export function CameraCapture({onConfirm,onCancel,galleryOnly=false,onDraftChange}:{visible?:boolean;onDraftChange?:(dirty:boolean)=>void;onConfirm:(file:InputDocument)=>void;onCancel:()=>void;galleryOnly?:boolean}){
  const [photo,setPhoto]=useState<InputDocument|null>(null),[checked,setChecked]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),active=useRef(true);
  useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
+ useEffect(()=>{onDraftChange?.(!!photo);},[photo,onDraftChange]);
  async function pick(camera:boolean){if(busy)return;setBusy(true);setError('');try{
   if(camera){const permission=await ImagePicker.requestCameraPermissionsAsync();if(!permission.granted)throw Error('Acesso à câmara recusado. Pode autorizar nas definições ou selecionar uma imagem.');}
   const options:ImagePicker.ImagePickerOptions={mediaTypes:['images'],base64:true,exif:false,allowsEditing:false,quality:1};

@@ -2,12 +2,13 @@ import React,{useEffect,useRef,useState} from 'react';
 import {View} from 'react-native';
 import {Button,Card,T,layout,useTheme} from '../ui';
 import {checkPhoto,InputDocument,MAX_DOCUMENT_BYTES} from './inputDocument';
-export function CameraCapture({onConfirm,onCancel,galleryOnly=false}:{onConfirm:(file:InputDocument)=>void;onCancel:()=>void;galleryOnly?:boolean}){
+export function CameraCapture({onConfirm,onCancel,galleryOnly=false,visible=true,onDraftChange}:{visible?:boolean;onDraftChange?:(dirty:boolean)=>void;onConfirm:(file:InputDocument)=>void;onCancel:()=>void;galleryOnly?:boolean}){
  const {colors:c}=useTheme(),video=useRef<HTMLVideoElement>(null),stream=useRef<MediaStream|null>(null),input=useRef<HTMLInputElement>(null),generation=useRef(0);
  const [live,setLive]=useState(false),[ready,setReady]=useState(false),[pending,setPending]=useState(false),[photo,setPhoto]=useState<File|null>(null),[url,setUrl]=useState(''),[checked,setChecked]=useState(false),[error,setError]=useState('');
  const supported=typeof window!=='undefined'&&window.isSecureContext&&!!navigator.mediaDevices?.getUserMedia;
  function stop(){generation.current++;stream.current?.getTracks().forEach(track=>track.stop());stream.current=null;setLive(false);setReady(false);setPending(false);}
- useEffect(()=>{document.getElementById('camera-title')?.focus();},[]);
+ useEffect(()=>{if(visible)document.getElementById(photo?'camera-review-title':'camera-title')?.focus();else stop();},[visible]);
+ useEffect(()=>{onDraftChange?.(!!photo);},[photo,onDraftChange]);
  useEffect(()=>{if(url)document.getElementById('camera-review-title')?.focus();},[url]);
  useEffect(()=>()=>{generation.current++;stream.current?.getTracks().forEach(track=>track.stop());},[]);
  useEffect(()=>{if(!photo){setUrl('');return;}const uri=URL.createObjectURL(photo);setUrl(uri);return()=>URL.revokeObjectURL(uri);},[photo]);

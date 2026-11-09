@@ -55,8 +55,15 @@ test('revisão atual: campos permanentes, Enter num valor não confirma e guarda
 test('Voltar do navegador deve regressar à categoria, não saltar para o Hub',async({page})=>{
  await activate(page,'Registar');await activate(page,'Importar ficheiro');await activate(page,'Análises clínicas');await activate(page,'Análises ao sangue');
  await page.goBack();
- test.fail(true,'v0.7.3: os passos internos não são entradas de histórico.');
  await expect(page.getByRole('button',{name:'Análises ao sangue',exact:true})).toBeVisible();
+ await page.goForward();await expect(page).toHaveURL(/#\/record\/form\/laboratory\/blood$/);
+ await page.getByLabel('Selecionar documento sintético').setInputFiles(pdf);await page.getByLabel('Nome do documento',{exact:true}).fill('Rascunho sintético de navegação');
+ await page.goBack();await expect(page.getByRole('button',{name:'Análises ao sangue',exact:true})).toBeVisible();await page.goForward();await expect(page.getByLabel('Nome do documento',{exact:true})).toHaveValue('Rascunho sintético de navegação');
+ await activate(page,'Histórico');await expect(page.getByRole('heading',{name:'Registos',exact:true})).toBeVisible();await page.goBack();await expect(page.getByLabel('Nome do documento',{exact:true})).toHaveValue('Rascunho sintético de navegação');
+ await activate(page,'Início');await activate(page,'Registar');await activate(page,'Retomar registo por guardar');await expect(page.getByLabel('Nome do documento',{exact:true})).toHaveValue('Rascunho sintético de navegação');
+ const dialog=page.waitForEvent('dialog'),reload=page.reload({timeout:3000}).catch(()=>{});const warning=await dialog;expect(warning.type()).toBe('beforeunload');await warning.dismiss();await reload;
+ await expect(page.getByLabel('Nome do documento',{exact:true})).toHaveValue('Rascunho sintético de navegação');
+ await activate(page,'Abrir menu de perfil');await activate(page,'Terminar sessão');await expect(page.getByRole('button',{name:'Histórico',exact:true})).toHaveCount(0);await page.goBack();await expect(page.getByLabel('Nome do documento',{exact:true})).toHaveCount(0);
 });
 
 

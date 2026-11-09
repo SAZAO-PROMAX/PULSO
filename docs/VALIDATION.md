@@ -1,3 +1,19 @@
+# v0.7.4 em curso — B2: navegação de Registar, 09/11/2026
+
+Base `3ef956c`. **59 TypeScript e 16 Chromium aprovados, zero falhas esperadas neste lote.** Typecheck/exportação web aprovados. Logs tmp/v074-b2-unit.log e tmp/v074-block-b2-public.log; repetição final direcionada em tmp/v074-block-b2-final.log. O primeiro ensaio do cancelamento de recarga esperava uma navegação que tinha sido cancelada; o rascunho permanecia no snapshot. O teste passou a limitar essa espera a três segundos e verificar explicitamente o campo preservado.
+
+- Rotas de Registar só aceitam passos/categorias/tipos explícitos do catálogo. Rejeitam parâmetros desconhecidos, tipos planeados, travessias e URLs externas. Sem dados/nomes documentais no URL. A mesma autenticação protege ligações diretas.
+- Voltar/Avançar do navegador conserva o formulário e o documento. Ir a Histórico/Início e regressar retoma o rascunho, sem confirmar ou reextrair. Um componente de registo fica montado dentro da Shell da conta; é desmontado ao terminar sessão/mudar de dono. Não há armazenamento de rascunhos em disco ou localStorage.
+- Aviso beforeunload existe apenas com documento/fotografia/alterações por guardar. Cancelar a recarga conserva os campos; terminar sessão limpa a memória privada e Voltar não revela o documento. A recarga aceite continua a perder o rascunho, por decisão explícita no aviso do navegador.
+- Câmara sintética: pré-visualização mantida entre separadores; streams encerradas quando a câmara fica oculta. Reabrir exige ação para ligar novamente vídeo. Permissão apenas por ação explícita; qualidade da fotografia e confirmação humana dos resultados mantidas.
+- Chromium completo conserva as regressões de autenticação, permissões recusadas, importação, persistência, três modos e layouts. A versão executável continua 0.7.3 até acabar o sprint; não se declara uma v0.7.4 completa.
+
+**Limites:** B2 cobre Registar na web, não todo o bloco B. B3 deverá tratar detalhes/artigos/acontecimentos/perfil e proteção de edições fora de Registar antes de iniciar C. BackHandler Android foi acrescentado em código; sem dispositivo/emulador, sem alegar gestos iOS verificados. Backend/pipeline/SQLite não foram alterados; não se repetiram API completa, Ollama real, carga ou 1.000 contas. Caso difícil HDL continua pendente de D.
+
+Repetir a suite pública com as variáveis/portas do comando A abaixo: `npx.cmd playwright test --reporter=line`. Usar um terminal reservado aos testes e fechá-lo antes do arranque normal para não herdar EXPO_PUBLIC_API_URL de teste. A base normal/serviços existentes foram preservados. Artefactos permanecem em tmp, fora do Git.
+
+---
+
 # v0.7.4 em curso — bloco B1, 09/11/2026
 
 Checkpoint anterior A: `8f33c82`. B1 corrige a navegação **dentro de Registar**, não todo o bloco B. Versão executável mantém 0.7.3 até conclusão da v0.7.4.

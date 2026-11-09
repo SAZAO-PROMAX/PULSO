@@ -6,15 +6,15 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 
 Versão executável continua **0.7.3**; não declarar a v0.7.4 concluída. Base `1c6e0cc`; commit de atualização consultável por `git log -1 -- docs/PROJECT_STATUS.md`.
 
-**Bloco A concluído, checkpoint `8f33c82`. Bloco B1 concluído: navegação local de Registar e foco**, sem declarar o bloco B completo. A instância normal/base não foi alterada pelos ensaios; testes usam contas sintéticas, SQLite em tmp e portas 8784/8014.
+**A e B1 concluídos:** checkpoints `8f33c82` e `3ef956c`. **B2 concluído para a navegação de Registar na web**; o bloco B global ainda não está concluído. Base deste checkpoint: `3ef956c`; obter o commit correspondente por `git log -1 -- docs/PROJECT_STATUS.md`.
 
-Corrigidos dois defeitos reproduzidos: foco perdido ao escolher categoria e rascunho descartado ao voltar às categorias. Um único formulário fica em memória enquanto se percorrem as categorias; conserva ficheiro, correções e marcas de revisão sem nova extração ou gravação automática. Voltar com seta, retomar rascunho e trocar de tipo; troca com alterações exige descarte explícito, formulário vazio não mostra diálogo. Escape restitui foco; Continuar a editar reabre o rascunho. Voltar local indisponível durante processamento/guarda.
+Registar conserva um único rascunho em memória ao voltar às categorias e ao mudar de separador: ficheiro, correções e revisão sem reextração ou gravação automática. Rotas internas limitadas a categorias/tipos conhecidos permitem Voltar/Avançar. Dados clínicos e nomes de ficheiro não entram no URL. O seletor Retomar registo recupera o formulário; troca de registo com alterações exige descarte explícito. Formulário vazio não mostra diálogo. Recarga/fecho com rascunho pedem aviso nativo do navegador; cancelar recarga conserva os campos. Logout desmonta a memória privada. Após guardar, o rascunho é limpo e o detalhe continua a ser o destino.
 
-**Pendência prioritária B2:** Voltar/Avançar do navegador ainda salta etapas; sair de Registar pela navegação principal ou recarregar ainda pode perder rascunhos. A proteção B1 limita-se às transições internas de Registar. O respetivo teste de navegador continua marcado como falha esperada, não como correção aprovada. Revisão compacta e fidelidade ainda não alteradas; confirmação humana/persistência permanecem intactas.
+Câmara web conserva a pré-visualização ao navegar, mas encerra vídeo/pedidos de permissão pendentes quando fica oculta. Confirmar fotografia continua a exigir conferência de qualidade; confirmar resultados mantém as regras anteriores. BackHandler Android foi preparado para estes passos, **sem ensaio nativo**. Não há sincronização nem rascunho em disco/localStorage.
 
-Validação desta etapa: 58 testes TypeScript e 15 cenários Chromium aprovados; uma falha esperada de navegador mantém a pendência B2. Typecheck/exportação web aprovados; detalhes em VALIDATION.md. Não somar a validação histórica da v0.7.3 como testes repetidos. Sem nova inferência, carga ou testes nativos.
+Validação atual: **59 TypeScript e 16 Chromium aprovados**, sem falhas esperadas restantes no ficheiro de reprodução. Typecheck/exportação web aprovados. Testes em SQLite temporária/portas 8784 e 8014, apenas contas/documentos sintéticos; base normal intacta. API completa, inferência real e carga não repetidas; resultados/limites em VALIDATION.md.
 
-Próximos três objetivos, por ordem: (1) concluir B2 — histórico contextual global, proteção ao sair, detalhes/artigos e teclado restante; (2) C — revisão compacta com edição contextual, sem reduzir validações; (3) D–G — regressões HDL/proposta extra/estados, confirmações e refinamento visual com regressão final. Não iniciar C antes de concluir/testar B2. Não marcar versão 0.7.4 final nem repetir carga/1.000 contas sem necessidade.
+**Ponto de continuação: B3, antes de C.** Estender navegação/contexto/proteção de alterações aos detalhes de Histórico, acontecimentos, artigos e edição de perfil/registos; estes fluxos ainda não têm cobertura global equivalente a Registar. A revisão compacta, estados documentais e regressão HDL/proposta extra continuam por implementar. Não declarar a v0.7.4 concluída nem repetir carga/1.000 contas sem necessidade. Próximos objetivos no final desta ficha.
 
 ## Versão e Git
 
@@ -66,7 +66,7 @@ Próximos três objetivos, por ordem: (1) concluir B2 — histórico contextual 
 3. **P1 identidade/móvel:** entrega/verificação real de e-mail, recuperação auditada e integração de sessão/Origin/cookies/API e ficheiros em dispositivos por concluir; câmara ainda sem teste físico.
 4. **P2 fidelidade/capacidade:** no corpus denso, HDL ficou sem data e houve proposta extra não mapeada/sem valor; revisão humana mantida. Coorte autenticada ensaiada, mas só carga curta: 100 clientes marginalmente dentro do p95; 250 ultrapassaram o objetivo. Sem capacidade sustentada/produção demonstrada. Avisos de depreciação e dependências continuam por revisão própria.
 
-## Última validação — atualização 09/11/2026
+## Validação anterior — v0.7.3, não repetida integralmente
 
 **211 testes distintos aprovados:** 100 API, 58 TypeScript, 36 Chromium demonstrativos isolados, 9 na configuração normal, 2 de estrutura e 6 dos geradores/métricas. Typecheck, pip check, exportação web e exportações JavaScript Android/iOS aprovados. Dois testes Chromium opcionais de inferência real omitidos; benchmark real separado efetivamente executado.
 
@@ -78,9 +78,9 @@ Capturas/geradores/DB de ensaio em tmp, ignorados pelo Git; comparação web e f
 
 ## Próximos três objetivos
 
-1. Validar a aquisição e integração de sessão/transporte/ficheiros em Android/iOS físico ou emulador, mantendo as guardas de autorização; estabilizar limites de fotografia antes de considerar várias páginas.
-2. Expandir regressões documentais independentes para datas ausentes, propostas extra, reflexos/recortes e revisão clínica/editorial, sem remover casos difíceis ou inferir segurança clínica.
-3. Rever independentemente autenticação/privacidade e medir carga sustentada/históricos grandes; não avançar para dados reais/cloud sem proteção e avaliação apropriadas.
+1. B3: concluir a navegação contextual e proteção de alterações fora de Registar, com testes web; conservar as limitações nativas explícitas.
+2. C: substituir a revisão extensa por resumo/lista compacta e edição contextual, preservando evidência, correções, exclusões e confirmação humana.
+3. D–G: regressões independentes de HDL/data/proposta extra e estados documentais, simplificação das confirmações redundantes e refinamento visual com regressão final. Só então concluir/publicar a versão 0.7.4.
 
 ## Continuidade
 
