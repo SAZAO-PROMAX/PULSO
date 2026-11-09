@@ -8,7 +8,7 @@ import {eventsInRange} from './events';
 import {EventDetail} from './EventViews';
 import {periods,timeRange,filterTime} from './timeRange';
 import {MedicalTerm} from '../learning/Learning';
-export function ClinicalPanel({ownerId,parameters,data,initialParameter,importedDocumentId}:{importedDocumentId?:string;ownerId:string;parameters:Parameter[];data:ClinicalData;initialParameter?:Parameter|null}) {
+export function ClinicalPanel({ownerId,parameters,data,initialParameter,importedDocumentId,onDocument}:{onDocument?:(id:string)=>void;importedDocumentId?:string;ownerId:string;parameters:Parameter[];data:ClinicalData;initialParameter?:Parameter|null}) {
  const {settings,colors:c}=useTheme();
  const imported=data.documents.find(d=>d.id===importedDocumentId&&d.ownerId===ownerId);
  const importedParameters=[...new Set(data.results.filter(r=>r.ownerId===ownerId&&r.documentId===imported?.id&&r.status!=='extracted_pending').map(r=>r.parameter))];
@@ -26,10 +26,10 @@ export function ClinicalPanel({ownerId,parameters,data,initialParameter,imported
  const outside=all.filter(r=>!visible.results.some(v=>v.id===r.id)).length;
  const reasons=new Map<string,number>();
  for(const row of visible.results.filter(r=>r.ownerId===ownerId&&selected.includes(r.parameter))){const reason=exclusionReason(data,row);if(reason)reasons.set(reason,(reasons.get(reason)??0)+1);}
- return <View style={layout.stack}>{imported&&<Card><T kind="heading" nativeID="analysis-evolution-title" tabIndex={-1}>Evolução dos resultados desta análise</T><T>{imported.title}</T><T kind="small">Parâmetros confirmados: {importedParameters.map(p=>parameterLabels[p]).join(', ')}. O ponto desta análise é selecionado quando tem dados comparáveis; resultados incompletos mantêm-se no Histórico.</T><DocumentView doc={imported}/></Card>}<T kind="small">Evolução dos registos.</T>
+ return <View style={layout.stack}>{imported&&<Card><T kind="heading" nativeID="analysis-evolution-title" tabIndex={-1}>Evolução dos resultados desta análise</T><T>{imported.title}</T><T kind="small">Parâmetros confirmados: {importedParameters.map(p=>parameterLabels[p]).join(', ')}. O ponto desta análise é selecionado quando tem dados comparáveis; resultados incompletos mantêm-se no Histórico.</T>{onDocument&&<Button label="Ver detalhe do exame" variant="tertiary" onPress={()=>onDocument(imported.id)}/>}<DocumentView doc={imported}/></Card>}<T kind="small">Evolução dos registos.</T>
  <Button label="Opções do gráfico" expanded={options} selected={options} onPress={()=>setOptions(!options)}/>{parameters.length>5&&<Button label={more?'Recolher parâmetros':'Ver todos os parâmetros'} onPress={()=>setMore(!more)}/>}
  {options&&<View style={layout.row}><Button label="Individual" selected={!combined} onPress={()=>setCombined(false)}/><Button label="Combinado" selected={combined} onPress={()=>setCombined(true)}/></View>}{combined&&<T>Gráficos alinhados no tempo, com escalas independentes e unidades identificadas. Não há normalização nem equivalência entre parâmetros.</T>}
- <View accessibilityLabel="Parâmetro" style={layout.row}>{parameters.filter(p=>more||parameters.length<=5||['glucose','ldl','creatinine','hemoglobin','hba1c'].includes(p)||p===parameter||combined&&chosen.includes(p)).map(p=><Button key={p} label={parameterLabels[p]} selected={combined?chosen.includes(p):p===parameter} onPress={()=>combined?setChosen(chosen.includes(p)?chosen.filter(v=>v!==p):[...chosen,p]):setParameter(p)}/>)}</View>
+ <View accessibilityLabel="Parâmetro" style={layout.row}>{parameters.filter(p=>more||parameters.length<=5||['glucose','ldl','creatinine','hemoglobin','hba1c'].includes(p)||p===parameter||importedParameters.includes(p)||combined&&chosen.includes(p)).map(p=><Button key={p} label={parameterLabels[p]} selected={combined?chosen.includes(p):p===parameter} onPress={()=>combined?setChosen(chosen.includes(p)?chosen.filter(v=>v!==p):[...chosen,p]):setParameter(p)}/>)}</View>
  <MedicalTerm parameter={parameter} label={parameterLabels[parameter]}/>
 
  <View accessibilityLabel="Período" style={layout.row}>{periods.filter(([id])=>options||['all','90','1y'].includes(id)).map(([id,label])=><Button key={id} label={label} selected={period===id} onPress={()=>setPeriod(id)}/>)}</View>

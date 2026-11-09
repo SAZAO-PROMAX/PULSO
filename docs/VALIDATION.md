@@ -1,3 +1,13 @@
+# Reorientação — checkpoint documental P0, 09/11/2026
+
+Base5e7a4c2, versão0.7.4. Implementação: Conferi/Editar/Excluir diretamente na linha, origem/data/excerto próximos; pendências orientam revisão, guarda permanece explícita e bloqueada até conferência. Alterações materiais invalidam revisão. Confirmação API fornece destino evolução com IDs/parâmetros do documento, aguardando leitura da revisão atual. Falha dessa leitura informa que o exame ficou guardado e repete apenas GET. Documento sem resultados numéricos mantém detalhe; original/detalhe acessíveis na evolução. Corrigida disputa de foco shell/detalhe.
+
+Executados62testesTypeScript e typecheck, aprovados. Chromium:10testes distintos na soma dos ficheiros public-product(2),public-navigation-review(7),public-compact-review(1); execução conjunta9aprovações/1falha de restituição de foco após nova ação inline, corrigida e caso compacto repetido/aprovado. Percursos novos cobrem teclado sem editor, correção, erro503na gravação, commit+erro503na leitura, ausência de duplicação, gráfico direto, detalhe/original e recarga. PDF usa parser determinístico real; PNG usa fallback manual real com inferência desligada, não prova extração visual nem OCR. Caso denso usa propostas controladas com guarda real. Logs tmp/product-{unit,p0,p0-regression,p0-dense}.log. API/backend/pipeline não alterados. Testes históricos adaptados ao acesso explícito ao detalhe, nem todos repetidos neste checkpoint. SQLite em tmp,loopback8014/8784,base normal sem testes/reposições. Sem suite completa,carga,GPU ouAndroid.
+
+Ainda pendentes: composição visual, lifecycle e ensaio de estabilidade de2horas. Não declarar transformação inteira concluída com este checkpoint. Cooperação Work: recebeu o resumo acessível de BrainStorm e reviu sequência/aceitação; não inspecionou diretamente checkout/vídeo.
+
+---
+
 # Pós-entrega v0.7.4 — recuperação web e diagnóstico Android, 09/11/2026
 
 Sem mudança de versão ou autenticação. **1 percurso Playwright de PDF autenticado aprovado** com launcher/base temporária; página pública normal carregada em Chromium com zero pageerror. **2 API direcionados aprovados**, 13 não selecionados (isolamento/CSRF/revogação e diagnóstico sem Origin), em tmp. Emulador Android16/API36 com ExpoGo57.0.9: página pública PULSO abriu, canal local respondeu200, tentativa de login mostrou403/Origin e não abriu Hub privado. Não é aprovação da autenticação nativa, nem build própria, teste físico, câmara/PDF privado ou suite completa. Ollama/carga não executados. Ferramentas, comandos, proposta de contrato e ponto de continuação em [MOBILE_VALIDATION.md](MOBILE_VALIDATION.md). Artefactos locais em tmp; base normal sem testes/reposições.

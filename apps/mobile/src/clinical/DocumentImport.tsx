@@ -31,7 +31,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  const [editing,setEditing]=useContextStep('review-editor',null),[editDocument,setEditDocument]=useState(false);
  const {width}=useWindowDimensions(),{colors:c}=useTheme(),previousEditor=useRef<string|null>(null);
  function closeEditor(){setEditing(null);setChoosing(null);}
- useEffect(()=>{if(Platform.OS!=='web')return;const previous=previousEditor.current;previousEditor.current=editing;const target=editing!==null?'review-editor-title':previous!==null?'review-row-'+previous:null;if(target){const node=document.getElementById(target);(node?.querySelector('button')??node)?.focus();}const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'&&editing!==null){event.preventDefault();closeEditor();}};window.addEventListener('keydown',escape);return()=>window.removeEventListener('keydown',escape);},[editing]);
+ useEffect(()=>{if(Platform.OS!=='web')return;const previous=previousEditor.current;previousEditor.current=editing;const target=editing!==null?'review-editor-title':previous!==null?'review-row-'+previous:null;if(target){const node=document.getElementById(target);(node?.querySelector('button[aria-label^="Editar resultado"]')??node)?.focus();}const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'&&editing!==null){event.preventDefault();closeEditor();}};window.addEventListener('keydown',escape);return()=>window.removeEventListener('keydown',escape);},[editing]);
  const baseline=useRef({title,metadata,institution});
  useEffect(()=>{onDraftState?.({dirty:!!selected||!!parsed||title!==baseline.current.title||institution!==baseline.current.institution||JSON.stringify(metadata)!==JSON.stringify(baseline.current.metadata),busy});},[selected,parsed,title,institution,metadata,busy,onDraftState]);
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
@@ -87,6 +87,13 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
   const candidate:Candidate={parameter:'glucose',originalParameter:null,value:'',unit:'',referenceText:null,method:null,context:null,page:null,excerpt:'',issues:['Introdução manual: conferir parâmetro, valor, unidade, página e data no original.'],extractionMethod:'manual',verification:'manual_source_unverified'};
   setEditing(String(rows.length));setParsed({...parsed,candidates:[...parsed.candidates,candidate]});setRows([...rows,{parameter:'glucose',value:'',unit:'mg/dL',date:parsed.date??'',laboratory:parsed.laboratory??'',method:'',context:'',include:true,reviewed:false}]);
  }
+ function review(i:number){
+  if(!parsed||busy)return;const row=rows[i],raw=parsed.candidates[i];if(!row.include)return;
+  if(!row.reviewed){try{confirmRows(owner,id.current,{...parsed,candidates:[raw]},[{...row,reviewed:true}]);}catch(e){setError((e as Error).message);setEditing(String(i));return;}}
+  change(i,{reviewed:!row.reviewed});if(!row.reviewed)closeEditor();
+ }
+ const pending=rows.filter(r=>r.include&&!r.reviewed).length;
+ useEffect(()=>{if(!error||Platform.OS!=='web')return;const node=document.getElementById(editing!==null?'review-editor-title':'import-feedback');node?.focus();node?.scrollIntoView({block:'center'});},[error]);
  async function confirm(){
   if(!parsed||lock.current)return;lock.current=true;setBusy(true);setError('');setStage('A guardar na base local');
   try{
@@ -99,7 +106,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
     pageMethods:parsed.pages?.map(p=>({page:p.page,method:p.method,state:p.state})),
     capture:selected?.capture,original:{fileName:selected?.name??'laboratorio-'+parsed.sha256.slice(0,12)+'.'+extension,mediaType:mime,text:parsed.text,dataUrl:fileData}};
    validateClassification(doc);
-   await clinicalRepository.confirmDocument(owner,doc,results);if(active.current)onSaved({kind:'document',id:doc.id});
+   await clinicalRepository.confirmDocument(owner,doc,results);if(active.current)onSaved({kind:'document',id:doc.id,parameters:[...new Set(results.filter(r=>r.value!==null).map(r=>r.parameter))]});
   }catch(e){if(active.current){setError((e as Error).message);setStage('Não foi guardado. Os campos foram preservados.');}}
   finally{lock.current=false;if(active.current)setBusy(false);}
  }
@@ -109,7 +116,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  </>}{(!parsed||editDocument)&&<PdfPicker selected={selected} stage={stage} onClear={()=>{if(parsed&&onDiscardRequest)onDiscardRequest(clearDocument);else clearDocument();}} onFile={file=>{if(!mimeFor(file)||file.size>MAX_BYTES){setError('Escolha um PDF, PNG ou JPEG sintético até 2 MB.');return;}setSelected(file);setParsed(null);setRows([]);setFileData('');setError('');setStage('Ficheiro selecionado');}} disabled={busy}/>}
  {selected&&(!parsed||editDocument)&&<><Field label="Nome do documento" value={title} onChange={setTitle}/><ClassificationFields value={metadata} onChange={setMetadata}/>{documentOnly&&<Field label="Instituição de origem (opcional)" value={institution} onChange={setInstitution}/>}</>}
  {selected&&!parsed&&<>{documentOnly?<Button label="Guardar documento" primary disabled={busy} onPress={()=>void saveOnly()}/>:<><Button label="Importar PDF" primary disabled={busy} onPress={()=>void read(selected)}/><Button label="Introduzir resultados manualmente" variant="tertiary" disabled={busy} onPress={()=>void manual()}/></>}</>}
- {!selected&&!!stage&&<T accessibilityLiveRegion="polite">{stage}</T>}{!!error&&<T accessibilityRole="alert">{error}</T>}
+ {!selected&&!!stage&&<T accessibilityLiveRegion="polite">{stage}</T>}{!parsed&&!!error&&<T nativeID="import-feedback" tabIndex={-1} accessibilityRole="alert">{error}</T>}
  {waiting&&<Button label="Cancelar pedido em espera" onPress={()=>void cancelWaiting()}/>}
  {selected&&!parsed&&!!error&&<Button label="Tentar novamente" disabled={busy} onPress={()=>void(documentOnly?saveOnly():read(selected))}/>}
  {parsed&&<><T kind="heading">Rever resultados do exame</T>
@@ -129,7 +136,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  {parsed.warnings?.map((warning,i)=><T kind="small" key={i}>{warning}</T>)}
  <T kind="small">Confira os resultados no original. Datas ou métodos ausentes podem impedir gráficos. A revisão pessoal não é validação clínica.</T>
  {rows.map((r,i)=>{const raw=parsed.candidates[i],p=rowLabel(r,raw),label=p?parameterLabels[p]:'Parâmetro por identificar';const state=reviewState(r,raw,parsed);return <View key={i} testID={'review-result-'+i} style={{borderBottomWidth:1,borderColor:c.line,paddingVertical:14,paddingHorizontal:10,gap:6,borderRadius:10,backgroundColor:editing===String(i)?c.soft:'transparent',borderLeftWidth:editing===String(i)?3:0,borderLeftColor:c.control}}>
- <View style={layout.row}><View style={{flex:1,minWidth:120}}><T kind="small" style={{fontWeight:'600'}}>{label}</T><T style={{fontSize:22,lineHeight:30,fontWeight:'600'}}>{r.missingValue?'Sem valor numérico':r.value||'Valor ausente'} {r.unit||'Unidade ausente'}</T><View style={{alignSelf:'flex-start',paddingHorizontal:8,paddingVertical:2,borderRadius:8,backgroundColor:c.soft}}><T kind="small" style={{fontWeight:'600',color:c.ink}}>{state.label}</T></View>{state.reasons.map(reason=><T kind="small" key={reason}>{reason}</T>)}</View><View nativeID={'review-row-'+i}><Button label="Editar" variant="tertiary" disabled={busy} accessibilityLabel={'Editar resultado '+(i+1)+': '+label} onPress={()=>setEditing(String(i))}/></View></View>
+ <View style={layout.row}><View style={{flex:1,minWidth:120}}><T kind="small" style={{fontWeight:'600'}}>{label}</T><T style={{fontSize:22,lineHeight:30,fontWeight:'600'}}>{r.missingValue?'Sem valor numérico':r.value||'Valor ausente'} {r.unit||'Unidade ausente'}</T><T kind="small">{r.date||'Data por confirmar'} · {r.laboratory||parsed.laboratory||'Origem não indicada'}</T>{!!raw.excerpt&&<T kind="small" selectable numberOfLines={2}>Original · página {raw.page??'não indicada'}: {raw.excerpt}</T>}<View style={{alignSelf:'flex-start',paddingHorizontal:8,paddingVertical:2,borderRadius:8,backgroundColor:c.soft}}><T kind="small" style={{fontWeight:'600',color:c.ink}}>{state.label}</T></View>{state.reasons.map(reason=><T kind="small" key={reason}>{reason}</T>)}</View><View nativeID={'review-row-'+i} style={{gap:6}}><Button label={r.reviewed?"Conferido":"Conferi"} accessibilityLabel={(r.reviewed?"Retirar conferência do resultado ":"Conferi resultado ")+(i+1)+": "+label} variant="chip" selected={r.reviewed} disabled={busy||!r.include} onPress={()=>review(i)}/><Button label="Editar" variant="tertiary" disabled={busy} accessibilityLabel={'Editar resultado '+(i+1)+': '+label} onPress={()=>setEditing(String(i))}/><Button label={r.include?"Excluir":"Voltar a incluir"} accessibilityLabel={(r.include?"Excluir proposta ":"Incluir proposta ")+(i+1)+": "+label} variant="tertiary" disabled={busy} onPress={()=>change(i,{include:!r.include,reviewed:false})}/></View></View>
 
  {editing===String(i)&&<Card style={{borderWidth:0,backgroundColor:c.bg,padding:16}}><T kind="heading" nativeID="review-editor-title" tabIndex={-1}>Rever {label}</T><Button label="← Voltar aos resultados" accessibilityLabel="Voltar aos resultados" variant="tertiary" onPress={closeEditor}/>
  {p?<MedicalTerm parameter={p} label={label}/>:<T kind="heading">{label}</T>}<T kind="small">Nome no original: {raw.originalParameter??'Introdução manual'} · Página {raw.page??'não indicada'}</T>
@@ -148,7 +155,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  <Field label={'Origem '+label+' (opcional)'} value={r.laboratory??''} onChange={laboratory=>change(i,{laboratory,reviewed:false})}/>
  <Field label={'Método '+label} value={r.method} onChange={method=>change(i,{method,reviewed:false})}/>
  <Field label={'Amostra '+label} value={r.context} onChange={context=>change(i,{context,reviewed:false})}/>
- <Button label={(r.reviewed?'Revisto: ':'Marcar revisto: ')+label} primary={!r.reviewed} selected={r.reviewed} onPress={()=>{if(!r.reviewed){try{confirmRows(owner,id.current,{...parsed,candidates:[raw]},[{...r,reviewed:true}]);}catch(e){setError((e as Error).message);return;}}change(i,{reviewed:!r.reviewed});if(!r.reviewed)closeEditor();}}/></>}
+ <Button label={(r.reviewed?'Revisto: ':'Marcar revisto: ')+label} primary={!r.reviewed} selected={r.reviewed} onPress={()=>review(i)}/></>}
  {preview&&<DocumentView doc={preview}/>}
  </Card>}
  </View>;})}
@@ -156,7 +163,9 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  <View style={{gap:12,backgroundColor:c.soft,padding:16,borderRadius:12}}><T>Será guardado: {rows.filter(r=>r.include).length} resultados selecionados, dos quais {rows.filter(r=>r.include&&r.reviewed).length} revistos. {rows.filter(r=>!r.include).length} excluídos. Por rever: {rows.filter(r=>r.include&&!r.reviewed).length}. Com avisos ou informação incompleta: {rows.filter((r,i)=>r.include&&reviewState(r,parsed.candidates[i],parsed).attention).length}.</T>
  <Button label="Adicionar resultado manual" variant="tertiary" disabled={busy} onPress={addRow}/>
  {rows.length===0&&selected&&<Button label="Repetir leitura automática" disabled={busy} onPress={()=>void read(selected)}/>}
- <Button label="Confirmar e guardar resultados" primary disabled={busy||editing!==null} onPress={confirm}/>
+ {!!error&&<T nativeID="import-feedback" tabIndex={-1} accessibilityRole="alert">{error}</T>}
+ {pending>0&&<><T accessibilityLiveRegion="polite">Falta conferir {pending} {pending===1?'resultado':'resultados'}. Compare com o original e escolha Conferi, Editar ou Excluir em cada linha.</T><Button label={'Rever próximo resultado ('+pending+')'} primary disabled={busy} onPress={()=>setEditing(String(rows.findIndex(r=>r.include&&!r.reviewed)))}/></>}
+ <Button label="Confirmar e guardar resultados" primary={pending===0} disabled={busy||editing!==null||pending>0||!rows.some(r=>r.include)} onPress={confirm}/>
  <Button label="Cancelar importação" variant="tertiary" disabled={busy} onPress={()=>{if(onDiscardRequest)onDiscardRequest(clearDocument);else clearDocument();}}/></View>
  </>}
  </Card>;

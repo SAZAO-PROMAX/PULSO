@@ -50,7 +50,7 @@ test('revisão compacta: Enter num valor não confirma e guarda sem revisão é 
  let writes=0;page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/confirm'))writes++;});
  await editResult(page,'Glicose');await page.getByLabel('Valor Glicose',{exact:true}).focus();await page.keyboard.press('Enter');expect(writes).toBe(0);
  await page.screenshot({path:'../../tmp/v074-review-before-390.png',fullPage:true});
- await page.keyboard.press('Escape');await activate(page,'Confirmar e guardar resultados');await expect(page.getByRole('alert')).toContainText('Revê cada linha');expect(writes).toBe(0);
+ await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'Confirmar e guardar resultados',exact:true})).toBeDisabled();expect(writes).toBe(0);
 });
 
 test('Voltar do navegador deve regressar à categoria, não saltar para o Hub',async({page})=>{
@@ -102,6 +102,6 @@ test('PDF por teclado: seleção, correção, revisão deliberada, guarda única
  await page.keyboard.press('Enter');await expect(page.getByText('Rever resultados do exame',{exact:true})).toBeVisible();
  for(const name of ['Glicose','Colesterol LDL','Creatinina','Hemoglobina','Hemoglobina glicada']){await editResult(page,name);await activate(page,'Marcar revisto: '+name,'Space');}
  let saves=0;page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/confirm'))saves++;});
- await page.keyboard.press('Escape');await activate(page,'Confirmar e guardar resultados');await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeFocused();expect(saves).toBe(1);
+ await page.keyboard.press('Escape');await activate(page,'Confirmar e guardar resultados');await page.getByRole('button',{name:'Ver detalhe do exame',exact:true}).click();await expect(page.getByRole('heading',{name:'Documento laboratorial sintético',exact:true})).toBeFocused();expect(saves).toBe(1);
  await activate(page,'Ver evolução de Glicose');await expect(page.getByTestId('point-detail')).toContainText('99,2 mg/dL');await page.reload();await expect(page.getByText('Glicose: 99,2 mg/dL',{exact:true})).toBeVisible();
 });

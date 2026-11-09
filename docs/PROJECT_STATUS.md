@@ -8,7 +8,7 @@ Checkpoint pós-entrega — recuperação web/Android, 09/11/2026: [MOBILE_VALID
 
 Verificações deste checkpoint: 1 percurso Playwright autenticado isolado aprovado, 2 testes API de segurança aprovados, página pública normal sem pageerror, diagnóstico de arranque/UI/transporte Android no emulador. Sem suite completa, carga, inferência ou dispositivo físico. API/Metro de teste e emulador encerrados; web normal mantida para utilização interativa. Ordem prevista naquele checkpoint: contrato nativo seguro/testado → seleção/consulta PDF → percursos privados/acessibilidade/cache. Não foi demonstrada segurança de uma nova autenticação nativa; aplicar o limite do Bloco 3 e retomar desse ponto.
 
-**Prioridade atual após novo feedback:** revisão documental descobrível, guardar→gráficos e estabilidade do servidor, seguidos do redesign coeso. Prompt recebido do Work em [NEXT_SPRINT_PROMPT.md](NEXT_SPRINT_PROMPT.md); fundamentação em [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md). São propostas por executar, sem nova versão ou melhoria funcional alegada.
+**Prioridade atual após novo feedback:** revisão documental descobrível, guardar→gráficos e estabilidade do servidor, seguidos do redesign coeso. Prompt recebido do Work em [NEXT_SPRINT_PROMPT.md](NEXT_SPRINT_PROMPT.md); fundamentação em [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md). Implementação iniciada: conferência na própria linha, próxima pendência, erros junto da ação e guardar→evolução com recuperação apenas da leitura após commit. Checkpoint documental funcional em validação; restante composição visual e lifecycle ainda por concluir. Versão permanece 0.7.4.
 
 ## Implementado e verificado
 
