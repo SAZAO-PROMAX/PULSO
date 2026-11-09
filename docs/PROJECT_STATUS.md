@@ -36,7 +36,13 @@ Validação E: **12 TypeScript e 6 Chromium direcionados aprovados**, mais repet
 
 Limites: Android/iOS sem ensaio; consulta de permissão concedida preparada em código nativo, sem teste físico. A entrada na câmara e a ação Abrir câmara continuam explícitas; não há arranque automático. Sem leitor de ecrã/zoom real. Versão executável permanece 0.7.3.
 
-**Ponto de continuação: F. Não iniciado.** Terminar em E; refinamento geral e regressão final apenas por novo pedido.
+**F concluído na web — 09/11/2026**, base `99f2b26`. Checkpoint correspondente por `git log -1 -- docs/PROJECT_STATUS.md`. Percurso documental com etapas discretas derivadas de preparação/revisão/guarda reais, sem percentagens/animação fictícias. Superfícies com menos bordas, hierarquia de valores/estados e destaque do resultado em edição; confirmação agrupada numa superfície própria, ações secundárias discretas. Original textual abre no painel lateral desktop; PDF continua no visualizador existente. Mobile mantém acesso curto Ver original. Tokens, componentes e regras existentes reutilizados.
+
+Validação F: **13 TypeScript e 13 Chromium distintos aprovados** (8 combinações visuais, 1 de texto muito grande/foco e 4 de regressão documental/câmara). Os oito percursos visuais também foram executados antes das alterações, sem os somar novamente ao total. Typecheck/exportação web aprovados. Comparações com mesmo PDF/conta fictícia, sete estados, 390/1280, Simples/Equilibrado e claro/escuro; Detalhado verificado na regressão compacta. Artefactos em tmp, fora do Git; detalhes em VALIDATION.md. Sem carga, GPU, nova inferência ou alterações à base normal.
+
+Limites visíveis: revisão longa exige deslocação vertical; metadados continuam extensos quando abertos. O painel lateral mostra texto original e ação para PDF, sem renderizador PDF incorporado. Texto ampliado foi ensaiado pela preferência da aplicação, não zoom real. Sem leitor de ecrã, dispositivo/emulador Android/iOS ou certificação WCAG. Regras de autenticação, extração, validação, confirmação e persistência não foram alteradas.
+
+**Ponto de continuação: G. Não iniciado.** Versão executável permanece 0.7.3. Executar G apenas por novo pedido, incluindo adaptação/regressão dos testes históricos ainda pendentes.
 
 ## Versão e Git
 
@@ -100,7 +106,7 @@ Capturas/geradores/DB de ensaio em tmp, ignorados pelo Git; comparação web e f
 
 ## Próximos três objetivos
 
-1. F: refinamento visual mais amplo, mediante novo pedido, preservando os percursos concluídos.
+1. G: validação final direcionada e adaptação das regressões históricas antes de concluir a versão, mediante novo pedido.
 2. E/F: simplificar apenas confirmações redundantes e refinar os percursos, após autorização específica.
 3. G: adaptar restantes testes históricos que pressupõem campos sempre abertos, executar regressão geral e validação nativa/acessível apropriada antes de concluir a v0.7.4.
 

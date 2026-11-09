@@ -1,3 +1,4 @@
+import {DocumentJourney} from './DocumentJourney';
 import {useContextStep} from '../editNavigation';
 import {reviewState} from './reviewState';
 import React,{useEffect,useRef,useState} from 'react';
@@ -103,16 +104,17 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
   finally{lock.current=false;if(active.current)setBusy(false);}
  }
  const preview=parsed?{id:id.current,ownerId:owner,synthetic:true,title:'Revisão',laboratory:parsed.laboratory,issuedAt:null,importedAt:new Date().toISOString(),original:{fileName:selected?.name??'documento',mediaType:parsed.mediaType??'application/pdf',text:parsed.text,dataUrl:fileData}}:null;
- return <Card>{!parsed&&<><T kind="heading" nativeID="registration-form-title" tabIndex={-1}>{documentOnly?'Guardar documento sintético':'Importar exame sintético'}</T>{!documentOnly&&<T kind="small">{engine}</T>}<T>{documentOnly?'O ficheiro será guardado sem extrair medições nem interpretar o exame.':'A leitura é local e exige sempre revisão humana.'} PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas.</T>
- <Button label="Descarregar PDF de exemplo" onPress={()=>void Linking.openURL('/laboratorio-demo.pdf')}/>
+ return <Card style={{borderWidth:0,padding:width<600?16:24,gap:20}}><DocumentJourney current={parsed?(busy&&lock.current?3:2):busy?1:0}/>{!parsed&&<><T kind="heading" nativeID="registration-form-title" tabIndex={-1}>{documentOnly?'Guardar documento sintético':'Importar exame sintético'}</T>{!documentOnly&&<T kind="small">{engine}</T>}<T>{documentOnly?'O ficheiro será guardado sem extrair medições nem interpretar o exame.':'A leitura é local e exige sempre revisão humana.'} PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas.</T>
+ <Button label="Descarregar PDF de exemplo" variant="tertiary" onPress={()=>void Linking.openURL('/laboratorio-demo.pdf')}/>
  </>}{(!parsed||editDocument)&&<PdfPicker selected={selected} stage={stage} onClear={()=>{if(parsed&&onDiscardRequest)onDiscardRequest(clearDocument);else clearDocument();}} onFile={file=>{if(!mimeFor(file)||file.size>MAX_BYTES){setError('Escolha um PDF, PNG ou JPEG sintético até 2 MB.');return;}setSelected(file);setParsed(null);setRows([]);setFileData('');setError('');setStage('Ficheiro selecionado');}} disabled={busy}/>}
  {selected&&(!parsed||editDocument)&&<><Field label="Nome do documento" value={title} onChange={setTitle}/><ClassificationFields value={metadata} onChange={setMetadata}/>{documentOnly&&<Field label="Instituição de origem (opcional)" value={institution} onChange={setInstitution}/>}</>}
- {selected&&!parsed&&<>{documentOnly?<Button label="Guardar documento" primary disabled={busy} onPress={()=>void saveOnly()}/>:<><Button label="Importar PDF" primary disabled={busy} onPress={()=>void read(selected)}/><Button label="Introduzir resultados manualmente" disabled={busy} onPress={()=>void manual()}/></>}</>}
+ {selected&&!parsed&&<>{documentOnly?<Button label="Guardar documento" primary disabled={busy} onPress={()=>void saveOnly()}/>:<><Button label="Importar PDF" primary disabled={busy} onPress={()=>void read(selected)}/><Button label="Introduzir resultados manualmente" variant="tertiary" disabled={busy} onPress={()=>void manual()}/></>}</>}
  {!selected&&!!stage&&<T accessibilityLiveRegion="polite">{stage}</T>}{!!error&&<T accessibilityRole="alert">{error}</T>}
  {waiting&&<Button label="Cancelar pedido em espera" onPress={()=>void cancelWaiting()}/>}
  {selected&&!parsed&&!!error&&<Button label="Tentar novamente" disabled={busy} onPress={()=>void(documentOnly?saveOnly():read(selected))}/>}
  {parsed&&<><T kind="heading">Rever resultados do exame</T>
- <T>{title} · {parsed.date||'Data não identificada'} · {parsed.laboratory||'Instituição não identificada'}</T>
+ <T style={{fontWeight:'600'}}>{title}</T>
+ <T kind="small">{parsed.date||'Data não identificada'} · {parsed.laboratory||'Instituição não identificada'}</T>
  <T accessibilityLiveRegion="polite">{rows.length} propostas · {rows.filter((r,i)=>reviewState(r,parsed.candidates[i],parsed).attention&&r.include).length} exigem atenção</T>
  <Button label={editDocument?'Fechar dados do exame':'Editar dados do exame'} variant="tertiary" onPress={()=>setEditDocument(!editDocument)}/>
  {editDocument&&<>
@@ -122,14 +124,14 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  <Field label="Data do relatório (opcional)" value={parsed.reportDate??''} onChange={reportDate=>setParsed({...parsed,reportDate})}/>
  </>}
  <View style={{flexDirection:width>=1000?'row':'column',gap:20,alignItems:'stretch'}}>
- {preview&&<View style={{flex:width>=1000?1:undefined,minWidth:0}}><DocumentView doc={preview}/></View>}
+ {preview&&<View style={{flex:width>=1000?1:undefined,minWidth:0,backgroundColor:width>=1000?c.bg:'transparent',borderRadius:12,padding:width>=1000?16:0,gap:12}}>{width>=1000&&<T kind="small" style={{fontWeight:'700'}}>DOCUMENTO ORIGINAL</T>}<DocumentView key={width>=1000?'desktop':'mobile'} initialOpen={width>=1000} doc={preview}/></View>}
  <View style={{flex:width>=1000?1.4:undefined,minWidth:0,gap:8}}>
  {parsed.warnings?.map((warning,i)=><T kind="small" key={i}>{warning}</T>)}
  <T kind="small">Confira os resultados no original. Datas ou métodos ausentes podem impedir gráficos. A revisão pessoal não é validação clínica.</T>
- {rows.map((r,i)=>{const raw=parsed.candidates[i],p=rowLabel(r,raw),label=p?parameterLabels[p]:'Parâmetro por identificar';const state=reviewState(r,raw,parsed);return <View key={i} testID={'review-result-'+i} style={{borderBottomWidth:1,borderColor:c.line,paddingVertical:10,gap:6}}>
- <View style={layout.row}><View style={{flex:1,minWidth:120}}><T style={{fontWeight:'600'}}>{label}</T><T>{r.missingValue?'Sem valor numérico':r.value||'Valor ausente'} {r.unit||'Unidade ausente'}</T><T kind="small">{state.label}</T>{state.reasons.map(reason=><T kind="small" key={reason}>{reason}</T>)}</View><View nativeID={'review-row-'+i}><Button label="Editar" disabled={busy} accessibilityLabel={'Editar resultado '+(i+1)+': '+label} onPress={()=>setEditing(String(i))}/></View></View>
+ {rows.map((r,i)=>{const raw=parsed.candidates[i],p=rowLabel(r,raw),label=p?parameterLabels[p]:'Parâmetro por identificar';const state=reviewState(r,raw,parsed);return <View key={i} testID={'review-result-'+i} style={{borderBottomWidth:1,borderColor:c.line,paddingVertical:14,paddingHorizontal:10,gap:6,borderRadius:10,backgroundColor:editing===String(i)?c.soft:'transparent',borderLeftWidth:editing===String(i)?3:0,borderLeftColor:c.control}}>
+ <View style={layout.row}><View style={{flex:1,minWidth:120}}><T kind="small" style={{fontWeight:'600'}}>{label}</T><T style={{fontSize:22,lineHeight:30,fontWeight:'600'}}>{r.missingValue?'Sem valor numérico':r.value||'Valor ausente'} {r.unit||'Unidade ausente'}</T><View style={{alignSelf:'flex-start',paddingHorizontal:8,paddingVertical:2,borderRadius:8,backgroundColor:c.soft}}><T kind="small" style={{fontWeight:'600',color:c.ink}}>{state.label}</T></View>{state.reasons.map(reason=><T kind="small" key={reason}>{reason}</T>)}</View><View nativeID={'review-row-'+i}><Button label="Editar" variant="tertiary" disabled={busy} accessibilityLabel={'Editar resultado '+(i+1)+': '+label} onPress={()=>setEditing(String(i))}/></View></View>
 
- {editing===String(i)&&<Card><T kind="heading" nativeID="review-editor-title" tabIndex={-1}>Rever {label}</T><Button label="← Voltar aos resultados" accessibilityLabel="Voltar aos resultados" variant="tertiary" onPress={closeEditor}/>
+ {editing===String(i)&&<Card style={{borderWidth:0,backgroundColor:c.bg,padding:16}}><T kind="heading" nativeID="review-editor-title" tabIndex={-1}>Rever {label}</T><Button label="← Voltar aos resultados" accessibilityLabel="Voltar aos resultados" variant="tertiary" onPress={closeEditor}/>
  {p?<MedicalTerm parameter={p} label={label}/>:<T kind="heading">{label}</T>}<T kind="small">Nome no original: {raw.originalParameter??'Introdução manual'} · Página {raw.page??'não indicada'}</T>
  <T kind="small">Leitura: {raw.extractionMethod==='deterministic'?'leitura automática de texto':raw.extractionMethod==='manual'?'manual':'modelo local'}{raw.model?' · '+raw.model:''}</T>
  <T kind="small">Campos propostos pelo motor, antes da validação: data de colheita {raw.sourceFields?.collectionDate??'não fornecida'}, data do relatório {raw.sourceFields?.reportDate??'não fornecida'}, método {raw.sourceFields?.method??raw.method??'não fornecido'}, amostra {raw.sourceFields?.context??raw.context??'não fornecida'}. Conferir no original.</T>
@@ -151,11 +153,11 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  </Card>}
  </View>;})}
  </View></View>
- <T>Será guardado: {rows.filter(r=>r.include).length} resultados selecionados, dos quais {rows.filter(r=>r.include&&r.reviewed).length} revistos. {rows.filter(r=>!r.include).length} excluídos. Por rever: {rows.filter(r=>r.include&&!r.reviewed).length}. Com avisos ou informação incompleta: {rows.filter((r,i)=>r.include&&reviewState(r,parsed.candidates[i],parsed).attention).length}.</T>
- <Button label="Adicionar resultado manual" disabled={busy} onPress={addRow}/>
+ <View style={{gap:12,backgroundColor:c.soft,padding:16,borderRadius:12}}><T>Será guardado: {rows.filter(r=>r.include).length} resultados selecionados, dos quais {rows.filter(r=>r.include&&r.reviewed).length} revistos. {rows.filter(r=>!r.include).length} excluídos. Por rever: {rows.filter(r=>r.include&&!r.reviewed).length}. Com avisos ou informação incompleta: {rows.filter((r,i)=>r.include&&reviewState(r,parsed.candidates[i],parsed).attention).length}.</T>
+ <Button label="Adicionar resultado manual" variant="tertiary" disabled={busy} onPress={addRow}/>
  {rows.length===0&&selected&&<Button label="Repetir leitura automática" disabled={busy} onPress={()=>void read(selected)}/>}
  <Button label="Confirmar e guardar resultados" primary disabled={busy||editing!==null} onPress={confirm}/>
- <Button label="Cancelar importação" disabled={busy} onPress={()=>{if(onDiscardRequest)onDiscardRequest(clearDocument);else clearDocument();}}/>
+ <Button label="Cancelar importação" variant="tertiary" disabled={busy} onPress={()=>{if(onDiscardRequest)onDiscardRequest(clearDocument);else clearDocument();}}/></View>
  </>}
  </Card>;
 }

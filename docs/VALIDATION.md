@@ -1,3 +1,29 @@
+# v0.7.4 — F: refinamento visual, 09/11/2026
+
+Base 99f2b26. **13 TypeScript e 13 Chromium distintos aprovados**, typecheck/exportação web aprovados. TypeScript: reviewState/persistence/experience (incluindo contraste ink/muted em soft, além dos pares anteriores). Chromium: oito combinações do percurso visual, um ensaio de texto muito grande/foco, três de câmara e um de revisão compacta. Antes: mesmos oito percursos em base temporária, não somados como aprovações adicionais. Logs tmp/v074-f-{before,after-final,extra,regression-final,unit-final}.log. Sem suite completa, carga, GPU, inferência real, alteração à base normal ou nova dependência.
+
+## Comparação e alterações
+
+56 capturas antes + 56 depois: Registar, seleção, preview de câmara sintética, revisão, edição, confirmação e detalhe guardado; 390/1280 px × claro/escuro × Simples/Equilibrado. Mesmo PDF de cinco resultados e nome fictício; IDs/e-mails de teste e instante de importação diferem, portanto não se trata de comparação pixel a pixel. Base antes capturada antes de alterar produto; PULSO_VISUAL_PHASE apenas rotula capturas, não restaura uma revisão Git.
+
+Revistos visualmente os sete pares mobile Simples/claro, revisão desktop Equilibrado/escuro e texto muito grande. Comparações locais: tmp/v074-f-comparison-final-{390,1280}.pdf; capturas v074-f-before/after-*.png. Não adicionar esses documentos/imagens ao Git.
+
+- Registar: retirados contornos e emoji decorativo; superfícies/títulos distinguem câmara, ficheiro e medição. Mesmas ações e callbacks.
+- Seleção/câmara: contornos reservados ao alvo de ficheiro; superfícies mais leves e mesma conferência de qualidade. Sem nova animação.
+- Etapas Documento/Preparar/Rever/Guardar derivadas de busy/parsed/guarda existente. Rótulos e marcas textuais, sem depender só de cor. Teste segura o transporte real antes de o continuar e verifica Etapa 1 → Etapa 2; a revisão aparece após resposta. Guardado só no destino já existente após confirmação da API. Preparar não declara uma extração automática concluída nos casos manuais.
+- Revisão: valores com maior hierarquia, estados textuais discretos, ações Editar sem caixa, resultado selecionado com superfície/faixa e edição contextual. Resumo e confirmação numa superfície dedicada. Mobile: original com acesso curto; desktop: DocumentView abre texto original por defeito em coluna adjacente, preservando abrir PDF original. Não existe novo motor/iframe PDF.
+- DocumentView reutilizado com initialOpen opcional (falso fora da revisão desktop), botão de texto e texto original na escala secundária. Detalhe guardado também foi capturado/verificado. ui.tsx, tokens, fontes e Hub não foram alterados.
+
+## Ensaios e limites
+
+public-f-visual: modo Simples/Equilibrado, temas/larguras acima, movimento reduzido, guardar/detalhe reais em API 8014 e SQLite nova em tmp. Texto extra a 390 escuro: campos ≥24 px, foco com outline ≥3 px, Tab/Shift+Tab, Enter, Escape e restituição do foco aprovados. public-compact-review: Detalhado além dos modos anteriores, 15 parâmetros + extra, teclado, recarga, falha/repetição, exclusão, proveniência e logout. public-camera: permissões recusadas/ausentes e captura/repetição aceites só após conferência. Não há alteração de regras clínicas/permissões por modo.
+
+Problemas visíveis restantes: percurso com muitos resultados exige scroll vertical; editor conserva metadados extensos; PDF abre no visualizador existente em vez de renderização integrada; texto muito grande ocupa mais altura e pode envolver a navegação em duas linhas, sem overflow horizontal observado. Sem zoom real, leitor de ecrã, teste humano, Android/iOS físico/emulador ou certificação WCAG. Contraste calculado é evidência limitada aos pares testados, não auditoria completa. G não iniciado e versão executável continua 0.7.3.
+
+Repetir com Node no PATH: `npx.cmd --prefix apps/mobile tsx --test apps/mobile/tests/reviewState.test.ts apps/mobile/tests/persistence.test.ts apps/mobile/tests/experience.test.ts` e `npm.cmd run typecheck --prefix apps/mobile`. Em apps/mobile, usar configuração isolada PULSO_TEST_PUBLIC=true, PULSO_TEST_API_PORT=8014, PULSO_TEST_WEB_PORT=8784, EXPO_PUBLIC_API_URL=http://127.0.0.1:8014; executar `npx.cmd playwright test public-f-visual.spec.ts --reporter=line`, depois `npx.cmd playwright test public-compact-review.spec.ts public-camera.spec.ts --reporter=line`. Cada lote usa base nova para respeitar limites de registo. Não executar todos juntos nem reutilizar a base normal.
+
+---
+
 # v0.7.4 — E: confirmações e continuidade, 09/11/2026
 
 Base f62515c. **12 TypeScript e 6 Chromium direcionados aprovados**, typecheck/exportação web aprovados. Logs tmp/v074-e-unit.log, tmp/v074-e-final.log e repetição específica tmp/v074-e-cancel-final.log (mesmo percurso, não um sétimo teste distinto). SQLite temporária, API 8014/web 8784, só contas/PDF/fotografias sintéticos. Sem suite completa, API completa, inferência Ollama, carga ou GPU. Backend/pipeline D, autenticação, Origin/CSRF/If-Match e base normal inalterados.

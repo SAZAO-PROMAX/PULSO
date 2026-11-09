@@ -85,9 +85,9 @@ export const RegisterHub=forwardRef<RegistrationActions,{active?:boolean;onEvent
  <T kind="heading" nativeID="registration-options-title" tabIndex={-1}>O que pretende registar?</T>
  {selected&&draft.dirty&&<Button label="Retomar registo por guardar" primary onPress={()=>choose(selected)}/>}
  {cameraMounted&&cameraDirty&&<Button label="Retomar digitalização" primary onPress={()=>startCamera()}/>}
- <View style={layout.row}><View style={layout.grow}><Card><T style={{fontSize:28}}>📷</T><T kind="heading">Digitalizar exame</T><T kind="small">Fotografe uma página fictícia, confira a imagem e escolha a categoria.</T><Button label="Digitalizar exame" buttonRef={trigger} primary onPress={()=>startCamera()}/></Card></View>
- <View style={layout.grow}><Card><T kind="heading">Importar ficheiro</T><T kind="small">PDF ou imagem existente. Escolha a categoria antes de importar.</T><Button label="Importar ficheiro" onPress={()=>show({step:'categories'})}/></Card></View>
- <View style={layout.grow}><Card><T kind="heading">Registar medição</T><T kind="small">Introduza uma leitura de tensão arterial e pulsação opcional.</T><Button label="Registar medição" onPress={()=>choose({category:'pressure',type:'manual-pressure'})}/></Card></View></View>
+ <View style={layout.row}><View style={layout.grow}><Card style={{borderWidth:0,backgroundColor:c.soft}}><T kind="heading">Com a câmara</T><T kind="small">Fotografe uma página fictícia, confira a imagem e escolha a categoria.</T><Button label="Digitalizar exame" buttonRef={trigger} primary onPress={()=>startCamera()}/></Card></View>
+ <View style={layout.grow}><Card style={{borderWidth:0}}><T kind="heading">Um ficheiro existente</T><T kind="small">PDF ou imagem existente. Escolha a categoria antes de importar.</T><Button label="Importar ficheiro" onPress={()=>show({step:'categories'})}/></Card></View>
+ <View style={layout.grow}><Card style={{borderWidth:0,backgroundColor:c.bg}}><T kind="heading">Uma medição em casa</T><T kind="small">Introduza uma leitura de tensão arterial e pulsação opcional.</T><Button label="Registar medição" onPress={()=>choose({category:'pressure',type:'manual-pressure'})}/></Card></View></View>
  {onEvent&&<Button label="Registar acontecimento" variant="tertiary" onPress={()=>requestReplace(onEvent)}/>}
  </View>:<View style={layout.stack}>
  <Back label={category?'Voltar às categorias de registo':'Voltar às opções de registo'} onPress={()=>show({step:category?'categories':'options'})}/>
