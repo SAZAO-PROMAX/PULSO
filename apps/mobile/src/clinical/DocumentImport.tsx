@@ -31,7 +31,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
  const [editing,setEditing]=useContextStep('review-editor',null),[editDocument,setEditDocument]=useState(false);
  const {width}=useWindowDimensions(),{colors:c}=useTheme(),previousEditor=useRef<string|null>(null);
  function closeEditor(){setEditing(null);setChoosing(null);}
- useEffect(()=>{if(Platform.OS!=='web')return;const previous=previousEditor.current;previousEditor.current=editing;const target=editing!==null?'review-editor-title':previous!==null?'review-row-'+previous:null;if(target){const node=document.getElementById(target);(node?.querySelector('button[aria-label^="Editar resultado"]')??node)?.focus();}const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'&&editing!==null){event.preventDefault();closeEditor();}};window.addEventListener('keydown',escape);return()=>window.removeEventListener('keydown',escape);},[editing]);
+ useEffect(()=>{if(Platform.OS!=='web')return;const previous=previousEditor.current;previousEditor.current=editing;const target=editing!==null?'review-editor-title':previous!==null?'review-row-'+previous:null;if(target){const node=document.getElementById(target);(node?.querySelector<HTMLButtonElement>('button[aria-label^="Editar resultado"]')??node)?.focus();}const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'&&editing!==null){event.preventDefault();closeEditor();}};window.addEventListener('keydown',escape);return()=>window.removeEventListener('keydown',escape);},[editing]);
  const baseline=useRef({title,metadata,institution});
  useEffect(()=>{onDraftState?.({dirty:!!selected||!!parsed||title!==baseline.current.title||institution!==baseline.current.institution||JSON.stringify(metadata)!==JSON.stringify(baseline.current.metadata),busy});},[selected,parsed,title,institution,metadata,busy,onDraftState]);
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
@@ -107,7 +107,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
     capture:selected?.capture,original:{fileName:selected?.name??'laboratorio-'+parsed.sha256.slice(0,12)+'.'+extension,mediaType:mime,text:parsed.text,dataUrl:fileData}};
    validateClassification(doc);
    await clinicalRepository.confirmDocument(owner,doc,results);if(active.current)onSaved({kind:'document',id:doc.id,parameters:[...new Set(results.filter(r=>r.value!==null).map(r=>r.parameter))]});
-  }catch(e){if(active.current){setError((e as Error).message);setStage('Não foi guardado. Os campos foram preservados.');}}
+   }catch(e){if(active.current){setError((e as Error).message);setStage('Não foi possível confirmar a gravação. Os campos foram preservados; repetir mantém a proteção contra duplicados.');}}
   finally{lock.current=false;if(active.current)setBusy(false);}
  }
  const preview=parsed?{id:id.current,ownerId:owner,synthetic:true,title:'Revisão',laboratory:parsed.laboratory,issuedAt:null,importedAt:new Date().toISOString(),original:{fileName:selected?.name??'documento',mediaType:parsed.mediaType??'application/pdf',text:parsed.text,dataUrl:fileData}}:null;

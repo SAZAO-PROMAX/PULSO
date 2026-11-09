@@ -1,3 +1,42 @@
+# Reorientação web — revisão, composição e operação, 09/11/2026
+
+Versão permanece 0.7.4. Base P0 `8ce706c`; commit desta atualização: `git log -1 -- docs/VALIDATION.md`. Sem backend/migração/dependência nova, Android ou interpretação de imagens clínicas. O mesmo Work recebeu contexto acessível de BrainStorm, feedback e checkpoints; identificou lacunas sem inspecionar diretamente o checkout.
+
+| Verificação executada | Resultado observado |
+|---|---|
+| Typecheck e `npm.cmd test` em apps/mobile | Aprovados; 62 testes TS, repetidos após as últimas alterações |
+| public-product + public-navigation-review com launcher real | 11 aprovados, 30,2 s; revisão por teclado, rascunhos/Voltar, edição invalida conferência, POST 503, commit + GET 503, perda da resposta após commit com repetição idempotente, PDF parser real, PNG manual, original, persistência, Hub e pesquisa |
+| public-f-visual.spec.ts | 9 aprovados, 29,5 s; claro/escuro, Simples/Equilibrado, 390/1280, texto ampliado/foco |
+| flows, local-extraction, catalogue, accounts | 8 aprovados; fluxos, catálogo de 19 parâmetros/origem, conta e fallback manual |
+| public-compact-review.spec.ts com PULSO_G_PARAMETERS=25 | 1 aprovado, 24,3 s; 25 propostas controladas, edição/exclusão/rascunho/teclado, guarda real |
+| Integração curta inicial do launcher | 1 aprovado, 8 s; prontidão API/web, estado e recusa de parar processo cuja identidade difere; teste posteriormente ampliado |
+| Ensaio ampliado do launcher | **Em curso, não aprovado/concluído nesta atualização**: 2 horas solicitadas em tmp/product-stability.log, 8015/8085 e SQLite própria em tmp |
+| Serviços habituais, apenas leitura | Web 8081 e health 8000: 200; entrada pública Chromium sem pageerror |
+
+O ensaio em curso verifica HTTP a cada 30 s e escrita sintética/reabertura funcional a cada 10 min, com outra sessão recusada; não é carga. Falha se houver intervalo sem observação superior a 90 s. O log operacional não guarda cookies, credenciais ou conteúdo documental. Launcher regista saídas, espera pela interface e permite parar apenas a sessão identificada; não é serviço Windows/reinício automático nem prova da causa histórica das paragens.
+
+Repetição (PowerShell, raiz; Node no PATH), apenas com portas livres e sem ensaio anterior ativo:
+
+```powershell
+$env:PULSO_STABILITY_SECONDS='7200'
+node --test tests/dev-launcher.test.mjs *> tmp/product-stability.log
+Remove-Item Env:PULSO_STABILITY_SECONDS
+# Consultar sem encerrar o teste:
+Get-Content tmp/product-stability.log -Tail 8
+```
+
+Para interromper a instância de ensaio, identificar o diretório tmp/launcher-test-* desta execução pelo respetivo console/log, definir PULSO_RUN_DIR para esse diretório e executar `.\dev.cmd --stop`; depois remover a variável. Não adivinhar PIDs/terminar outra instância. Interrupção não conta como aprovação de duas horas. Ao retomar, recolher o resultado antes de iniciar outro; sessão Codex 88638. Artefactos tmp não publicados.
+
+Chromium: bases tmp, loopback 8014/8784; sustentado 8015/8085. Sem escritas/testes/reposições na base normal. Capturas 320/390/768/1280/1440/1920 sem overflow, navegação centrada verificada em desktop; capturas desktop/390 inspecionadas visualmente. Detalhado ensaiado na revisão densa, não em todos os cruzamentos. Movimento reduzido aprovado. Sem zoom real, leitor de ecrã, dispositivos físicos, inferência real ou validação clínica. PNG manual não prova reconhecimento de fotografia. Suite completa não repetida.
+
+Avisos reais `Unexpected text node` reproduzidos em teste Metro no Hub/Histórico: espaço JSX solto no Card do Hub e condição de filtros devolvendo string vazia. Removido o espaço e convertida condição para booleano; teste de consola passou depois. Primeira tentativa de executar a suite antiga de navegação no Metro interrompida por hostname incompatível dos cookies (127.0.0.1 vs localhost); helper ajustado ao launcher e os 11 casos passaram. Logs tmp/product-console-before.log e product-metro-verified.log. A causa das paragens históricas não foi atribuída a esses avisos sem prova.
+
+Sessão habitual anterior, criada por esta execução, encerrada pelo seu terminal e substituída por launcher independente atualizado; estado ready, API/web respondem. Nenhum processo desconhecido terminado nem reposição da base.
+
+Pendências: extração real de fotografia; sessão expirada/conflitos não repetidos neste novo fluxo; página pública ainda não redesenhada; estabilidade de duas horas por concluir. Sem diagnóstico de radiografias. Gráfico com um único ponto mantém aviso de ausência de tendência. Unidades/métodos/amostras separados. Erro de foco do primeiro P0 corrigido e revisão densa repetida.
+
+---
+
 # Reorientação — checkpoint documental P0, 09/11/2026
 
 Base5e7a4c2, versão0.7.4. Implementação: Conferi/Editar/Excluir diretamente na linha, origem/data/excerto próximos; pendências orientam revisão, guarda permanece explícita e bloqueada até conferência. Alterações materiais invalidam revisão. Confirmação API fornece destino evolução com IDs/parâmetros do documento, aguardando leitura da revisão atual. Falha dessa leitura informa que o exame ficou guardado e repete apenas GET. Documento sem resultados numéricos mantém detalhe; original/detalhe acessíveis na evolução. Corrigida disputa de foco shell/detalhe.

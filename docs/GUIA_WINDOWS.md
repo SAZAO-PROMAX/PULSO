@@ -1,5 +1,23 @@
 # PULSO no Windows — arranque e estabilização
 
+## Controlo da sessão local — checkpoint de reorientação
+
+Abra PowerShell na raiz e execute `.\dev.cmd`. Mantenha essa janela aberta; o launcher anuncia disponibilidade depois de API e interface responderem. Pode usar uma janela PowerShell independente do Codex. Não é um serviço permanente: fechar a janela, suspender ou desligar o computador interrompe o ambiente.
+
+Noutro PowerShell na mesma pasta:
+
+```powershell
+.\dev.cmd --status
+# Parar apenas a sessão registada e identificada:
+.\dev.cmd --stop
+```
+
+Ctrl+C na janela original também termina os serviços dessa sessão. Se as portas estiverem ocupadas e aparecer «Sem sessão registada», pode existir um launcher anterior: use a janela original; não termine processos desconhecidos. Os novos controlos exigem arranque com o launcher atualizado.
+
+O estado fica em `.local/dev-runtime.json`; eventos operacionais em `.local/dev-lifecycle.log` (rotação limitada), sem conteúdo de pedidos/documentos. Uma saída do servidor identifica o componente no terminal. Não apague `.local` nem a base para resolver erros. O launcher não reinicia indefinidamente nem contorna autenticação.
+
+Depois de Ctrl+F5 em http://localhost:8081, importe um PDF inteiramente fictício. Compare cada resultado com o original, use **Conferi** ou **Editar**; **Rever próximo resultado** abre a pendência seguinte. Só **Confirmar e guardar resultados** persiste. Análises numéricas abrem os gráficos e dão acesso a **Ver detalhe do exame**. Se apenas a leitura falhar após guardar, **Tentar novamente** repete a leitura; não importe novamente. No Hub, experimente os parâmetros em **Em perspetiva** e **Explorar resultados**; a pesquisa dá acesso ao catálogo suportado, sem inventar valores.
+
 ## Reabrir a v0.7.4 sem Codex
 
 O PULSO não é um serviço permanente. Abra PowerShell na pasta do projeto e execute `.\dev.cmd`; mantenha essa janela aberta e aguarde o arranque do Metro. Abra http://localhost:8081/. **Ctrl+C nessa janela** termina os servidores iniciados pelo launcher. Para voltar a abrir, execute novamente o mesmo comando. Não precisa de manter uma conversa Codex aberta.

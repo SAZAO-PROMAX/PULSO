@@ -6,11 +6,11 @@ const pdf=path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf')
 const email=`navigation-${Date.now()}-${Math.random().toString(36).slice(2)}@example.test`,password='synthetic-navigation-password';
 // One account per file: only the final journey persists a record. Keep registration limits intact.
 test.beforeAll(async({request,baseURL})=>{
- const api='http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000);
+ const api=(process.env.PULSO_TEST_LAUNCHER==='true'?'http://localhost:':'http://127.0.0.1:')+(process.env.PULSO_TEST_API_PORT??8000);
  expect((await request.post(api+'/auth/register',{headers:{Origin:new URL(baseURL!).origin},data:{email,password,displayName:'Pessoa sintética de teste',birthDate:'1970-05-23'}})).ok()).toBeTruthy();
 });
 async function enter(page:Page,baseURL:string){
- const origin=new URL(baseURL).origin,api='http://127.0.0.1:'+(process.env.PULSO_TEST_API_PORT??8000);
+ const origin=new URL(baseURL).origin,api=(process.env.PULSO_TEST_LAUNCHER==='true'?'http://localhost:':'http://127.0.0.1:')+(process.env.PULSO_TEST_API_PORT??8000);
  expect((await page.request.post(api+'/auth/login',{headers:{Origin:origin},data:{email,password}})).ok()).toBeTruthy();
  await page.route('**/*',route=>{const url=new URL(route.request().url());if(url.hostname==='127.0.0.1'&&![new URL(baseURL).port,String(process.env.PULSO_TEST_API_PORT??8000)].includes(url.port))return route.abort();return route.continue();});
  await page.goto('/#/app');await expect(page.getByRole('button',{name:'Adicionar exame',exact:true})).toBeVisible();

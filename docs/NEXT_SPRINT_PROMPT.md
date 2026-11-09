@@ -1,6 +1,6 @@
 # PULSO — prompt de execução recolhido do ChatGPT Work
 
-09/11/2026. Proposta de implementação, **ainda não executada**. Relatório, observações do vídeo e fontes em [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md). Estado técnico confirmado em [PROJECT_STATUS.md](PROJECT_STATUS.md). O texto abaixo foi recolhido diretamente da resposta Work, sem exigir copiar/colar ao utilizador. Não prova alterações funcionais, ensaios ou uma nova versão.
+09/11/2026. Prompt original recolhido do Work; **execução iniciada, não integralmente concluída**. P0 documental, primeira composição Hub/evolução e lifecycle já implementados; resultados/pendências em [PROJECT_STATUS.md](PROJECT_STATUS.md) e [VALIDATION.md](VALIDATION.md). Relatório, vídeo amostrado e fontes em [PRODUCT_DIRECTION.md](PRODUCT_DIRECTION.md). O texto abaixo preserva a proposta histórica e não deve ser executado novamente desde o início nem tratado como prova de conclusão.
 
 ```text
 Implementa a próxima melhoria do PULSO no repositório existente:

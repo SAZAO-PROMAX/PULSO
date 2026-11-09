@@ -1,5 +1,7 @@
 # PULSO — reorientação de produto e prompt de execução
 
+Implementação iniciada após este briefing: revisão explícita→gráficos, primeira composição Hub/evolução e diagnóstico do launcher. Estado efetivo e limitações em [PROJECT_STATUS.md](PROJECT_STATUS.md). O restante documento preserva a análise/proposta da data, não uma alegação de entrega integral.
+
 09/11/2026. **Briefing e proposta, não implementação nem nova versão.** Base inspecionada: `005849fc2658269f99fa11872b5ffd0273799883`, v0.7.4 experimental. Estado técnico em PROJECT_STATUS.md; diagnóstico Android em MOBILE_VALIDATION.md. Pesquisa pública realizada nesta data, sem contas, pagamentos, ensaios práticos dos concorrentes ou pretensão de cobrir todo o mercado. Work recebeu contexto técnico/histórico e feedback para aprofundar esta investigação; a investigação abaixo integra a análise local e a direção convergente recebida do Work, mantendo as fontes primárias identificadas.
 
 ## Mudança de direção pedida pelo utilizador
