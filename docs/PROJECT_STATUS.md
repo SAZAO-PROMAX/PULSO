@@ -6,9 +6,15 @@ Resumo de continuidade. Evidência e matriz de parâmetros em [VALIDATION.md](VA
 
 Versão executável continua **0.7.3**; não declarar a v0.7.4 concluída. Base `1c6e0cc`; commit de atualização consultável por `git log -1 -- docs/PROJECT_STATUS.md`.
 
-Bloco A: reprodução em contas sintéticas/DB temporária e portas 8784/8014, sem alterar a base normal. Três defeitos confirmados: perda de foco ao escolher categoria, rascunho descartado ao voltar, histórico do navegador sem passos internos. Enter/Espaço funcionam nos botões ensaiados. Revisão mostra 35 campos para cinco resultados; confirmação humana não pode ser ignorada. Um cenário aprovado/três falhas esperadas de reprodução; detalhes e comando em VALIDATION.md. Sem nova inferência, carga ou testes nativos.
+**Bloco A concluído, checkpoint `8f33c82`. Bloco B1 concluído: navegação local de Registar e foco**, sem declarar o bloco B completo. A instância normal/base não foi alterada pelos ensaios; testes usam contas sintéticas, SQLite em tmp e portas 8784/8014.
 
-Próximos três objetivos desta execução sequencial: (1) bloco B — navegação contextual, preservação de rascunhos e foco/teclado, incluindo Voltar/Avançar; (2) bloco C — revisão compacta com edição contextual, sem reduzir validações; (3) blocos D–G — regressões de fidelidade/estados, confirmações/contexto visual e testes finais. Concluir/testar cada bloco antes do seguinte; preservar os defeitos como testes até resolver. Estado anterior abaixo mantém funcionalidades e limites existentes.
+Corrigidos dois defeitos reproduzidos: foco perdido ao escolher categoria e rascunho descartado ao voltar às categorias. Um único formulário fica em memória enquanto se percorrem as categorias; conserva ficheiro, correções e marcas de revisão sem nova extração ou gravação automática. Voltar com seta, retomar rascunho e trocar de tipo; troca com alterações exige descarte explícito, formulário vazio não mostra diálogo. Escape restitui foco; Continuar a editar reabre o rascunho. Voltar local indisponível durante processamento/guarda.
+
+**Pendência prioritária B2:** Voltar/Avançar do navegador ainda salta etapas; sair de Registar pela navegação principal ou recarregar ainda pode perder rascunhos. A proteção B1 limita-se às transições internas de Registar. O respetivo teste de navegador continua marcado como falha esperada, não como correção aprovada. Revisão compacta e fidelidade ainda não alteradas; confirmação humana/persistência permanecem intactas.
+
+Validação desta etapa: 58 testes TypeScript e 15 cenários Chromium aprovados; uma falha esperada de navegador mantém a pendência B2. Typecheck/exportação web aprovados; detalhes em VALIDATION.md. Não somar a validação histórica da v0.7.3 como testes repetidos. Sem nova inferência, carga ou testes nativos.
+
+Próximos três objetivos, por ordem: (1) concluir B2 — histórico contextual global, proteção ao sair, detalhes/artigos e teclado restante; (2) C — revisão compacta com edição contextual, sem reduzir validações; (3) D–G — regressões HDL/proposta extra/estados, confirmações e refinamento visual com regressão final. Não iniciar C antes de concluir/testar B2. Não marcar versão 0.7.4 final nem repetir carga/1.000 contas sem necessidade.
 
 ## Versão e Git
 

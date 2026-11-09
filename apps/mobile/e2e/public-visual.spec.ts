@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 test('referência visual comparável das páginas principais, com dados e sem dados',async({page,baseURL})=>{
- const phase=process.env.PULSO_VISUAL_PHASE??'after',api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':8000',origin=new URL(baseURL!).origin,email='visual-person@example.test',password='fictitious-visual-password';
+ const phase=process.env.PULSO_VISUAL_PHASE??'after',api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':'+(process.env.PULSO_TEST_API_PORT??8000),origin=new URL(baseURL!).origin,email='visual-person@example.test',password='fictitious-visual-password';
  await page.request.post(api+'/auth/register',{headers:{Origin:origin},data:{email,password,displayName:'Pessoa fictícia',birthDate:'1970-05-23'}});await page.goto('/#/login');await page.getByLabel('E-mail',{exact:true}).fill(email);await page.getByLabel('Palavra-passe',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sessão',exact:true}).click();await expect(page.getByRole('button',{name:'Adicionar exame',exact:true})).toBeVisible();
  const session=await (await page.request.get(api+'/auth/session')).json();await page.request.patch(api+'/auth/preferences',{headers:{Origin:origin,'X-Pulso-CSRF':session.csrf,'If-Match':String(session.user.version)},data:{...session.user.experience,onboardingCompleted:true}});await page.reload();
  for(const width of [390,1280]){await page.setViewportSize({width,height:900});await page.screenshot({path:'../../tmp/v072-'+phase+'-hub-empty-'+width+'.png'});}

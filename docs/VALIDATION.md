@@ -1,3 +1,25 @@
+# v0.7.4 em curso — bloco B1, 09/11/2026
+
+Checkpoint anterior A: `8f33c82`. B1 corrige a navegação **dentro de Registar**, não todo o bloco B. Versão executável mantém 0.7.3 até conclusão da v0.7.4.
+
+Antes/depois reproduzido: a escolha de categoria perdia foco; agora foca o título de tipos e depois o formulário. Voltar desmontava o formulário e apagava seleção/correções; agora mantém uma única instância oculta em memória, retoma sem reextrair e nunca grava automaticamente. Cabeçalhos/Voltar usam foco e seta com nome acessível. Tensão usa a mesma preservação local. Trocar de tipo/câmara/acontecimento com um rascunho exige descartar explicitamente; formulário vazio não exige confirmação. Escape fecha o diálogo e restitui foco; Continuar a editar reabre o formulário. Não foram retiradas confirmações de resultados, qualidade da fotografia, permissões de câmara ou eliminações.
+
+A revisão ainda tem os mesmos 35 campos para cinco resultados: **bloco C não iniciado**. Pipeline e regras de confirmação não foram alterados. O caso difícil HDL/data/proposta extra não foi repetido nem declarado corrigido. B2 continua necessário para Voltar/Avançar global, proteção ao sair pela navegação principal/recarregar e outros detalhes/artigos. Uma falha esperada explícita mantém a reprodução do histórico do navegador; não a contar como funcionalidade aprovada.
+
+Testes desta etapa:
+
+- `npm.cmd test --prefix apps/mobile`: 58 aprovados, tmp/v074-unit.log. Typecheck aprovado depois das alterações finais. Exportação web executada pela suite Chromium.
+- Novo ficheiro percorre Tab/Shift+Tab, Enter/Espaço, seletor de ficheiro ativado por Enter (ficheiro fornecido ao evento Playwright, sem automatizar o diálogo nativo do Windows), correção/revisão deliberada de cinco linhas, gravação única, detalhe/gráfico e persistência após recarga. Sem cliques nem focus() nesse percurso integral. Outros cenários usam fill() para preparar dados e não são declarados integralmente por teclado.
+- Rascunho conserva nome/ficheiro, valor corrigido e marca de revisão; contador confirma uma só extração e zero gravações ao voltar. Tensão conserva valor. Campo de texto + Enter não confirma resultados; guardar sem revisão é bloqueado antes de enviar POST.
+- Diálogo em 320/390/768/1100/1280 px sem overflow horizontal observado; capturas tmp/v074-draft-dialog-{390,1280}.png, 390 revista visualmente. Sem ensaio de zoom real/texto ampliado do novo diálogo, leitor de ecrã ou Android/iOS.
+- Regressões existentes de câmara, seletor, autenticação/recusa de cookie, sessão expirada, guarda/detalhe/evolução e três modos foram repetidas em bases temporárias. Ficheiros public-* agora respeitam a porta API de teste.
+
+Ocorrências durante B1: o primeiro ensaio encontrou foco perdido após descarte e depois interferência no retorno da câmara; ambos corrigidos e repetidos. Um lote inicial de 15 cenários excedeu o limite normal de criação de contas. Não se alterou a aplicação/limite: o novo ficheiro usa uma conta sintética, sessões separadas e só o último percurso guarda resultados; a suite completa fica no limite existente de dez registos. Nenhuma limpeza da base normal ou pedido de escrita nela.
+
+Comando completo, na mesma configuração PowerShell de A abaixo: `npx.cmd playwright test --reporter=line`. Artefactos ficam em tmp; não publicar capturas/documentos/bases. **Resultado final:** 15 cenários Chromium aprovados e uma falha esperada do histórico do navegador (Playwright apresenta 16 passed por incluir essa falha esperada); 58 TypeScript aprovados, total de 73 aprovações reais. Log tmp/v074-block-b1-public.log. Sem testes API completos repetidos porque o backend não foi alterado; a regressão Chromium usa API real isolada. Sem inferência real, carga, 1.000 contas ou alterações a modelos/SQLite.
+
+---
+
 # v0.7.4 em curso — bloco A, 09/11/2026
 
 Base: `1c6e0cc`. Inspeção da documentação, DocumentImport/RegisterHub, rotas/Shell, controlos, modal educativo e hybrid concluída. Sem gravação do utilizador disponível/analisada; reprodução baseada no pedido escrito.

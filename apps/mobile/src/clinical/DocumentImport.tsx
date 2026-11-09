@@ -21,10 +21,12 @@ async function original(file:InputDocument){
  const url=file.dataUrl??await new Promise<string>((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result));r.onerror=()=>no(Error('Falha na leitura do ficheiro.'));r.readAsDataURL(new Blob([bytes],{type:mimeFor(file)!}));});
  return {bytes,sha,url};
 }
-export function DocumentImport({owner,onSaved,classification=classificationFor('laboratory','blood'),documentOnly=false,initialDocument=null}:{owner:string;onSaved:(analysis?:SavedRecord)=>void;classification?:Classification;documentOnly?:boolean;initialDocument?:InputDocument|null}){
+export function DocumentImport({owner,onSaved,classification=classificationFor('laboratory','blood'),documentOnly=false,initialDocument=null,onDraftState}:{onDraftState?:(state:{dirty:boolean;busy:boolean})=>void;owner:string;onSaved:(analysis?:SavedRecord)=>void;classification?:Classification;documentOnly?:boolean;initialDocument?:InputDocument|null}){
  const [metadata,setMetadata]=useState(classification),[title,setTitle]=useState(documentOnly?(registrationCategories.find(c=>c.id===classification.category)?.types.find(t=>t.id===classification.examType)?.label??'Documento sintético'):'Documento laboratorial sintético'),[institution,setInstitution]=useState('');
  const [parsed,setParsed]=useState<Extraction|null>(null),[rows,setRows]=useState<ReviewRow[]>([]),[fileData,setFileData]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [selected,setSelected]=useState<InputDocument|null>(initialDocument),[stage,setStage]=useState(initialDocument?'Ficheiro selecionado':''),[choosing,setChoosing]=useState<number|null>(null),[engine,setEngine]=useState('A verificar o motor local…');
+ const baseline=useRef({title,metadata,institution});
+ useEffect(()=>{onDraftState?.({dirty:!!selected||!!parsed||title!==baseline.current.title||institution!==baseline.current.institution||JSON.stringify(metadata)!==JSON.stringify(baseline.current.metadata),busy});},[selected,parsed,title,institution,metadata,busy,onDraftState]);
  const lock=useRef(false),id=useRef('doc-'+Date.now().toString(36)+Math.random().toString(36).slice(2)),active=useRef(true);
  const job=useRef<string|null>(null),reading=useRef<AbortController|null>(null),[waiting,setWaiting]=useState(false);
  useEffect(()=>()=>{reading.current?.abort();if(job.current)void apiFetch('/demo/extractions/'+job.current,{method:'DELETE',headers:{'X-Pulso-Profile':owner}}).catch(()=>{});},[owner]);
@@ -94,7 +96,7 @@ export function DocumentImport({owner,onSaved,classification=classificationFor('
   finally{lock.current=false;if(active.current)setBusy(false);}
  }
  const preview=parsed?{id:id.current,ownerId:owner,synthetic:true,title:'Revisão',laboratory:parsed.laboratory,issuedAt:null,importedAt:new Date().toISOString(),original:{fileName:selected?.name??'documento',mediaType:parsed.mediaType??'application/pdf',text:parsed.text,dataUrl:fileData}}:null;
- return <Card><T kind="heading">{documentOnly?'Guardar documento sintético':'Importar exame sintético'}</T>{!documentOnly&&<T kind="small">{engine}</T>}<T>{documentOnly?'O ficheiro será guardado sem extrair medições nem interpretar o exame.':'A leitura é local e exige sempre revisão humana.'} PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas.</T>
+ return <Card><T kind="heading" nativeID="registration-form-title" tabIndex={-1}>{documentOnly?'Guardar documento sintético':'Importar exame sintético'}</T>{!documentOnly&&<T kind="small">{engine}</T>}<T>{documentOnly?'O ficheiro será guardado sem extrair medições nem interpretar o exame.':'A leitura é local e exige sempre revisão humana.'} PDF, PNG ou JPEG fictício · até 2 MB e 3 páginas.</T>
  <Button label="Descarregar PDF de exemplo" onPress={()=>void Linking.openURL('/laboratorio-demo.pdf')}/>
  <PdfPicker selected={selected} stage={stage} onClear={()=>{setSelected(null);setParsed(null);setRows([]);setFileData('');setStage('');setError('');}} onFile={file=>{if(!mimeFor(file)||file.size>MAX_BYTES){setError('Escolha um PDF, PNG ou JPEG sintético até 2 MB.');return;}setSelected(file);setParsed(null);setRows([]);setFileData('');setError('');setStage('Ficheiro selecionado');}} disabled={busy}/>
  {selected&&<><Field label="Nome do documento" value={title} onChange={setTitle}/><ClassificationFields value={metadata} onChange={setMetadata}/>{documentOnly&&<Field label="Instituição de origem (opcional)" value={institution} onChange={setInstitution}/>}</>}

@@ -4,7 +4,7 @@ import path from 'node:path';
 
 test('documento ocupa a área de seleção: escolher, trocar, arrastar, rejeitar, processar e cancelar',async({page,baseURL})=>{
  const textErrors:string[]=[];page.on('console',message=>{if(message.type()==='error'&&message.text().includes('Unexpected text node'))textErrors.push(message.text());});
- const api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':8000',origin=new URL(baseURL!).origin,email='picker-'+Date.now()+'@example.test',password='fictitious-picker-password';
+ const api=new URL(baseURL!).protocol+'//'+new URL(baseURL!).hostname+':'+(process.env.PULSO_TEST_API_PORT??8000),origin=new URL(baseURL!).origin,email='picker-'+Date.now()+'@example.test',password='fictitious-picker-password';
  expect((await page.request.post(api+'/auth/register',{headers:{Origin:origin},data:{email,password,displayName:'Pessoa fictícia',birthDate:'1970-05-23'}})).ok()).toBeTruthy();
  await page.goto('/#/login');await page.getByLabel('E-mail',{exact:true}).fill(email);await page.getByLabel('Palavra-passe',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sessão',exact:true}).click();await page.getByRole('button',{name:'Adicionar exame',exact:true}).click();
  const area=page.getByRole('region',{name:'Área de seleção do documento',exact:true}),input=page.getByLabel('Selecionar documento sintético',{exact:true}),raw=fs.readFileSync(path.resolve(__dirname,'../../../data/synthetic/laboratorio-demo.pdf'));
