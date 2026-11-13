@@ -1,0 +1,11 @@
+FAMÍLIA A — DOCUMENTO INTEIRAMENTE SINTÉTICO — A08
+parameter: glucose
+value: 90
+unit: mg/dL
+collectionDate: 2026-11-05T08:00:00Z
+reportDate: 2026-11-07
+method: Hexoquinase
+context: Soro
+provenance: synthetic-A08
+confirmation: user_confirmed
+processedAt: 2026-11-08T10:00:00Z

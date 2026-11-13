@@ -96,3 +96,6 @@ models/
 *.pt
 *.pth
 *.bin
+
+# Síntese privada de documentos do pacote de transição: manter só neste computador.
+codex/diferenciacao-viabilidade/AUDITORIA.md

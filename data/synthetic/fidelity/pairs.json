@@ -1,0 +1,4906 @@
+[
+  {
+    "id": "E01",
+    "synthetic": true,
+    "title": "Idêntico",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E01"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E01"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E01.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/E01.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E01.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E01.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E01.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E01.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/E01.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-E01",
+        "file": "sources/E01.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E01.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-E01",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E01.txt"
+      }
+    },
+    "sourceSha256": "13b0bde7abc0a6f7f06d6a7847ba0b69144dd8638b82b2dc85162668cec50fa1"
+  },
+  {
+    "id": "E02",
+    "synthetic": true,
+    "title": "Data DD/MM/AAAA",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E02"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "05/11/2026"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E02"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E02.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E02.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-E02",
+        "file": "sources/E02.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/E02.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E02.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E02.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E02.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E02.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/E02.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-E02",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E02.txt"
+      }
+    },
+    "sourceSha256": "062be0e3df248c05f6d9fd1e687a0c3b627e54ebb3359a376c455bd35ced7b9a"
+  },
+  {
+    "id": "E03",
+    "synthetic": true,
+    "title": "Decimal vírgula/ponto",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90,0"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E03"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90.00"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E03"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E03.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E03.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/E03.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-E03",
+        "file": "sources/E03.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E03.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E03.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E03.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90,0",
+        "file": "sources/E03.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E03.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E03",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E03.txt"
+      }
+    },
+    "sourceSha256": "540bdee6458f15e4dd0eccfa926c63a51a4cad805626c38c8d946e76bc568fdb"
+  },
+  {
+    "id": "E04",
+    "synthetic": true,
+    "title": "Alias de parâmetro",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E04"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "Glicemia"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E04"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E04.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/E04.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E04.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E04.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E04.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E04.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/E04.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-E04",
+        "file": "sources/E04.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E04.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-E04",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E04.txt"
+      }
+    },
+    "sourceSha256": "cffa6d358cc6a721f66c964aef254971abf550618ac9a0a36c18feaf213caa9f"
+  },
+  {
+    "id": "E05",
+    "synthetic": true,
+    "title": "Maiúsculas da unidade",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E05"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": " MG/DL "
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E05"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E05.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E05.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-E05",
+        "file": "sources/E05.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/E05.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E05.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E05.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E05.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E05.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/E05.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-E05",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E05.txt"
+      }
+    },
+    "sourceSha256": "80101f6b0dd1a29ef75c2bbfb76403ffdb9729e12de01a660d4938540f6c2681"
+  },
+  {
+    "id": "E06",
+    "synthetic": true,
+    "title": "Símbolo micro",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "creatinine"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "umol/L"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E06"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "creatinine"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "µmol/L"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E06"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E06.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E06.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/E06.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-E06",
+        "file": "sources/E06.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E06.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E06.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: creatinine",
+        "file": "sources/E06.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90",
+        "file": "sources/E06.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: umol/L",
+        "file": "sources/E06.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E06",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E06.txt"
+      }
+    },
+    "sourceSha256": "5af60a1ffa777ab5df22e37655bac594993cf08af0e633be91d4958765bf8b0b"
+  },
+  {
+    "id": "E07",
+    "synthetic": true,
+    "title": "Espaçamento do método",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E07"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "  HEXOQUINASE  "
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E07"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E07.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/E07.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E07.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E07.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E07.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E07.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/E07.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-E07",
+        "file": "sources/E07.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E07.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-E07",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E07.txt"
+      }
+    },
+    "sourceSha256": "ef9e373a5bd730357979a250566444000971aceed02a173c742b5a677749d844"
+  },
+  {
+    "id": "E08",
+    "synthetic": true,
+    "title": "Maiúsculas da amostra",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E08"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": " SORO "
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E08"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E08.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E08.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-E08",
+        "file": "sources/E08.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/E08.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E08.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E08.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E08.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E08.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/E08.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-E08",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E08.txt"
+      }
+    },
+    "sourceSha256": "3e32ed2f5efa3308c03a9a03c40679e9f629694d09fa2dd66e889ad75ec6c36a"
+  },
+  {
+    "id": "E09",
+    "synthetic": true,
+    "title": "Instante de processamento diferente",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E09"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E09"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-09T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E09.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E09.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/E09.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-E09",
+        "file": "sources/E09.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E09.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E09.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E09.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90",
+        "file": "sources/E09.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E09.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E09",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E09.txt"
+      }
+    },
+    "sourceSha256": "137d5e4552c0acca13145545f444cc36eea9aaf4e872fbdba4a5bd98793bd34a"
+  },
+  {
+    "id": "E10",
+    "synthetic": true,
+    "title": "Representações combinadas",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E10"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "Glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "090.00"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "07/11/2026"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-E10"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/E10.txt"
+      },
+      "value": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/E10.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/E10.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/E10.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/E10.txt"
+      },
+      "method": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/E10.txt"
+      },
+      "context": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/E10.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-E10",
+        "file": "sources/E10.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/E10.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-E10",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/E10.txt"
+      }
+    },
+    "sourceSha256": "f979cc106d244fa7f415913748a0188a6ed761ade9291c7fb48eb96c72e311fa"
+  },
+  {
+    "id": "L01",
+    "synthetic": true,
+    "title": "Emissão no campo da colheita",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L01"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L01"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L01.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L01.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-L01",
+        "file": "sources/L01.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/L01.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L01.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L01.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L01.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L01.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/L01.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-L01",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L01.txt"
+      }
+    },
+    "sourceSha256": "eafa9e0067d1e6cc6f9485b9d95952dff5834963207b783f2b40309caf1a29f9"
+  },
+  {
+    "id": "L02",
+    "synthetic": true,
+    "title": "Colheita omitida",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L02"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L02"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L02.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L02.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/L02.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-L02",
+        "file": "sources/L02.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L02.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L02.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L02.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90",
+        "file": "sources/L02.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L02.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L02",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L02.txt"
+      }
+    },
+    "sourceSha256": "338a1f1f3372e66fb66e807e16c93ff4ec0ffa9657363471458acf703b4b7ea0"
+  },
+  {
+    "id": "L03",
+    "synthetic": true,
+    "title": "Valor alterado",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L03"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "900"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L03"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L03.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/L03.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L03.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L03.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L03.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L03.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/L03.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-L03",
+        "file": "sources/L03.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L03.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-L03",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L03.txt"
+      }
+    },
+    "sourceSha256": "93980875b15c8049c696ebfd44e84c1215ef7a83c6d182f7f112d7c076d692ef"
+  },
+  {
+    "id": "L04",
+    "synthetic": true,
+    "title": "Parâmetro trocado",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L04"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "ldl"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L04"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L04.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L04.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-L04",
+        "file": "sources/L04.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/L04.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L04.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L04.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L04.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L04.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/L04.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-L04",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L04.txt"
+      }
+    },
+    "sourceSha256": "0195b43b4710ae427f0653339ea2d7e66b36cb1b66bb77c6184a6b0546c1e95e"
+  },
+  {
+    "id": "L05",
+    "synthetic": true,
+    "title": "Unidade alterada sem conversão declarada",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L05"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mmol/L"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L05"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L05.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L05.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/L05.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-L05",
+        "file": "sources/L05.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L05.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L05.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L05.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90",
+        "file": "sources/L05.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L05.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L05",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L05.txt"
+      }
+    },
+    "sourceSha256": "b89996256a67939d99e58ed43ddb993dc11b8c1783a44d4a899842d8fdd7cbf0"
+  },
+  {
+    "id": "L06",
+    "synthetic": true,
+    "title": "Método alterado",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L06"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Enzimático"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L06"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L06.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/L06.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L06.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L06.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L06.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L06.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/L06.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-L06",
+        "file": "sources/L06.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L06.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-L06",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L06.txt"
+      }
+    },
+    "sourceSha256": "62aabc50d1d927aca559e29e8f82f16b11537ad4427a14c0901966de568c91a4"
+  },
+  {
+    "id": "L07",
+    "synthetic": true,
+    "title": "Amostra trocada",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L07"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Plasma"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L07"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L07.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L07.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-L07",
+        "file": "sources/L07.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/L07.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L07.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L07.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L07.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L07.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/L07.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-L07",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L07.txt"
+      }
+    },
+    "sourceSha256": "4adaed02e99c9460b470f5468d0ec4cee0fda46677c5e9c53e035b11e01753c4"
+  },
+  {
+    "id": "L08",
+    "synthetic": true,
+    "title": "Ligação ao original perdida",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L08"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L08.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L08.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/L08.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-L08",
+        "file": "sources/L08.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L08.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L08.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L08.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90",
+        "file": "sources/L08.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L08.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L08",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L08.txt"
+      }
+    },
+    "sourceSha256": "4a66f4389ba3dd15af6e7e7425f092f1fa5b157e94b1f1380d8e873bf359449e"
+  },
+  {
+    "id": "L09",
+    "synthetic": true,
+    "title": "Estado de confirmação perdido",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L09"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L09"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "extracted_pending"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L09.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/L09.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L09.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L09.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L09.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L09.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/L09.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-L09",
+        "file": "sources/L09.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L09.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-L09",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L09.txt"
+      }
+    },
+    "sourceSha256": "4c8a3db99cca362d35ecc4dc95a10d1109e23b9b3c25b154c2de05b238e8830f"
+  },
+  {
+    "id": "L10",
+    "synthetic": true,
+    "title": "Emissão alterada",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L10"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-08"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-L10"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/L10.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/L10.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-L10",
+        "file": "sources/L10.txt"
+      },
+      "context": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/L10.txt"
+      },
+      "method": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/L10.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/L10.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/L10.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/L10.txt"
+      },
+      "value": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/L10.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-L10",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/L10.txt"
+      }
+    },
+    "sourceSha256": "fe38988402c1ad7a529c8b03b045996f68da0ad7a5ef06f6481881452bb26118"
+  },
+  {
+    "id": "A01",
+    "synthetic": true,
+    "title": "Método já desconhecido na origem",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "unknown",
+        "value": null
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A01"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "unknown",
+        "value": null
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A01"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A01.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: [DESCONHECIDO]",
+        "file": "sources/A01.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/A01.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-A01",
+        "file": "sources/A01.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A01.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A01.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A01.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90",
+        "file": "sources/A01.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A01.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A01",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A01.txt"
+      }
+    },
+    "sourceSha256": "45512d9f0dc2257024354659e0effbf0e6afb61f36f9da9cfd0410852f2436c5"
+  },
+  {
+    "id": "A02",
+    "synthetic": true,
+    "title": "Colheita já desconhecida na origem",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "unknown",
+        "value": null
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A02"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "unknown",
+        "value": null
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A02"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A02.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/A02.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A02.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: [DESCONHECIDO]",
+        "file": "sources/A02.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A02.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A02.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/A02.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-A02",
+        "file": "sources/A02.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A02.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-A02",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A02.txt"
+      }
+    },
+    "sourceSha256": "6c76cd45fe31929358b47ca438920bed912ef6fd31d822ea19b76dd87280fe52"
+  },
+  {
+    "id": "A03",
+    "synthetic": true,
+    "title": "Amostra desconhecida",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "unknown",
+        "value": null
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A03"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "unknown",
+        "value": null
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A03"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A03.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A03.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-A03",
+        "file": "sources/A03.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: [DESCONHECIDO]",
+        "file": "sources/A03.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A03.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A03.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A03.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A03.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/A03.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-A03",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A03.txt"
+      }
+    },
+    "sourceSha256": "56642d3328fd224f10f407476bef65ff358a204f997d2d89a19953211e82c09c"
+  },
+  {
+    "id": "A04",
+    "synthetic": true,
+    "title": "Origem documental desconhecida",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "unknown",
+        "value": null
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "unknown",
+        "value": null
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A04.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A04.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/A04.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: [DESCONHECIDO]",
+        "file": "sources/A04.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A04.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A04.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A04.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: 90",
+        "file": "sources/A04.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A04.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A04",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A04.txt"
+      }
+    },
+    "sourceSha256": "293208c89a4c2d13caca339a5ded38185620bfedfd36a5230350cf8e2570efe0"
+  },
+  {
+    "id": "A05",
+    "synthetic": true,
+    "title": "Unidade desconhecida",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "unknown",
+        "value": null
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A05"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "unknown",
+        "value": null
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A05"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A05.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/A05.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: [DESCONHECIDO]",
+        "file": "sources/A05.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A05.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A05.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A05.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/A05.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-A05",
+        "file": "sources/A05.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A05.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-A05",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A05.txt"
+      }
+    },
+    "sourceSha256": "217e84068aed31702ebb2b9469ba320da7c63734dcea7468c71cfa3bf72e324f"
+  },
+  {
+    "id": "A06",
+    "synthetic": true,
+    "title": "Parâmetro e unidade não identificados",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "unknown",
+        "value": null
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "unknown",
+        "value": null
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A06"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "unknown",
+        "value": null
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "unknown",
+        "value": null
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A06"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A06.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A06.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-A06",
+        "file": "sources/A06.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/A06.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A06.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A06.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A06.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: [DESCONHECIDO]",
+        "file": "sources/A06.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/A06.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-A06",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: [DESCONHECIDO]",
+        "file": "sources/A06.txt"
+      }
+    },
+    "sourceSha256": "80b286b3882bfa4a805601f59088b1e0e24e15b6b70df1ea8302ca4ab2523bcf"
+  },
+  {
+    "id": "A07",
+    "synthetic": true,
+    "title": "Resultado com qualificador",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "<90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A07"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "<90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A07"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "reportDate": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 2,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A07.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 3,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A07.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 4,
+        "excerpt": "context: Soro",
+        "file": "sources/A07.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 5,
+        "excerpt": "provenance: synthetic-A07",
+        "file": "sources/A07.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 6,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A07.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 7,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A07.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 8,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A07.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 9,
+        "excerpt": "value: <90",
+        "file": "sources/A07.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 10,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A07.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A07",
+        "page": 1,
+        "line": 11,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A07.txt"
+      }
+    },
+    "sourceSha256": "b007088040f2d99f0aeba7c32a47aa2143ed41bf53c335c6c8d2b94dad820321"
+  },
+  {
+    "id": "A08",
+    "synthetic": true,
+    "title": "Precisão temporal não suportada",
+    "layoutFamily": "A",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05T08:00:00Z"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A08"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05T08:00:00Z"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A08"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "parameter": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 2,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A08.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 3,
+        "excerpt": "value: 90",
+        "file": "sources/A08.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 4,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A08.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 5,
+        "excerpt": "collectionDate: 2026-11-05T08:00:00Z",
+        "file": "sources/A08.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 6,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A08.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 7,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A08.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 8,
+        "excerpt": "context: Soro",
+        "file": "sources/A08.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 9,
+        "excerpt": "provenance: synthetic-A08",
+        "file": "sources/A08.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 10,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A08.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-A08",
+        "page": 1,
+        "line": 11,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A08.txt"
+      }
+    },
+    "sourceSha256": "dc46e9b7905f1ddaa7e1d74a7b8c0962ee10a7f2a6ebcfc0ca015f10568db8d0"
+  },
+  {
+    "id": "A09",
+    "synthetic": true,
+    "title": "Destino afirma método que a origem não confirma",
+    "layoutFamily": "B",
+    "split": "development",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "unknown",
+        "value": null
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A09"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "reportDate": {
+        "state": "known",
+        "value": "2026-11-07"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A09"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "processedAt": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 2,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A09.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 3,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A09.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-A09",
+        "file": "sources/A09.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 5,
+        "excerpt": "context: Soro",
+        "file": "sources/A09.txt"
+      },
+      "method": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 6,
+        "excerpt": "method: [DESCONHECIDO]",
+        "file": "sources/A09.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 7,
+        "excerpt": "reportDate: 2026-11-07",
+        "file": "sources/A09.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 8,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A09.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A09.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 10,
+        "excerpt": "value: 90",
+        "file": "sources/A09.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-A09",
+        "page": 1,
+        "line": 11,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A09.txt"
+      }
+    },
+    "sourceSha256": "e86d1e58c65071d8e1845844dec0e742150f110a3dddf7ec4e5192dcc22be132"
+  },
+  {
+    "id": "A10",
+    "synthetic": true,
+    "title": "Campo ausente desde a origem",
+    "layoutFamily": "C",
+    "split": "evaluation",
+    "source": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A10"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "destination": {
+      "parameter": {
+        "state": "known",
+        "value": "glucose"
+      },
+      "value": {
+        "state": "known",
+        "value": "90"
+      },
+      "unit": {
+        "state": "known",
+        "value": "mg/dL"
+      },
+      "collectionDate": {
+        "state": "known",
+        "value": "2026-11-05"
+      },
+      "method": {
+        "state": "known",
+        "value": "Hexoquinase"
+      },
+      "context": {
+        "state": "known",
+        "value": "Soro"
+      },
+      "provenance": {
+        "state": "known",
+        "value": "synthetic-A10"
+      },
+      "confirmation": {
+        "state": "known",
+        "value": "user_confirmed"
+      },
+      "processedAt": {
+        "state": "known",
+        "value": "2026-11-08T10:00:00Z"
+      }
+    },
+    "evidence": {
+      "method": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 2,
+        "excerpt": "method: Hexoquinase",
+        "file": "sources/A10.txt"
+      },
+      "context": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 3,
+        "excerpt": "context: Soro",
+        "file": "sources/A10.txt"
+      },
+      "provenance": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 4,
+        "excerpt": "provenance: synthetic-A10",
+        "file": "sources/A10.txt"
+      },
+      "confirmation": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 5,
+        "excerpt": "confirmation: user_confirmed",
+        "file": "sources/A10.txt"
+      },
+      "processedAt": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 6,
+        "excerpt": "processedAt: 2026-11-08T10:00:00Z",
+        "file": "sources/A10.txt"
+      },
+      "parameter": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 7,
+        "excerpt": "parameter: glucose",
+        "file": "sources/A10.txt"
+      },
+      "value": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 8,
+        "excerpt": "value: 90",
+        "file": "sources/A10.txt"
+      },
+      "unit": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 9,
+        "excerpt": "unit: mg/dL",
+        "file": "sources/A10.txt"
+      },
+      "collectionDate": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": 10,
+        "excerpt": "collectionDate: 2026-11-05",
+        "file": "sources/A10.txt"
+      },
+      "reportDate": {
+        "documentId": "synthetic-A10",
+        "page": 1,
+        "line": null,
+        "excerpt": "Campo ausente no documento sintético integral.",
+        "file": "sources/A10.txt"
+      }
+    },
+    "sourceSha256": "0f1c37eab3cdddf09faba9e4725a82a451c916ec4f802a21f16db32f15b56f9f"
+  }
+]

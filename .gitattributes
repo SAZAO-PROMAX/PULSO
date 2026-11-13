@@ -1,3 +1,6 @@
 # Preserve generated fixture documents and reviewed screenshots byte-for-byte.
 *.pdf binary
 *.png binary
+
+# Corpus e hashes devem sobreviver a clones Windows sem conversão CRLF.
+data/synthetic/fidelity/** text eol=lf

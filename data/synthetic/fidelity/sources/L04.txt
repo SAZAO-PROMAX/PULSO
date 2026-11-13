@@ -1,0 +1,11 @@
+FAMÍLIA B — DOCUMENTO INTEIRAMENTE SINTÉTICO — L04
+processedAt: 2026-11-08T10:00:00Z
+confirmation: user_confirmed
+provenance: synthetic-L04
+context: Soro
+method: Hexoquinase
+reportDate: 2026-11-07
+collectionDate: 2026-11-05
+unit: mg/dL
+value: 90
+parameter: glucose

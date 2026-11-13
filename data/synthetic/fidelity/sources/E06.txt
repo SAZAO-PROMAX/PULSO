@@ -1,0 +1,11 @@
+FAMÍLIA C — DOCUMENTO INTEIRAMENTE SINTÉTICO — E06
+reportDate: 2026-11-07
+method: Hexoquinase
+context: Soro
+provenance: synthetic-E06
+confirmation: user_confirmed
+processedAt: 2026-11-08T10:00:00Z
+parameter: creatinine
+value: 90
+unit: umol/L
+collectionDate: 2026-11-05

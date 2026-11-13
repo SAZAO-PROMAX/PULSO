@@ -1,0 +1,11 @@
+FAMÍLIA C — DOCUMENTO INTEIRAMENTE SINTÉTICO — E03
+reportDate: 2026-11-07
+method: Hexoquinase
+context: Soro
+provenance: synthetic-E03
+confirmation: user_confirmed
+processedAt: 2026-11-08T10:00:00Z
+parameter: glucose
+value: 90,0
+unit: mg/dL
+collectionDate: 2026-11-05

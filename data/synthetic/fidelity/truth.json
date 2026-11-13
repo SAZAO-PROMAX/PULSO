@@ -1,0 +1,193 @@
+[
+  {
+    "id": "E01",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E02",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E03",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E04",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E05",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E06",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E07",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E08",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E09",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "E10",
+    "outcome": "equivalent",
+    "fields": {}
+  },
+  {
+    "id": "L01",
+    "outcome": "loss",
+    "fields": {
+      "collectionDate": "altered"
+    }
+  },
+  {
+    "id": "L02",
+    "outcome": "loss",
+    "fields": {
+      "collectionDate": "omitted"
+    }
+  },
+  {
+    "id": "L03",
+    "outcome": "loss",
+    "fields": {
+      "value": "altered"
+    }
+  },
+  {
+    "id": "L04",
+    "outcome": "loss",
+    "fields": {
+      "parameter": "altered"
+    }
+  },
+  {
+    "id": "L05",
+    "outcome": "loss",
+    "fields": {
+      "unit": "altered"
+    }
+  },
+  {
+    "id": "L06",
+    "outcome": "loss",
+    "fields": {
+      "method": "altered"
+    }
+  },
+  {
+    "id": "L07",
+    "outcome": "loss",
+    "fields": {
+      "context": "altered"
+    }
+  },
+  {
+    "id": "L08",
+    "outcome": "loss",
+    "fields": {
+      "provenance": "omitted"
+    }
+  },
+  {
+    "id": "L09",
+    "outcome": "loss",
+    "fields": {
+      "confirmation": "altered"
+    }
+  },
+  {
+    "id": "L10",
+    "outcome": "loss",
+    "fields": {
+      "reportDate": "altered"
+    }
+  },
+  {
+    "id": "A01",
+    "outcome": "ambiguous",
+    "fields": {
+      "method": "unknown_source"
+    }
+  },
+  {
+    "id": "A02",
+    "outcome": "ambiguous",
+    "fields": {
+      "collectionDate": "unknown_source"
+    }
+  },
+  {
+    "id": "A03",
+    "outcome": "ambiguous",
+    "fields": {
+      "context": "unknown_source"
+    }
+  },
+  {
+    "id": "A04",
+    "outcome": "ambiguous",
+    "fields": {
+      "provenance": "unknown_source"
+    }
+  },
+  {
+    "id": "A05",
+    "outcome": "ambiguous",
+    "fields": {
+      "unit": "unknown_source"
+    }
+  },
+  {
+    "id": "A06",
+    "outcome": "ambiguous",
+    "fields": {
+      "parameter": "unknown_source",
+      "unit": "unknown_source"
+    }
+  },
+  {
+    "id": "A07",
+    "outcome": "ambiguous",
+    "fields": {
+      "value": "review"
+    }
+  },
+  {
+    "id": "A08",
+    "outcome": "ambiguous",
+    "fields": {
+      "collectionDate": "review"
+    }
+  },
+  {
+    "id": "A09",
+    "outcome": "ambiguous",
+    "fields": {
+      "method": "unknown_source"
+    }
+  },
+  {
+    "id": "A10",
+    "outcome": "ambiguous",
+    "fields": {
+      "reportDate": "unknown_source"
+    }
+  }
+]

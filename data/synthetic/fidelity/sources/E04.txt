@@ -1,0 +1,11 @@
+FAMÍLIA A — DOCUMENTO INTEIRAMENTE SINTÉTICO — E04
+parameter: glucose
+value: 90
+unit: mg/dL
+collectionDate: 2026-11-05
+reportDate: 2026-11-07
+method: Hexoquinase
+context: Soro
+provenance: synthetic-E04
+confirmation: user_confirmed
+processedAt: 2026-11-08T10:00:00Z

@@ -1,0 +1,11 @@
+FAMÍLIA C — DOCUMENTO INTEIRAMENTE SINTÉTICO — L02
+reportDate: 2026-11-07
+method: Hexoquinase
+context: Soro
+provenance: synthetic-L02
+confirmation: user_confirmed
+processedAt: 2026-11-08T10:00:00Z
+parameter: glucose
+value: 90
+unit: mg/dL
+collectionDate: 2026-11-05

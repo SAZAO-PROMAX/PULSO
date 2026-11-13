@@ -1,3 +1,17 @@
+# Diferenciação offline — 13/11/2026
+
+Base e aplicação preservadas: e255f0e / 0.7.4 experimental. Laboratório fidelity-1.0 em branch própria. [Comandos, omissões e passagens](../codex/diferenciacao-viabilidade/EXECUCAO.md) e [tabela de resultados por caso](../codex/diferenciacao-viabilidade/RESULTADOS.md).
+
+Execução concluída: 30 pares (10 equivalentes/10 perdas/10 ambíguos), oráculos separados, A/B desenvolvimento (20), C avaliação (10). 30/30 classes e campos esperados pelo PULSO; baseline literal 12/30 classes e zero perdas críticas omitidas; PULSO evita oito alertas de representação e pede revisão nos dez ambíguos. Referência estrutural Pydantic 2.14.3, contrato nativo fidelity-record-1: 30 aceites estruturalmente, 10 perdas não detetadas. Não é FHIR nem medição competitiva numa integração real. Mesma autoria de regras/corpus, sem teste externo cego; reserva por ordenação de campos, sem avaliar parser.
+
+Comandos concluídos nesta cópia: `.venv/Scripts/python.exe -m unittest discover -s tests/fidelity -v` (18 testes), `ensaio.cmd` (inclui referência), `.venv/Scripts/python.exe -m pytest services/api/tests -q --basetemp=tmp/fidelity-api-verified` (111 aprovados em 26,64 s, dois avisos de depreciação existentes), `npm.cmd run typecheck --prefix apps/mobile`, `npm.cmd test --prefix apps/mobile` (62 aprovados), `pip check` (sem incompatibilidades), launcher --check (Python/Expo e portas 8017/8087 livres). Dependências existentes instaladas sem atualizar versões/lockfile.
+
+Verificações de preservação, precisão decimal, ausência/desconhecido, datas inválidas, sem inferir conversões, HTML escapado, fonte/linha/hash, determinismo byte a byte e recusa de saída para .local incluídas. Contagens não incluem repetições como testes novos. Nenhuma alteração funcional na aplicação, SQLite ou autenticação; ensaio não abre a base habitual. Tentativas iniciais sem acesso adequado foram interrompidas/repetidas; os resultados acima correspondem a execuções concluídas.
+
+Sem novo percurso autenticado no navegador, validação visual do HTML, medição humana, fotografia/Ollama, carga, estabilidade prolongada, entrevistas ou piloto. Browser integrado devolveu timeout ao abrir servidor temporário do HTML, entretanto encerrado. As três datas e o caso desconhecido estão demonstrados na saída CLI/HTML, sem alegar que uma pessoa completou a tarefa. Windows recusou .ps1; sincronização implementada em Node sem mudar política de execução.
+
+---
+
 # Recuperação local supervisionada — 13/11/2026
 
 Base `32064f0`, versão 0.7.4 mantida; commit desta ficha: `git log -1 -- docs/VALIDATION.md`. Sem alterações funcionais/backend/SQLite/autenticação. Antes da correção: sem listeners 8000/8081, PIDs antigos ausentes e último lifecycle de 09/11 terminava em ready, sem motivo de saída. Windows não reiniciou desde 04/11; eventos de suspensão/retoma existem, mas não provam a causa da terminação. O antigo teste sustentado acabou cancelado por timeout (86 observações e grande intervalo final); **não comprova duas horas de disponibilidade**. Não foi repetido.
@@ -681,3 +695,5 @@ Auditoria programática em bases temporárias: 19 testes API, 19 testes do model
 | SpO₂ | NS (unidade A no modelo) | A | A | A | NS | NS |
 
 Extração real por Ollama de cada parâmetro: NT nesta auditoria; o catálogo de aliases/unidades e a validação determinística de propostas não provam reconhecimento de qualquer PDF. Parser conhecido limitado aos cinco analitos indicados; os restantes requerem introdução/revisão manual ou extração local posteriormente validada. SpO₂ não tem formulário domiciliário dedicado. A matriz não valida resultados clínicos. Logs: `tmp/entry-c-api.log`, `tmp/entry-c-unit.log`, `tmp/entry-c-browser.log`. Nenhum problema de integridade/isolamento novo encontrado nestes testes.
+
+Sincronização: três testes Node aprovados; origin incorreto, trabalho sem commit e modo inválido são recusados antes de comunicar com remotos, preservando o checkout. Comando: node --test tests/fidelity/sync.test.mjs.

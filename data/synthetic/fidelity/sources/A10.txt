@@ -1,0 +1,10 @@
+FAMÍLIA C — DOCUMENTO INTEIRAMENTE SINTÉTICO — A10
+method: Hexoquinase
+context: Soro
+provenance: synthetic-A10
+confirmation: user_confirmed
+processedAt: 2026-11-08T10:00:00Z
+parameter: glucose
+value: 90
+unit: mg/dL
+collectionDate: 2026-11-05
