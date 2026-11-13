@@ -1,6 +1,10 @@
 # Estado atual do PULSO
 
-Atualização: **09/11/2026, Europe/Lisbon**. Versão executável: **0.7.4 experimental** (Expo/frontend/API). Blocos A–G concluídos para o âmbito web ensaiado; não iniciar uma nova versão automaticamente.
+Atualização: **13/11/2026, Europe/Lisbon**. Versão executável: **0.7.4 experimental** (Expo/frontend/API). Blocos A–G concluídos para o âmbito web ensaiado; não iniciar uma nova versão automaticamente.
+
+**Último checkpoint — recuperação local:** base `32064f0`; commit desta atualização: `git log -1 -- docs/PROJECT_STATUS.md`. Serviços estavam ausentes e o registo ready de 09/11 era obsoleto; os processos já não existiam, sem evento de saída que estabelecesse a causa exata. Novo supervisor local inicia/recupera apenas a árvore identificada do launcher, com prontidão, exclusão de instâncias e recuo entre tentativas. Tarefa Windows por utilizador, sem elevação, arranca ao iniciar sessão; atalho PULSO no ambiente de trabalho verifica/recupera e abre a aplicação. Processo confirmado como filho do serviço do Agendador, sem dependência do Codex. Testes/limites em [VALIDATION.md](VALIDATION.md), utilização em [GUIA_WINDOWS.md](GUIA_WINDOWS.md). Sem alterações funcionais, versões, autenticação ou esquema. Ficheiro da base normal com SHA-256 inalterado durante a intervenção.
+
+Validação mais recente: **2 testes supervisor + 3 estrutura/launcher aprovados**, crash da API só em tmp; entrada pública normal 200/sem pageerror, abertura idempotente pelo comando do atalho. Sem reinício/login Windows real, suspensão controlada, carga, inferência ou suite completa. O ensaio antigo de duas horas terminou **cancelado por timeout**, com grande intervalo sem observação: não foi aprovado e já não está em curso.
 
 Branch `main`; entrega G publicada: `c093695a23d5378ddd5c2f6e7039080a6126ceec`. Na verificação anterior de 09/11/2026, HEAD, origin/main e GitHub coincidiam nesse commit, assim como os últimos commits dos documentos. Antes deste novo checkpoint, fetch confirmou ausência de divergência remota; as duas alterações documentais locais da preparação foram preservadas e incluídas. Repositório oficial: https://github.com/SAZAO-PROMAX/PULSO.
 
@@ -52,8 +56,8 @@ Câmara nativa preparada em código, sem ensaio físico/emulador de sessão, per
 
 Novo feedback de 09/11/2026 tem prioridade sobre a ordem anterior. Contexto relevante recuperado de BrainStorm e feedback entregues ao mesmo ChatGPT Work, com revisão dos checkpoints. Work não inspecionou diretamente ficheiros/vídeo: recebeu resumo anonimizado. Pesquisa e prompt estão ligados acima; a implementação efetiva está discriminada nesta ficha.
 
-1. Recolher o resultado do ensaio de 2 horas e registar duração/limites reais; investigar paragens com os novos logs. Causa intermitente histórica ainda não demonstrada. Não reiniciar outro ensaio enquanto o atual estiver ativo.
+1. Validar início de sessão Windows e retoma real com o supervisor; acompanhar os novos logs. Ensaio antigo de duas horas cancelado por timeout; não repetir carga nem considerar estabilidade prolongada demonstrada. Causa exata da perda dos processos históricos não estabelecida.
 2. Validar fotografia sintética com inferência local real, separadamente e com fila existente; sessão expirada/conflitos e tarefas reais de revisão. O fallback manual testado não prova reconhecimento da imagem.
 3. Avaliar a nova composição com o utilizador e refinar Hub/página pública/descoberta com critérios de tarefa e zoom/leitor de ecrã. Android e interpretação de radiografias continuam fora desta implementação.
 
-Continuação: **P0 documental e primeiro incremento visual/lifecycle implementados; recolher estabilidade em curso antes de declarar essa meta concluída.** Consultar [VALIDATION.md](VALIDATION.md) e [GUIA_WINDOWS.md](GUIA_WINDOWS.md). Não repetir G, ensaios de carga ou iniciar Android automaticamente.
+Continuação: **P0 documental, primeiro incremento visual e recuperação local implementados; validação real de login Windows/retoma e estabilidade prolongada pendentes.** Consultar [VALIDATION.md](VALIDATION.md) e [GUIA_WINDOWS.md](GUIA_WINDOWS.md). Não repetir G, carga ou iniciar Android automaticamente. Os parágrafos anteriores de 09/11 são histórico; o antigo ensaio já terminou por timeout.

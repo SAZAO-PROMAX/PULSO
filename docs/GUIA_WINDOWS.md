@@ -1,5 +1,27 @@
 # PULSO no Windows — arranque e estabilização
 
+## Abertura recomendada — recuperação de 13/11/2026
+
+Use o atalho **PULSO** no ambiente de trabalho ou faça duplo clique em `PULSO.cmd` na raiz. Verifica/recupera os servidores em segundo plano, espera pela prontidão e abre http://localhost:8081/. Não precisa de manter o Codex ou um terminal aberto. Abrir várias vezes reutiliza a sessão.
+
+Foi configurada uma tarefa Windows pessoal que inicia o supervisor quando entra na sua sessão, sem permissões de administrador. Mantém-se também em bateria. Se um processo da aplicação terminar, o supervisor tenta recuperar os seus serviços; falhas repetidas têm espera crescente até cinco minutos. Não termina processos desconhecidos, não abre firewall e não expõe a API fora de loopback.
+
+O link HTTP funciona enquanto os serviços estão ativos; **um URL sozinho não consegue iniciar um servidor desligado**. Se voltar a haver ligação recusada, abra o atalho PULSO: aguarda o arranque antes de abrir o browser. Durante suspensão/desligamento não há acesso; não foi testado ainda um ciclo real de logout/login ou suspensão nesta correção.
+
+Na raiz, para parar explicitamente até voltar a abrir o atalho ou iniciar sessão Windows:
+
+```powershell
+.\PULSO.cmd --stop
+# Consultar serviços:
+.\dev.cmd --status
+# Reinstalar tarefa/atalho depois de mover a pasta, com Node no PATH:
+node scripts/install-local-startup.mjs
+```
+
+O log .local/supervisor.log regista arranque, saídas e recuperação sem dados de pedidos. Não apagar .local. Para desativar o arranque automático, desative a tarefa pessoal `PULSO-Local-…` no Agendador de Tarefas. Não deve voltar a usar dev.cmd para arrancar outra instância enquanto o supervisor está ativo.
+
+As secções seguintes descrevem o modo manual e entregas anteriores; o atalho e supervisor acima são o percurso recomendado atual.
+
 ## Controlo da sessão local — checkpoint de reorientação
 
 Abra PowerShell na raiz e execute `.\dev.cmd`. Mantenha essa janela aberta; o launcher anuncia disponibilidade depois de API e interface responderem. Pode usar uma janela PowerShell independente do Codex. Não é um serviço permanente: fechar a janela, suspender ou desligar o computador interrompe o ambiente.

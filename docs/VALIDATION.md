@@ -1,3 +1,33 @@
+# Recuperação local supervisionada — 13/11/2026
+
+Base `32064f0`, versão 0.7.4 mantida; commit desta ficha: `git log -1 -- docs/VALIDATION.md`. Sem alterações funcionais/backend/SQLite/autenticação. Antes da correção: sem listeners 8000/8081, PIDs antigos ausentes e último lifecycle de 09/11 terminava em ready, sem motivo de saída. Windows não reiniciou desde 04/11; eventos de suspensão/retoma existem, mas não provam a causa da terminação. O antigo teste sustentado acabou cancelado por timeout (86 observações e grande intervalo final); **não comprova duas horas de disponibilidade**. Não foi repetido.
+
+Implementado `scripts/local-server.mjs`: supervisor com guarda exclusiva em loopback, verificação HTTP dos dois serviços, arranque idempotente, recuperação da árvore própria e backoff limitado a 5 minutos entre falhas repetidas. Não termina processos desconhecidos. Logs operacionais limitados sem conteúdo de pedidos em .local/supervisor.log; mantém dev-lifecycle.log existente. `PULSO.cmd` aguarda prontidão antes de abrir browser; --stop interrompe supervisor e os seus serviços. `install-local-startup.mjs` configura tarefa pessoal no login, sem elevação/senha/firewall/política de execução alterada, e atalho PULSO no ambiente de trabalho. Tarefa instalada e iniciada; pai do supervisor confirmado como serviço Windows, não processo Codex.
+
+| Verificação executada | Resultado |
+|---|---|
+| `node --test tests/local-server.test.mjs` | 2 aprovados, 32 s; arranque, browser Chrome real, repetição sem duplicação, crash apenas da API criada pelo teste, recuperação, paragem e respeito por listener desconhecido |
+| `PULSO_TEST_BROWSER_CHANNEL=chrome` + `node --test tests/foundation.test.mjs tests/dev-launcher.test.mjs` | 3 aprovados, 10 s; estrutura/sintéticos e launcher, identidade de processo adulterada recusada, paragem própria |
+| Instalador Node e tarefa Windows | Aprovados; tarefa sem limite de duração, executa sem elevação e permite bateria; atalho criado e início imediato confirmado |
+| `PULSO.cmd` com serviços já prontos | Sucesso, PID do launcher preservado, browser aberto |
+| Entrada pública normal por Chrome, apenas leitura | HTTP 200, botão Iniciar sessão, sem pageerror; API responde |
+| SHA-256 do ficheiro SQLite normal | Igual antes/depois; testes apenas em tmp, sem reposições/limpezas |
+
+Primeira tentativa de browser falhou pela ausência do Chromium gerido pelo Playwright; repetido com Chrome instalado, sem instalar pacotes. Primeira instalação via ficheiro PowerShell foi bloqueada pela política local; substituída por instalador Node usando cmdlets nativos, **sem ExecutionPolicy Bypass/alteração de política**. Logs dos testes em tmp/local-server-tests.log e tmp/local-startup-regression.log. Bases e serviços temporários encerrados. Serviços habituais restaurados para utilização; testes não escreveram na base normal.
+
+Repetir na raiz (PowerShell, Node no PATH):
+
+```powershell
+node --test tests/local-server.test.mjs
+$env:PULSO_TEST_BROWSER_CHANNEL='chrome'
+node --test tests/foundation.test.mjs tests/dev-launcher.test.mjs
+Remove-Item Env:PULSO_TEST_BROWSER_CHANNEL
+```
+
+Limites: não foi executado logout/login Windows real, suspensão controlada, crash na base normal, suite completa, carga ou inferência. Um URL HTTP não inicia programas com o servidor parado; tarefa de login mantém disponibilidade enquanto o PC está acordado e o atalho recupera explicitamente se necessário. Computador desligado/suspenso continua inacessível. Não é alojamento de produção. Não foi estabelecida causa exata para a saída histórica sem logs. Não interromper o ambiente pessoal para simular essas falhas; utilizar tmp/portas próprias.
+
+---
+
 # Reorientação web — revisão, composição e operação, 09/11/2026
 
 Versão permanece 0.7.4. Base P0 `8ce706c`; commit desta atualização: `git log -1 -- docs/VALIDATION.md`. Sem backend/migração/dependência nova, Android ou interpretação de imagens clínicas. O mesmo Work recebeu contexto acessível de BrainStorm, feedback e checkpoints; identificou lacunas sem inspecionar diretamente o checkout.

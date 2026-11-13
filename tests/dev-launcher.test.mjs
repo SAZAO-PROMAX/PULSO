@@ -15,7 +15,7 @@ test('launcher Windows: prontidão API/web, estado, identidade e paragem da sess
   while(Date.now()<end){if(existsSync(resolve(dir,'dev-runtime.json'))){state=JSON.parse(readFileSync(resolve(dir,'dev-runtime.json'),'utf8'));if(state.status==='ready')break;}assert.equal(child.exitCode,null,readFileSync(resolve(dir,'console.log'),'utf8'));await new Promise(r=>setTimeout(r,500));}
   assert.equal(state?.status,'ready');assert.equal((await fetch('http://127.0.0.1:8015/health')).status,200);assert.equal((await fetch('http://localhost:8085/')).status,200);
   assert.match(command('--status').stdout,/API: responde/);assert.match(command('--status').stdout,/Web: responde/);
-  const require=createRequire(resolve(root,'apps/mobile/package.json')),{chromium}=require('playwright'),browser=await chromium.launch();
+  const require=createRequire(resolve(root,'apps/mobile/package.json')),{chromium}=require('playwright'),browser=await chromium.launch({channel:process.env.PULSO_TEST_BROWSER_CHANNEL});
   try{
    const context=await browser.newContext(),page=await context.newPage();let forbidden=0;await page.route(url=>url.port==='8000',route=>{forbidden++;return route.abort();});
    await page.goto('http://localhost:8085/');await page.getByRole('button',{name:'Iniciar sessão',exact:true}).waitFor();assert.equal(forbidden,0);

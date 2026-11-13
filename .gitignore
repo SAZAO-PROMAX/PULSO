@@ -16,6 +16,7 @@ htmlcov/
 *.key
 .DS_Store
 Thumbs.db
+*.lnk
 *.log
 data/real/
 uploads/
