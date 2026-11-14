@@ -45,6 +45,7 @@ class FidelityTests(unittest.TestCase):
         p = self.example()
         p["source"]["value"]["value"] = "9007199254740992"
         p["destination"]["value"]["value"] = "9007199254740993"
+        p["evidence"]["value"]["excerpt"] = "value: 9007199254740992"
         self.assertEqual(compare(p["source"], p["destination"], p["evidence"])["outcome"], "loss")
 
     def test_unsupported_values_not_silently_equal(self):

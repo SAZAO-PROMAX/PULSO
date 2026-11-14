@@ -6,7 +6,7 @@ import re
 
 from services.api.app.laboratory import PARAMETERS, parameter_id, normalized_unit, iso_date
 
-RULE_VERSION = "fidelity-1.0"
+RULE_VERSION = "fidelity-1.0.1"
 FIELDS = ("parameter", "value", "unit", "collectionDate", "reportDate", "method",
           "context", "provenance", "confirmation")
 ABSENT = {"state": "absent"}
@@ -84,12 +84,45 @@ def finding(field, source, destination, state, reason, evidence):
             "reason": reason, "evidence": deepcopy(evidence), "rule": f"{RULE_VERSION}/{field}/{state}"}
 
 
-def compare(source, destination, evidence):
+def evidence_limit(field, cell, ref, record):
+    """Gramática do ensaio: campo: texto, ou value: número unidade."""
+    if not isinstance(ref, dict) or not isinstance(ref.get("excerpt"), str):
+        return "Prova ausente: falta um excerto para este campo."
+    if cell.get("state") == "absent":
+        return None  # A ausência na origem continua sempre por rever.
+    if type(ref.get("line")) is not int or ref["line"] < 1:
+        return "Prova insuficiente: linha não identificada."
+    label, separator, payload = ref["excerpt"].partition(":")
+    payload = payload.strip()
+    joint = re.fullmatch(r"([+-]?\d+(?:[.,]\d+)?)\s+([^\s:;|]+)", payload)
+    parameter = canonical("parameter", record.get("parameter", {}).get("value"), record)
+    units = PARAMETERS.get(parameter, {}).get("units", ())
+    if separator and label == "value" and joint and joint.group(2) in units and field in ("value", "unit"):
+        token = joint.group(1 if field == "value" else 2)
+    elif separator and label == field:
+        token = payload
+    else:
+        return "Prova insuficiente: o excerto não identifica este campo."
+    expected = cell.get("value") if cell.get("state") == "known" else "[DESCONHECIDO]"
+    if token == expected:
+        return None
+    if field == "value":
+        actual = canonical(field, token, {})
+        if actual is not None and actual == canonical(field, expected, {}):
+            return None
+    return "Prova contraditória: o conteúdo atribuído ao campo difere da origem estruturada."
+
+
+def compare(source, destination, evidence, location_errors=None):
     findings = []
     for field in FIELDS:
         left, right = source.get(field, ABSENT), destination.get(field, ABSENT)
         ls, rs = left.get("state"), right.get("state")
-        if ls != "known":
+        ref = evidence.get(field)
+        limit = (location_errors or {}).get(field) or evidence_limit(field, left, ref, source)
+        if limit:
+            state, reason = "review", limit
+        elif ls != "known":
             state, reason = "unknown_source", "A origem não confirma este campo; não declarar equivalência nem inventar o valor."
         elif rs == "absent":
             state, reason = "omitted", "Campo conhecido na origem e ausente no destino."
@@ -102,10 +135,7 @@ def compare(source, destination, evidence):
             if a is None or b is None:
                 state, reason = "review", "Representação não suportada: preservar e pedir revisão."
             elif a == b:
-                if not evidence.get(field):
-                    state, reason = "review", "Igualdade dos valores sem referência à fonte: evidência insuficiente."
-                else:
-                    state, reason = "equivalent", "Igualdade ou equivalência lexical explícita, sem conversão de unidades."
+                state, reason = "equivalent", "Igualdade ou equivalência lexical explícita, sem conversão de unidades."
             else:
                 state, reason = "altered", "Campo recebido diferente da origem; não são inferidas conversões nem equivalência clínica."
                 if field == "collectionDate" and b == canonical("reportDate", source.get("reportDate", {}).get("value"), source):
@@ -114,6 +144,7 @@ def compare(source, destination, evidence):
     outcome = "loss" if any(f["severity"] == "critical" for f in findings) else \
               "ambiguous" if any(f["severity"] == "review" for f in findings) else "equivalent"
     return {"ruleVersion": RULE_VERSION, "outcome": outcome, "findings": findings,
+            "requiresReview": any(f["severity"] == "review" for f in findings),
             "source": deepcopy(source), "destination": deepcopy(destination),
             "processingNote": "processedAt é transporte técnico; não substitui colheita nem emissão."}
 

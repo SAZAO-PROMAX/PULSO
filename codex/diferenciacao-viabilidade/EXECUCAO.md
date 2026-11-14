@@ -80,3 +80,7 @@ A instalação anterior no OneDrive permanece separada e operacional; não apont
 - Tentativas iniciais de venv/npm no isolamento falharam por permissões/rede; concluídas com acesso adequado. A primeira execução API sem progresso foi interrompida; só a execução concluída acima conta. O Windows recusou scripts PowerShell; sincronização foi adaptada para Node, sem alterar políticas de segurança.
 
 Sincronização: três testes Node aprovados; origin incorreto, trabalho sem commit e modo inválido são recusados antes de comunicar com remotos, preservando o checkout. Comando: node --test tests/fidelity/sync.test.mjs.
+
+## Atualização fidelity-1.0.1
+
+No caso mínimo E01, substituir apenas a referência de value pela de unit devolvia equivalent com o excerto unit: mg/dL. O hash e a linha eram válidos, mas o comparador verificava só a presença da referência. Agora o campo é revisto antes de concluir igualdade, alteração ou omissão. A linha value: 90,00 mg/dL pode suportar ambos os campos; texto fora da gramática requer revisão. Erros de integridade do ficheiro continuam a impedir a execução. Regressões cobrem também a renderização sem qualquer referência. Os 30 oráculos originais mantêm-se. O script normalizado reproduz as 30 classes, pelo que os oito falsos alertas evitados face à comparação literal não são vantagem sobre esse script. [Protocolo pronto a preencher](PROTOCOLO_SEIS.md).

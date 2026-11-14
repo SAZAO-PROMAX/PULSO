@@ -1,6 +1,6 @@
 # Ensaio de fidelidade v1 — execução sintética
 
-Regras `fidelity-1.0`. 30 pares estruturados; família C reservada para avaliação (10), A/B desenvolvimento (20).
+Regras `fidelity-1.0.1`. 30 pares estruturados; família C reservada para avaliação (10), A/B desenvolvimento (20).
 A reserva é por ordem de campos/layout sintético; não é validação cega, externa ou de OCR.
 
 A verdade de referência está em truth.json, declarada na autoria sem chamar o comparador.

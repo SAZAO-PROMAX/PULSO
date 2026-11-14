@@ -1,5 +1,11 @@
 # Estado atual do PULSO
 
+## Evidência por campo — 14/11/2026
+
+Base `3afacf6`, branch `trabalho/diferenciacao`, regras `fidelity-1.0.1`. O E01 reproduziu uma falsa equivalência ao citar a unidade para justificar o valor. O laboratório verifica documento/hash, página, linha, excerto e suporte ao campo antes da decisão. Prova ausente, contraditória ou mal atribuída exige revisão mesmo quando os dados estruturados divergem. Formatos do ensaio: campo etiquetado ou linha value com número e unidade explícita do catálogo. O relatório conserva o original mesmo sem referências. Aplicação pessoal 0.7.4.
+
+23 testes Python, 30/30 pares e campos do corpus original com --check --reference. Script normalizado: 30/30 classes. A correção melhora a justificação do veredicto; falta medir ganho humano. [Protocolo e fichas por incidente](../codex/diferenciacao-viabilidade/PROTOCOLO_SEIS.md). Próximos passos: recolher seis pacotes sintéticos e oráculos independentes, congelar materiais e executar sessões contrabalançadas, avaliar exatidão, prova e tempo antes da decisão. Sem novos dados humanos.
+
 ## Checkpoint ativo — diferenciação offline, 13/11/2026
 
 Pedido atual do utilizador: executar a passagem de fase do ZIP e manter o código completo no computador e GitHub. Clone independente da base limpa `e255f0eeac4502d46f64e078121d7710c39a1355`, branch `trabalho/diferenciacao`, origin oficial. Aplicação pessoal mantém **0.7.4 experimental**; laboratório separado **fidelity-1.0**. Instalação/base/supervisor anteriores preservados; sem migração de contas ou alteração ao percurso web. O checkpoint de recuperação abaixo passa a histórico. Commit deste incremento: consultar `git log -1 -- docs/PROJECT_STATUS.md`; não confundir a base com a entrega.

@@ -22,26 +22,45 @@ def load_corpus():
     for pair in pairs:
         if pair.get("synthetic") is not True:
             raise ValueError("Só pares explicitamente sintéticos.")
-        refs = list(pair["evidence"].values())
-        path = (CORPUS / refs[0]["file"]).resolve()
-        if not path.is_relative_to(CORPUS / "sources"):
-            raise ValueError("Fonte fora do corpus.")
-        content = path.read_bytes()
-        if hashlib.sha256(content).hexdigest() != pair["sourceSha256"]:
-            raise ValueError(f"Fonte alterada: {pair['id']}")
-        lines = content.decode("utf-8").splitlines()
-        for ref in refs:
-            if ref["file"] != refs[0]["file"] or ref["page"] != 1:
-                raise ValueError("Referência incoerente.")
-            if ref["line"] is not None and lines[ref["line"] - 1] != ref["excerpt"]:
-                raise ValueError(f"Excerto não corresponde à fonte: {pair['id']}")
     return pairs, {t["id"]: t for t in truth}
+
+
+def read_original(pair, directory=None):
+    directory = CORPUS if directory is None else directory
+    # No corpus v1, a associação caso–ficheiro é fixa e independente dos excertos.
+    name = f"sources/{pair['id']}.txt"
+    path = (directory / name).resolve()
+    if not path.is_relative_to((directory / "sources").resolve()):
+        raise ValueError("Fonte fora do corpus.")
+    content = path.read_bytes()
+    if hashlib.sha256(content).hexdigest() != pair["sourceSha256"]:
+        raise ValueError(f"Fonte alterada: {pair['id']}")
+    return name, content.decode("utf-8")
+
+
+def location_errors(pair, name, original):
+    errors = {}
+    lines = original.splitlines()
+    for field, ref in (pair.get("evidence") or {}).items():
+        if (not isinstance(ref, dict) or ref.get("file") != name or ref.get("page") != 1
+                or ref.get("documentId") != f"synthetic-{pair['id']}"):
+            errors[field] = "Prova insuficiente: documento ou página não correspondem à origem."
+            continue
+        number = ref.get("line")
+        if number is None and field not in pair["source"]:
+            continue
+        if type(number) is not int or not 1 <= number <= len(lines):
+            errors[field] = "Prova insuficiente: linha indisponível no original."
+        elif lines[number - 1] != ref.get("excerpt"):
+            errors[field] = "Prova contraditória: o excerto difere da linha do original."
+    return errors
 
 
 def evaluate(pairs, truth):
     rows = []
     for p in pairs:
-        result = compare(p["source"], p["destination"], p["evidence"])
+        name, original = read_original(p)
+        result = compare(p["source"], p["destination"], p.get("evidence") or {}, location_errors(p, name, original))
         structural = validate_record(p["source"]) + validate_record(p["destination"])
         simple = simple_compare(p["source"], p["destination"])
         actual_fields = {f["field"]: f["state"] for f in result["findings"] if f["state"] != "equivalent"}
@@ -50,7 +69,7 @@ def evaluate(pairs, truth):
                      "expected": oracle["outcome"], "expectedFields": oracle["fields"],
                      "pulso": result["outcome"], "simple": simple["outcome"],
                      "structure": "ambiguous" if structural else "equivalent",
-                     "structuralErrors": structural, "simpleDifferences": simple["differences"],
+                     "structuralErrors": structural, "simpleDifferences": simple["differences"], "original": original,
                      "fieldsCorrect": actual_fields == oracle["fields"], "result": result})
     return rows
 
@@ -111,23 +130,25 @@ def markdown(rows, hashes, reference=None):
     return "\n".join(text) + "\n"
 
 
-def html_report(rows):
+def html_report(rows, study=False):
     esc = lambda value: escape(json.dumps(value, ensure_ascii=False))
     parts = ["<!doctype html><html lang='pt-PT'><meta charset='utf-8'><meta name='viewport' content='width=device-width'>",
              "<title>PULSO — Fidelidade sintética</title><style>body{font:17px system-ui;max-width:1100px;margin:auto;padding:24px;color:#17283a;background:#f6f8fa}h1{font-size:32px}article{background:white;border:1px solid #a6b4c0;border-radius:12px;padding:20px;margin:20px 0}table{border-collapse:collapse;width:100%;font-size:15px}td,th{border:1px solid #a6b4c0;text-align:left;padding:10px;vertical-align:top;overflow-wrap:anywhere}summary{cursor:pointer;padding:12px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#174f94}:focus-visible{outline:3px solid #174f94;outline-offset:3px}@media(max-width:700px){table,tbody,tr,td,th{display:block}thead{display:none}}</style>",
              "<h1>PULSO · Fidelidade origem–destino</h1><p>Ensaio offline, inteiramente sintético. Sem diagnóstico ou ligação à base habitual.</p>",
-             "<p>Começa por E01 (igual), L01 (troca de datas), L02 (omissão) e A01 (desconhecido na origem). Abre a evidência e confirma o campo.</p>",
-             "<p><a href='#E01'>Conservado</a> · <a href='#L01'>Alterado</a> · <a href='#L02'>Omitido</a> · <a href='#A01'>Desconhecido</a></p>"]
+             ]
+    if not study:
+        parts += ['<p>Demonstração: <a href="#E01">Conservado</a> · <a href="#L01">Alterado</a> · <a href="#L02">Omitido</a> · <a href="#A01">Desconhecido</a></p>']
     for r in rows:
+        review_note = " Há campos por rever." if r["result"]["requiresReview"] else ""
+        comparison = "" if study else f" Comparação simples: {NAMES[r['simple']]}. Família {escape(r['layoutFamily'])}."
         parts += [f"<article id='{r['id']}'><h2>{escape(r['id'] + ' · ' + r['title'])}</h2>",
-                  f"<p>Conclusão: <strong>{NAMES[r['pulso']]}</strong>. Comparação simples: {NAMES[r['simple']]}. Família {r['layoutFamily']}.</p>",
+                  f"<p>Conclusão: <strong>{NAMES[r['pulso']]}</strong>. {comparison}{review_note}</p>",
                   "<table><thead><tr><th>Campo</th><th>Origem</th><th>Recebido</th><th>Conclusão / regra / fonte</th></tr></thead><tbody>"]
         for f in r["result"]["findings"]:
             ev = f["evidence"]
-            evtext = f"{ev['documentId']}, página {ev['page']}, linha {ev['line']}: {ev['excerpt']}" if ev else "Evidência não disponível"
+            evtext = f"{ev.get('documentId')}, página {ev.get('page')}, linha {ev.get('line')}: {ev.get('excerpt')}" if isinstance(ev, dict) else "Evidência não disponível"
             parts.append(f"<tr><th>{escape(f['field'])}</th><td>{esc(f['expected'])}</td><td>{esc(f['received'])}</td><td><b>{escape(f['state'])}</b> ({escape(f['severity'])})<br>{escape(f['reason'])}<details><summary>Evidência e regra</summary><p>{escape(evtext)}</p><code>{escape(f['rule'])}</code></details></td></tr>")
-        source_ref = next(f["evidence"] for f in r["result"]["findings"] if f["evidence"])
-        original = (CORPUS / source_ref["file"]).read_text(encoding="utf-8")
+        original = r["original"]
         parts += ["</tbody></table><details><summary>Original sintético completo</summary><pre>" + escape(original) + "</pre></details>",
                   "<details><summary>Registos integrais recebidos (incluindo processamento)</summary><pre>" + esc({"source": r["result"]["source"], "destination": r["result"]["destination"]}) + "</pre></details></article>"]
     return "\n".join(parts) + "</html>\n"
