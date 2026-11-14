@@ -1,5 +1,9 @@
 # Estado atual do PULSO
 
+## Preparação da primeira conversa — 14/11/2026
+
+Na branch `trabalho/diferenciacao`, a entrega técnica de referência é `9ea7046`. O PULSO fidelity-1.0.1 e o script normalized-1.0 acertaram nas mesmas 30 classificações sintéticas. Estão preparados o [guião para o entrevistador](../codex/diferenciacao-viabilidade/GUIAO_PRIMEIRA_CONVERSA.md) e a [ficha em texto para o profissional](../codex/diferenciacao-viabilidade/FICHA_INCIDENTE_FICTICIO.md). Até esta atualização houve zero entrevistas, zero incidentes externos recebidos e zero medições humanas. Seguem-se a primeira conversa, a recolha dos seis incidentes fictícios com decisões de referência e as sessões comparativas do [protocolo](../codex/diferenciacao-viabilidade/PROTOCOLO_SEIS.md).
+
 ## Consistência do relatório — 14/11/2026
 
 Base cfe2ab4, regras fidelity-1.0.1, script normalized-1.0. Alternativa executada e incluída nos agregados e por caso. PULSO e normalizado empatam em 30/30 classes. 25 testes Python aprovados com a venv, corpus preservado, entrypoints do estudo com os mesmos registos. Reproduzida a rejeição atual da unidade como prova do valor. [Comandos, evidência e limitações](../codex/diferenciacao-viabilidade/CONSISTENCIA_1.0.1.md). Próximos objetivos mantêm-se recolher os seis pacotes/oráculos, congelar versões e realizar as sessões do protocolo. Sem observações humanas novas.
