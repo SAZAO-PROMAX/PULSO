@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import time
 
+from .normalized import classify, VERSION as NORMALIZED_VERSION
 from .compare import RULE_VERSION, compare, simple_compare, validate_record
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -68,6 +69,7 @@ def evaluate(pairs, truth):
         rows.append({"id": p["id"], "title": p["title"], "split": p["split"], "layoutFamily": p["layoutFamily"],
                      "expected": oracle["outcome"], "expectedFields": oracle["fields"],
                      "pulso": result["outcome"], "simple": simple["outcome"],
+                     "normalized": classify(p["source"], p["destination"])["outcome"],
                      "structure": "ambiguous" if structural else "equivalent",
                      "structuralErrors": structural, "simpleDifferences": simple["differences"], "original": original,
                      "fieldsCorrect": actual_fields == oracle["fields"], "result": result})
@@ -94,18 +96,19 @@ def markdown(rows, hashes, reference=None):
             "|---|---|---:|---:|---:|---:|"]
     for split in ("all", "development", "evaluation"):
         subset = rows if split == "all" else [r for r in rows if r["split"] == split]
-        for approach in (("pulso", "simple", "structure", "reference") if reference else ("pulso", "simple", "structure")):
+        for approach in (("pulso", "normalized", "simple", "structure", "reference") if reference else ("pulso", "normalized", "simple", "structure")):
             m = metrics(subset, approach)
             text.append(f"| {split} | {approach} | {m['correct']}/{m['cases']} | {m['criticalMisses']} | {m['falseAlertsOnEquivalent']} | {m['abstentions']} |")
     text += ["", "Gravidade crítica significa risco de perda de fidelidade no ensaio, não urgência clínica.",
+             f"Alternativa principal executada: {NORMALIZED_VERSION}, services/fidelity/normalized.py. Regras: aliases explícitos do catálogo, Decimal com vírgula/ponto, datas ISO ou DD/MM/AAAA, micro e caixa nas unidades, espaços/caixa em método e amostra, revisão de desconhecidos ou formatos não interpretáveis. Sem uso do oráculo.",
              "A baseline simples compara literalmente os mesmos nove campos, distingue ausência/desconhecido e ignora processedAt tal como PULSO.",
              "A baseline de estrutura é validate_record v1 (Python/biblioteca padrão), contrato nativo local com campos opcionais; não compara origem/destino.",
              "Não foi introduzido FHIR, perfil, Inferno ou Firely; a comparação com um validador de interfaces institucionais continua pendente.", "",
              "## Resultados por caso", "",
-             "| Caso | Família/conjunto | Referência | PULSO | Simples | Estrutura | Campos corretos |",
-             "|---|---|---|---|---|---|---|"]
+             "| Caso | Família/conjunto | Referência | PULSO | Normalizado | Literal | Estrutura | Campos corretos PULSO |",
+             "|---|---|---|---|---|---|---|---|"]
     for r in rows:
-        text.append(f"| {r['id']} — {r['title']} | {r['layoutFamily']}/{r['split']} | {r['expected']} | {r['pulso']} | {r['simple']} | {r['structure']} | {'sim' if r['fieldsCorrect'] else 'NÃO'} |")
+        text.append(f"| {r['id']} — {r['title']} | {r['layoutFamily']}/{r['split']} | {r['expected']} | {r['pulso']} | {r['normalized']} | {r['simple']} | {r['structure']} | {'sim' if r['fieldsCorrect'] else 'NÃO'} |")
     if reference:
         text += ["", f"Validador de referência executado: {reference['tool']} **{reference['version']}**, contrato **{reference['contract']}**.",
                  reference["limits"], "Sem FHIR/perfil. Valida cada lado separadamente, sem importar regras do comparador.",
@@ -114,7 +117,8 @@ def markdown(rows, hashes, reference=None):
         text.extend(f"| {r['id']} | {r['reference']} |" for r in rows)
     text += ["", "## Conclusões e limites", "",
              "- Erro adicional face à estrutura: colheita substituída por emissão, embora ambas sejam datas válidas. A comparação simples também deteta esta troca; não há ganho de deteção de perdas críticas sobre essa baseline neste corpus.",
-             "- Falsos alertas evitados: diferenças de vírgula/ponto, alias do catálogo, espaços, maiúsculas, micro e datas explícitas equivalentes. Não são efetuadas conversões de unidades nem inferências clínicas.",
+             "- PULSO e normalized-1.0 atingem 30/30 classes, zero perdas omitidas e dez abstenções neste corpus. O ganho de classificação face ao script normalizado é zero. A hipótese pendente é tempo até decisão correta com prova, conforme PROTOCOLO_SEIS.md.",
+             "- Falsos alertas evitados face à comparação literal: diferenças de vírgula/ponto, alias do catálogo, espaços, maiúsculas, micro e datas explícitas equivalentes. Não são efetuadas conversões de unidades nem inferências clínicas.",
              "- Campos desconhecidos já na origem exigem revisão, mesmo quando os dois lados são literalmente iguais. processedAt é guardado intacto, separado da data clínica.",
              "- Não foi medido tempo humano, esforço real de configuração, redução de 30%, procura, orçamento ou piloto. Duração de execução da máquina não representa tempo de investigação.",
              "- Zero perdas omitidas neste conjunto é um resultado limitado aos pares escritos. As famílias não representam interfaces de parceiros; o comparador recebe campos já estruturados, sem descobrir mapeamentos ou alinhar documentos/resultados.",
@@ -176,12 +180,12 @@ def main():
             row["reference"] = "equivalent" if validate(pair["source"]) and validate(pair["destination"]) else "ambiguous"
     hashes = {name: hashlib.sha256((CORPUS / name).read_bytes()).hexdigest() for name in ("pairs.json", "truth.json")}
     out.mkdir(parents=True, exist_ok=True)
-    (out / "results.json").write_text(json.dumps({"ruleVersion": RULE_VERSION, "corpusHashes": hashes, "referenceValidator": reference, "rows": rows}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (out / "results.json").write_text(json.dumps({"ruleVersion": RULE_VERSION, "corpusHashes": hashes, "referenceValidator": reference, "normalizedVersion": NORMALIZED_VERSION, "rows": rows}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     (out / "report.md").write_text(markdown(rows, hashes, reference), encoding="utf-8", newline="\n")
     (out / "demo.html").write_text(html_report(rows), encoding="utf-8", newline="\n")
     elapsed = time.perf_counter() - start
     (out / "runtime.json").write_text(json.dumps({"elapsedSeconds": elapsed, "humanReviewSeconds": None}) + "\n", encoding="utf-8")
-    for approach in (("pulso", "simple", "structure", "reference") if reference else ("pulso", "simple", "structure")):
+    for approach in (("pulso", "normalized", "simple", "structure", "reference") if reference else ("pulso", "normalized", "simple", "structure")):
         print(approach, json.dumps(metrics(rows, approach), ensure_ascii=False))
     if args.demo:
         for r in rows:

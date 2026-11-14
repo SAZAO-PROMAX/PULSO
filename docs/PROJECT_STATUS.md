@@ -1,5 +1,9 @@
 # Estado atual do PULSO
 
+## Consistência do relatório — 14/11/2026
+
+Base cfe2ab4, regras fidelity-1.0.1, script normalized-1.0. Alternativa executada e incluída nos agregados e por caso. PULSO e normalizado empatam em 30/30 classes. 25 testes Python aprovados com a venv, corpus preservado, entrypoints do estudo com os mesmos registos. Reproduzida a rejeição atual da unidade como prova do valor. [Comandos, evidência e limitações](../codex/diferenciacao-viabilidade/CONSISTENCIA_1.0.1.md). Próximos objetivos mantêm-se recolher os seis pacotes/oráculos, congelar versões e realizar as sessões do protocolo. Sem observações humanas novas.
+
 ## Evidência por campo — 14/11/2026
 
 Base `3afacf6`, branch `trabalho/diferenciacao`, regras `fidelity-1.0.1`. O E01 reproduziu uma falsa equivalência ao citar a unidade para justificar o valor. O laboratório verifica documento/hash, página, linha, excerto e suporte ao campo antes da decisão. Prova ausente, contraditória ou mal atribuída exige revisão mesmo quando os dados estruturados divergem. Formatos do ensaio: campo etiquetado ou linha value com número e unidade explícita do catálogo. O relatório conserva o original mesmo sem referências. Aplicação pessoal 0.7.4.

@@ -6,6 +6,8 @@ from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 
+VERSION = "normalized-1.0"
+
 CATALOG = Path(__file__).resolve().parents[2] / "packages/shared/laboratory.json"
 PARAMETERS = json.loads(CATALOG.read_text(encoding="utf-8"))["parameters"]
 ALIASES = {alias.lower(): p["id"] for p in PARAMETERS for alias in (p["id"], *p["aliases"])}
